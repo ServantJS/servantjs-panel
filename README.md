@@ -1,2 +1,1 @@
-# servantjs-panel
-ServantJS web panel
+# Coming soon...
