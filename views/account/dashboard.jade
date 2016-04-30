@@ -1,0 +1,12 @@
+extends ../shared/_layout
+block StylesBlock
+block ContentBlock
+
+    h1 Hello
+
+block ScriptsPluginBlock
+block ScriptsBlock
+    script(type='application/javascript').
+        $(document).ready(function () {
+            setActiveLink('#dashboard');
+        });

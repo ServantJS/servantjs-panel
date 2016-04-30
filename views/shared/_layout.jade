@@ -1,0 +1,70 @@
+doctype html
+html(lang='en')
+    head
+        meta(charset='utf-8')
+        meta(name='viewport', content='width=device-width, initial-scale=1, shrink-to-fit=no')
+        meta(http-equiv='x-ua-compatible', content='ie=edge')
+
+        meta(content='ServantJS web panel', name='description')
+        meta(content='Vitaliy Orlov', name='author')
+        meta(content='320', name='MobileOptimized')
+
+        title ServantJS | #{title}
+
+        link(rel='stylesheet', href='/plugins/font-awesome/css/font-awesome.min.css')
+        link(rel='stylesheet', href='/plugins/bootstrap/css/bootstrap.min.css')
+        link(rel='stylesheet', href='/css/styles.css')
+
+        block StylesBlock
+    body
+        .page-container
+            .header
+                nav.navbar.navbar-full.navbar-dark.bg-inverse
+                    a.navbar-brand(href='/') ServantJS
+                    ul.nav.navbar-nav.pull-xs-right(style='margin-right: 40px')
+                        li.nav-item.dropdown
+                            a#account-menu.nav-link.dropdown-toggle(href='#', data-toggle='dropdown', role='button', aria-haspopup='true', aria-expanded='false')
+                                | #{username}
+                            .dropdown-menu(aria-labelledby='account-menu')
+                                a.dropdown-item(href='/settings/account')
+                                    i.fa.fa-user
+                                    | #{profile}
+                                .dropdown-divider
+                                a.dropdown-item(href='/signout')
+                                    i.fa.fa-key
+                                    | #{logout}
+            .side-wrapper
+                .side-panel
+                    ul.nav.nav-pills.nav-stacked
+                        li#dashboard.nav-item
+                            a.nav-link(href='/')
+                                i.fa.fa-home
+                                | #{home.menu}
+                        li#managment.nav-item
+                            a.nav-link(href='#managment')
+                                i.fa.fa-users
+                                | #{management.menu}
+                                i.arrow.fa.fa-angle-left.pull-xs-right
+                            ul.sub-menu
+                                li#users-sub
+                                    a(href='/users')= management.users
+                        li#haproxy.nav-item
+                            a.nav-link(href='#haproxy')
+                                i.fa.fa-shield
+                                | #{haproxy.menu}
+                                i.arrow.fa.fa-angle-left.pull-xs-right
+                            ul.sub-menu
+                                li#hap-configs-sub
+                                    a(href='/haproxy/configs')= haproxy.configs
+                                li#hap-settings-sub
+                                    a(href='/haproxy/settings')= haproxy.settings
+            .wrapper
+                .content
+                    block ContentBlock
+
+        script(src='/js/jquery-2.1.4.min.js', type='application/javascript')
+        script(src='/plugins/tether/js/tether.min.js', type='application/javascript')
+        script(src='/plugins/bootstrap/js/bootstrap.min.js', type='application/javascript')
+        script(src='/js/app.js', type='application/javascript')
+        block ScriptsPluginBlock
+        block ScriptsBlock

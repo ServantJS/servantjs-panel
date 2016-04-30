@@ -1,0 +1,13 @@
+extends ../../../views/shared/_layout
+block StylesBlock
+block ContentBlock
+
+    h3 #{pageTitle}
+
+
+block ScriptsPluginBlock
+block ScriptsBlock
+    script(type='application/javascript').
+        $(document).ready(function () {
+            setActiveLink('#haproxy', '#hap-configs-sub');
+        });

@@ -1,0 +1,192 @@
+body {
+    font-family: "Open Sans", sans-serif;
+    line-height: 1.1;
+    background-color: #fff;
+
+    font-size: 14px;
+}
+
+.page-container {
+    padding: 0;
+    margin: 0;
+    position: relative;
+}
+
+.page-title {
+    font-weight: 300 !important;
+    color: #666;
+}
+
+.wrapper {
+    float: left;
+    width: 100%;
+}
+
+.wrapper, .side-panel {
+    background-color: #1e1e1e;
+}
+
+.content {
+    padding: 20px;
+    border-left: 1px #eee solid;
+    background-color: #fafafa;
+    margin-left: 215px;
+    min-height: 760px;
+}
+
+.side-panel {
+    width: 215px;
+    height: auto;
+    padding-top: 60px;
+    padding-right: 0;
+
+    font-size: 14px;
+
+    display: block;
+    margin-right: -100%;
+
+    float: left;
+    position: relative;
+}
+
+.side-panel > ul > .nav-item {
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+
+    -moz-transition: background-color .25s ease-out;
+    -webkit-transition: background-color .25s ease-out;
+    -o-transition: background-color .25s ease-out;
+    -ms-transition: background-color .25s ease-out;
+}
+
+.side-panel > ul > .nav-item > a {
+    color: /*#808080*/#fff;
+    border-bottom: 1px #808080 solid;
+    border-radius: 0;
+    padding: .7em 1em;
+    font-weight: 300;
+
+    position: relative;
+}
+
+.side-panel > ul > .nav-item > a:hover {
+    -moz-transition: color .25s ease-out;
+    -webkit-transition: color .25s ease-out;
+    -o-transition: color .25s ease-out;
+    -ms-transition: color .25s ease-out;
+
+    color: #000;
+}
+
+.side-panel > ul > .nav-item.active > a {
+    color: #000;
+    border: none;
+    border-bottom: 1px #808080 solid;
+    background-color: #ff8c00;
+}
+
+.side-panel > ul > .nav-item > a:hover {
+    -moz-transition: background-color .25s ease-out;
+    -webkit-transition: background-color .25s ease-out;
+    -o-transition: background-color .25s ease-out;
+    -ms-transition: background-color .25s ease-out;
+
+    background-color: #ff8c00;
+}
+
+.side-panel > ul > .nav-item.active > a:hover {
+    background-color: #ff8c00;
+}
+
+.triangle {
+    float: right;
+    display: block;
+    position: absolute;
+    top: 0;
+    right: -8px;
+
+    z-index: 1;
+
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 20px 0 20px 8px;
+    border-color: transparent transparent transparent #ff8c00;
+}
+
+li > a > i.fa, div > a > i.fa {
+    margin-right: 5px;
+}
+
+.sub-menu {
+    display: none;
+    list-style: none;
+    clear: both;
+    margin: 8px 0px 8px 0px;
+    padding: 0;
+}
+
+.sub-menu > li > a {
+    display: block;
+    color: /*#808080*/#fff;
+    padding: 5px 0;
+    font-size: 16px;
+    font-weight: 300;
+    padding-left: 30px !important;
+    text-decoration: none;
+}
+
+.sub-menu > li > a:hover {
+    -moz-transition: background-color .25s ease-out;
+    -webkit-transition: background-color .25s ease-out;
+    -o-transition: background-color .25s ease-out;
+    -ms-transition: background-color .25s ease-out;
+
+    background: #b3ff00;
+}
+
+.sub-menu > li > a:hover {
+    -moz-transition: color .25s ease-out;
+    -webkit-transition: color .25s ease-out;
+    -o-transition: color .25s ease-out;
+    -ms-transition: color .25s ease-out;
+
+    color: #000;
+}
+
+.sub-menu > li.active > a {
+    background: #b3ff00;
+    color: #000;
+}
+
+.show {
+    display: block;
+}
+
+.dropdown-menu {
+    right: 0; left: auto;
+    margin-top: 15px;
+}
+
+.dropdown-item {
+    font-size: 1rem;
+    font-weight: 300;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.text-right {
+    text-align: right;
+}
+
+.text-left {
+    text-align: left;
+}
+
+.modal-align {
+    font-size: 16px;
+    line-height: 1.5;
+}

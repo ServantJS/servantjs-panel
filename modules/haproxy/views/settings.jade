@@ -1,0 +1,66 @@
+extends ../../../views/shared/_layout
+block StylesBlock
+block ContentBlock
+
+    .row
+        .col-xs-12
+            h3.page-title #{pageTitle}
+    .row
+        .col-xs-12
+            .card
+                .card-header
+                    | #{table.name}
+                    a.btn.btn-success.btn-sm.pull-xs-right(style='margin-top: -8px;', href='#create-setting-modal', data-toggle='modal')= buttonsTxt.create
+                .card-block
+                    table.table
+                        thead
+                            tr
+                                th #
+                                th= table.columns.name
+                                th= table.columns.desc
+                                th(style='width: 125px')
+                        tbody
+                            - var i = 1;
+                            - each setting in data
+                                tr.tr-vertical
+                                    input(name='id', type='hidden', value=setting._id)
+                                    td #{i++}
+                                    td= setting.token_name
+                                    td= setting.description
+                                    td
+                                        a.btn.btn-success.delete-btn(href='#edit', title=buttonsTxt.edit)
+                                            i.fa.fa-pencil
+                                        a.btn.btn-danger.delete-btn(href='#delete', title=buttonsTxt.delete)
+                                            i.fa.fa-trash-o
+
+    #create-setting-modal.modal.fade(tabindex='-1', role='dialog', aria-hidden='true')
+        .modal-dialog
+            .modal-content
+                form#create-setting-form(method='POST', action='/haproxy/settings', autocomplete='off')
+                    input(type='hidden', name='_csrf', value='#{csrfToken}')
+                    .modal-header
+                        button.close(type='button', data-dismiss='modal', aria-label='Close')
+                            span(aria-hidden='true') &times;
+                        h4.modal-title= modal.title
+                    .modal-body.modal-align
+                        .form-group.row.text-right
+                            label.col-md-4.form-control-label #{modal.fields.name}
+                            .col-md-8
+                                .block
+                                    input.form-control(name='name', placeholder='', type='text')
+                        .form-group.row.text-right
+                            label.col-md-4.form-control-label #{modal.fields.desc}
+                            .col-md-8
+                                .block
+                                    input.form-control(name='desc', placeholder='', type='text')
+
+                    .modal-footer
+                        button.btn.btn-default(type='button', data-dismiss='modal')= buttonsTxt.close
+                        button.btn.btn-primary(type='submit')= buttonsTxt.create
+
+block ScriptsPluginBlock
+block ScriptsBlock
+    script(type='application/javascript').
+        $(document).ready(function () {
+            setActiveLink('#haproxy', '#hap-settings-sub');
+        });

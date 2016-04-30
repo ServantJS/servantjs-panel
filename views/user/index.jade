@@ -1,0 +1,36 @@
+extends ../shared/_layout
+block StylesBlock
+block ContentBlock
+
+    .row
+        .col-xs-12
+            h3.page-title #{pageTitle}
+    .row
+        .col-xs-12
+            .card
+                .card-header= table.name
+                .card-block
+                    table.table
+                        thead
+                            tr
+                                th #
+                                th #{table.columns.email}
+                                th(style='width: 125px')
+                        tbody
+                            - var i = 1;
+                            - each user in data
+                                tr.tr-vertical
+                                    input(name='user-id', type='hidden', value=user._id)
+                                    td #{i++}
+                                    td #{user.email}
+                                    td
+                                        a.btn.btn-danger.delete-btn(href='/users/' + user._id, title=buttonsTxt.delete)
+                                            i.fa.fa-trash-o
+
+
+block ScriptsPluginBlock
+block ScriptsBlock
+    script(type='application/javascript').
+        $(document).ready(function () {
+            setActiveLink('#managment', '#users-sub');
+        });

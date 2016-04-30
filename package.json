@@ -1,0 +1,43 @@
+{
+  "name": "servantjs-panel",
+  "version": "1.0.0",
+  "description": "ServantJS web interface",
+  "main": "server.js",
+  "dependencies": {
+    "async": "^2.0.0-rc.3",
+    "body-parser": "^1.15.0",
+    "bootstrap": "^4.0.0-alpha.2",
+    "connect-mongo": "^1.1.0",
+    "cookie-parser": "^1.4.1",
+    "csurf": "^1.8.3",
+    "express": "^4.13.4",
+    "express-session": "^1.13.0",
+    "jade": "^1.11.0",
+    "method-override": "^2.3.5",
+    "mongoose": "^4.4.14",
+    "morgan": "^1.7.0",
+    "nconf": "^0.8.4",
+    "winston": "^2.2.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ServantJS/servantjs-panel.git"
+  },
+  "keywords": [
+    "servantjs",
+    "panel",
+    "admin",
+    "web"
+  ],
+  "author": "Vitaliy Orlov",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/ServantJS/servantjs-panel/issues"
+  },
+  "homepage": "https://github.com/ServantJS/servantjs-panel#readme"
+}

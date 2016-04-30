@@ -1,0 +1,46 @@
+doctype html
+html(lang='en')
+    head
+        meta(charset='utf-8')
+        meta(name='viewport', content='width=device-width, initial-scale=1, shrink-to-fit=no')
+        meta(http-equiv='x-ua-compatible', content='ie=edge')
+
+        meta(content='ServantJS web panel', name='description')
+        meta(content='Vitaliy Orlov', name='author')
+        meta(content='320', name='MobileOptimized')
+
+        title ServantJS | #{title}
+
+        link(rel='stylesheet', href='/plugins/font-awesome/css/font-awesome.min.css')
+        link(rel='stylesheet', href='/plugins/bootstrap/css/bootstrap.min.css')
+        link(rel='stylesheet', href='/css/login.css')
+
+        block StylesBlock
+    body
+        .logo
+            a(href='/') ServantJS
+        .content
+            if messages.error
+                .alert.alert-danger
+                    button.close(data-close='alert')
+                    span #{messages.error}
+
+            form(action='/signin', method='post')
+                h3.form-title= formTitle
+                input(type='hidden', name='_csrf', value=csrfToken)
+                input(type='hidden', name='redirect', value=redirect)
+                .form-group
+                    .input-icon
+                        i.fa.fa-envelope
+                        input.form-control(name='email', type='text', placeholder=email)
+                    .input-icon
+                        i.fa.fa-lock
+                        input.form-control(name='password', type='password', placeholder=password)
+                .form-actions
+                    button.btn.btn-orange.pull-xs-right(type='submit')= action
+
+
+        script(src='/js/jquery-2.1.4.min.js', type='application/javascript')
+
+        block ScriptsPluginBlock
+        block ScriptsBlock
