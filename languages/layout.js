@@ -147,7 +147,9 @@ exports.ru = {
     },
 
     cc: {
-        menu: 'Командный центр'
+        menu: 'Командный центр',
+        info: 'Информация',
+        groups: 'Группы'
     },
 
     ajax: {
@@ -276,7 +278,9 @@ exports.us = {
     },
 
     cc: {
-        menu: 'Command center'
+        menu: 'Command center',
+        info: 'Info',
+        groups: 'Groups'
     },
 
     ajax: {
