@@ -18,7 +18,8 @@ html(lang='en')
         block StylesBlock
     body
         .logo
-            a(href='/') ServantJS
+            a(href='/')
+                img(src='/img/servantjs.png', height='100px', alt='ServantJS')
         .content
             if messages.error
                 .alert.alert-danger
@@ -33,9 +34,15 @@ html(lang='en')
                     .input-icon
                         i.fa.fa-envelope
                         input.form-control(name='email', type='text', placeholder=email)
+                .form-group
                     .input-icon
                         i.fa.fa-lock
                         input.form-control(name='password', type='password', placeholder=password)
+                .form-group
+                    .checkbox
+                        label
+                            input(name='remember', type='checkbox')
+                            | &nbsp;#{remember}
                 .form-actions
                     button.btn.btn-orange.pull-xs-right(type='submit')= action
 
