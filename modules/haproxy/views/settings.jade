@@ -18,7 +18,7 @@ block ContentBlock
                                 th #
                                 th= table.columns.name
                                 th= table.columns.desc
-                                th(style='width: 125px')
+                                th(style='width: 135px')
                         tbody
                             - var i = 1;
                             - each setting in data
@@ -28,7 +28,7 @@ block ContentBlock
                                     td= setting.token_name
                                     td= setting.description
                                     td
-                                        a.btn.btn-success.delete-btn(href='#edit', title=buttonsTxt.edit)
+                                        a.btn.btn-success.delete-btn.margin-10-right(href='#edit', title=buttonsTxt.edit)
                                             i.fa.fa-pencil
                                         a.btn.btn-danger.delete-btn(href='#delete', title=buttonsTxt.delete)
                                             i.fa.fa-trash-o
@@ -43,12 +43,12 @@ block ContentBlock
                             span(aria-hidden='true') &times;
                         h4.modal-title= modal.title
                     .modal-body.modal-align
-                        .form-group.row.text-right
+                        .form-group.row
                             label.col-md-4.form-control-label #{modal.fields.name}
                             .col-md-8
                                 .block
                                     input.form-control(name='name', placeholder='', type='text')
-                        .form-group.row.text-right
+                        .form-group.row
                             label.col-md-4.form-control-label #{modal.fields.desc}
                             .col-md-8
                                 .block

@@ -1,0 +1,186 @@
+script(type='application/javascript').
+    var taskCheckInterval = 1000;
+
+    function waitTask(taskId, cb) {
+        $.get('/tasks/' + taskId + '/status', function (result) {
+            var refresh = true;
+
+            if (result.ok) {
+                if (result.data.status !== 2) {
+                    if (result.data.status == 0) {
+                        toastr.success(words.successTask.replace('$id', taskId));
+                    } else {
+                        toastr.warning(words.errorTask.replace('$id', taskId));
+                    }
+
+                    refresh = false;
+                    if (cb) {
+                        cb(result.data.status);
+                    }
+                }
+            } else {
+                console.error(result);
+
+                refresh = false;
+            }
+
+            if (refresh) {
+                setTimeout(function () {
+                    waitTask(taskId, cb);
+                }, taskCheckInterval);
+            }
+        });
+    }
+
+    function onSlideAction(e) {
+        e.preventDefault();
+
+        var text = words.slideUp;
+        var b = true;
+
+        if ($('.card-block:visible', $(this).closest('.card')).length) {
+            text = words.slideDown;
+            b = false;
+        }
+
+        $(this)
+                .attr('title', text)
+                .find('i')
+                .removeClass('fa-caret-up')
+                .removeClass('fa-caret-down')
+                .addClass(b ? 'fa-caret-up' : 'fa-caret-down')
+                .end()
+                .closest('.card')
+                .find('.card-block').slideToggle();
+    }
+
+    function onRemoveConfig(e) {
+        e.preventDefault();
+
+        $(this).closest('.form-group').remove();
+    }
+
+    function dropDone($next, $prev) {
+        var newColor = '#b3ff00';
+        var oldColor = $next.find('.card-header').css('background-color');
+
+        setTimeout(function () {
+            $next.find('.card-header')
+                    .css('background-color', newColor)
+                    .css('border-bottom', '1px solid ' + newColor);
+            $prev.find('.card-header')
+                    .css('background-color', newColor)
+                    .css('border-bottom', '1px solid ' + newColor);
+        }, 100);
+
+        setTimeout(function () {
+            $next.find('.card-header').css('background-color', oldColor).css('border-bottom', '1px solid ' + oldColor);
+            $prev.find('.card-header').css('background-color', oldColor).css('border-bottom', '1px solid ' + oldColor);
+        }, 400);
+    }
+
+    function makeDrag(elem) {
+        var dragged;
+
+        $('.draggable')
+                .off('dragstart')
+                .off('dragend')
+                .off('dragover')
+                .off('drop')
+                .off('dragenter')
+                .off('dragleave')
+                .on('dragstart', function (e) {
+                    dragged = e.target;
+
+                    if (e.originalEvent.dataTransfer) {
+                        e.originalEvent.dataTransfer.effectAllowed = 'move';
+                    } else if (e.dataTransfer) {
+                        e.dataTransfer.effectAllowed = 'move';
+                    }
+
+                    $(dragged).toggleClass('moving');
+                })
+                .on('dragend', function (e) {
+                    $(dragged).toggleClass('moving');
+                })
+                .on('dragover', function (e) {
+                    e.preventDefault();
+                })
+                .on('drop', function (e) {
+                    if (this != dragged) {
+                        $(this).toggleClass('over');
+
+                        var $targetContent = $(this).find('.card').detach();
+                        var $draggedContent = $(dragged).find('.card').detach();
+
+                        $targetContent.appendTo($(dragged));
+                        $draggedContent.appendTo($(this));
+
+                        dropDone($targetContent, $draggedContent);
+                    }
+                })
+                .on('dragenter', function (e) {
+                    if (this != dragged) {
+                        $(this).toggleClass('over');
+                    }
+                })
+                .on('dragleave', function (e) {
+                    if (this != dragged) {
+                        $(this).toggleClass('over');
+                    }
+                });
+    }
+
+    function onPauseClick(e) {
+        e.preventDefault();
+
+        var $elem = $(this);
+
+        $elem.toggleClass('hide')
+                .parent()
+                    .find('.resume-config')
+                    .toggleClass('hide')
+                .end()
+                    .find('input[name="status"]')
+                    .val($elem.data('status'));
+    }
+
+    function onResumeClick(e) {
+        e.preventDefault();
+
+        var $elem = $(this);
+
+        $elem.toggleClass('hide')
+                .parent()
+                    .find('.pause-config')
+                    .toggleClass('hide')
+                .end()
+                    .find('input[name="status"]')
+                    .val($elem.data('status'));
+    }
+
+    $(document).ready(function () {
+
+        $('.slide-action').on('click', onSlideAction);
+
+        $('.add-template').on('click', function (e) {
+            e.preventDefault();
+
+            var $elem = $($('.config-template-scope').html());
+
+            $elem.find('.remove-config').on('click', onRemoveConfig);
+            $elem.find('.slide-action').on('click', onSlideAction);
+
+            $elem.find('.pause-config').on('click', onPauseClick);
+            $elem.find('.resume-config').on('click', onResumeClick);
+
+            $('.configs-scope').append($elem);
+
+            makeDrag();
+        });
+
+        makeDrag();
+
+        $('.configs-scope .pause-config').on('click', onPauseClick);
+        $('.configs-scope .resume-config').on('click', onResumeClick);
+    });

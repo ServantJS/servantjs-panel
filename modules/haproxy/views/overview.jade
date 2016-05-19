@@ -1,0 +1,187 @@
+extends ../../../views/shared/_layout
+block StylesBlock
+    include ./includes/drag-style
+block ContentBlock
+    .row
+        .col-xs-12
+            h3.page-title #{pageTitle}
+    .row
+        .col-xs-12
+            .card
+                input(type='hidden', name='_csrf', value=csrfToken)
+                input#config-id(type='hidden', name='id', value=data._id)
+                input(type='hidden', name='target-id', value=data.target_id)
+                .card-block.configs-scope(style='max-width: 800px; min-width: 650px; margin: 0 auto;')
+                    - each config, index in data.container
+                        div(class=config.kind === 0 ? 'form-group' : 'form-group draggable', draggable=(config.kind !== 0).toString())
+                            .card(style='margin-bottom: 0', data-is-new='0')
+                                .card-header.form-inline
+                                    input(name='status', type='hidden', value=config.status)
+                                    input.form-control.form-control-sm.margin-10-right(type='text', name='config-name', placeholder=config.name, style='max-width: 300px;')
+                                    select.form-control.form-select-sm.margin-10-right(name='config-kind', style='min-width: 150px;z-index: 10', disabled)
+                                        option(value=0, selected=config.kind === 0) global
+                                        option(value=1, selected=config.kind === 1) default
+                                        option(value=2, selected=config.kind === 2) listen
+                                        option(value=3, selected=config.kind === 3) frontend
+
+                                    a.btn.btn-sm.btn-success.slide-action.margin-10-right(role='button', title=slideDown)
+                                        i.fa.fa-caret-down
+
+                                    if config.kind !== 0
+                                        a.btn.btn-sm.btn-warning.pause-config.margin-10-right(class=(config.status == 0 ? '' : 'hide'), role='button', title=actions.pause, data-status=1)
+                                            i.fa.fa-pause
+                                        a.btn.btn-sm.btn-success.resume-config.margin-10-right(class=(config.status == 0 ? 'hide' : ''), role='button', title=actions.resume, data-status=0)
+                                            i.fa.fa-play
+
+                                    if config.kind !== 0
+                                        button.close.remove-config(type='button', aria-label='Close')
+                                            span(aria-hidden='true') &times;
+                                .card-block(style='display: none;')
+                                    pre
+                                        textarea.form-control(name='content', rows='10', style='z-index: 1050;')= config.content
+                .card-footer.text-center
+                    a.btn.btn-danger.margin-10-right.delete-config(role='button', href='#delete-config')
+                        i.fa.fa-refresh.fa-spin.hide(style='margin-right: 5px')
+                        | #{buttonsTxt.delete}
+                    a.btn.btn-success.margin-10-right.add-template(role='button', href='#add-template')= buttonsTxt.add
+                    a.btn.btn-warning.margin-10-right.save-config(role='button', href='#save')
+                        i.fa.fa-refresh.fa-spin.hide(style='margin-right: 5px')
+                        | #{buttonsTxt.save}
+
+
+    include ./includes/config-template
+
+block ScriptsPluginBlock
+block ScriptsBlock
+    script(type='application/javascript').
+        var words = {
+            slideDown: '!{slideDown}',
+            slideUp: '!{slideUp}',
+            successTask: '!{task.success}',
+            errorTask: '!{task.error}',
+            saveBtn: '!{task.created}',
+            serverError: '!{task.createError}'
+        };
+
+    include ./includes/slide-action
+
+    script(type='application/javascript').
+
+        function onSave(e) {
+            e.preventDefault();
+
+            var data = {
+                _csrf: $('input[name="_csrf"]').val(),
+                configs: []
+            };
+
+            var isError = false;
+
+            $('.configs-scope .card').each(function () {
+                var $elem = $(this);
+
+                var name = $elem.find('input[name="config-name"]').val();
+
+                if ($elem.data('is-new')) {
+                    if (!name.length) {
+                        $elem.find('input[name="config-name"]').addClass('form-control-danger').parent().addClass('has-danger');
+                        isError = true;
+                    } else {
+                        $elem.find('input[name="config-name"]').removeClass('form-control-danger').parent().removeClass('has-danger');
+                    }
+                }
+
+                if (!name.length) {
+                    name = $elem.find('input[name="config-name"]').attr('placeholder');
+                }
+
+                data.configs.push({
+                    name: name,
+                    status: parseInt($elem.find('input[name="status"]').val()),
+                    content: $elem.find('textarea[name="content"]').val(),
+                    kind: parseInt($elem.find('select[name="config-kind"] > option:selected').val())
+                });
+            });
+
+            if (isError) {
+                return;
+            }
+
+            $.ajax({
+                url: '/haproxy/configs/' + $('#config-id').val(),
+                type: 'PUT',
+                contentType: 'application/json',
+                data: JSON.stringify(data),
+                dataType: 'json',
+                cache: false,
+                error: function (XMLHttpRequest, textStatus, errorThrow) {
+                    alert(XMLHttpRequest + '\n' + textStatus + '\n' + errorThrow);
+                },
+                success: function (result) {
+                    if (result.ok) {
+                        toastr.info(words.saveBtn);
+
+                        $('.save-config').addClass('disabled').find('i').removeClass('hide');
+
+                        setTimeout(function () {
+                            waitTask(result.data, function (status) {
+                                $('.save-config').removeClass('disabled').find('i').addClass('hide');
+                            });
+                        }, taskCheckInterval);
+
+                    } else {
+                        toastr.danger(words.serverError);
+                    }
+                }
+            });
+        }
+
+        function onDelete(e) {
+            e.preventDefault();
+
+            if (!confirm('Are you sure?')) {
+                return;
+            }
+
+            var data = {
+                _csrf: $('input[name="_csrf"]').val()
+            };
+
+            $.ajax({
+                url: '/haproxy/configs/' + $('#config-id').val(),
+                type: 'DELETE',
+                contentType: 'application/json',
+                data: JSON.stringify(data),
+                dataType: 'json',
+                cache: false,
+                error: function (XMLHttpRequest, textStatus, errorThrow) {
+                    alert(XMLHttpRequest + '\n' + textStatus + '\n' + errorThrow);
+                },
+                success: function (result) {
+                    if (result.ok) {
+                        toastr.info(words.saveBtn);
+
+                        $('.delete-config').addClass('disabled').find('i').removeClass('hide');
+
+                        setTimeout(function () {
+                            waitTask(result.data, function (status) {
+                                if (status === 0) {
+                                    location.href = '/haproxy/configs';
+                                }
+                            });
+                        }, taskCheckInterval);
+
+                    } else {
+                        toastr.danger(words.serverError);
+                    }
+                }
+            });
+        }
+
+        $(document).ready(function () {
+            setActiveLink('#haproxy', '#hap-configs-sub');
+
+            $('.remove-config').on('click', onRemoveConfig);
+            $('.delete-config').on('click', onDelete);
+            $('.save-config').on('click', onSave);
+        });

@@ -35,8 +35,8 @@ module.exports = (parent) => {
 
     core.logger.verbose(`\t\tPOST -> ${prefix}`);
     router.post('/', (req, res, next) => {
-        var name = req.body.name;
-        var desc = req.body.desc;
+        let name = req.body.name;
+        let desc = req.body.desc;
 
         var model = new moduleDB.HAProxySettingModel({
             token_name: name,

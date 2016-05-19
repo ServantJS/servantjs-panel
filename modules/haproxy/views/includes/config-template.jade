@@ -1,0 +1,21 @@
+.config-template-scope.hide
+    .form-group.draggable(draggable='true')
+        .card(style='margin-bottom: 0', data-is-new='1')
+            .card-header.form-inline
+                input(name='status', type='hidden', value='0')
+                input.form-control.form-control-sm.margin-10-right(type='text', name='config-name', placeholder=configName, style='max-width: 300px;')
+                select.form-control.form-select-sm.margin-10-right(name='config-kind', style='min-width: 150px')
+                    option(value=1) default
+                    option(value=2, selected=true) listen
+                    option(value=3) frontend
+
+                a.btn.btn-sm.btn-success.slide-action.margin-10-right(role='button', title=slideDown)
+                    i.fa.fa-caret-down
+
+                //-a.btn.btn-sm.btn-primary.margin-10-right(type='button')= insertTemplate
+
+                button.close.remove-config(type='button', aria-label='Close')
+                    span(aria-hidden='true') &times;
+            .card-block(style='display: none;')
+                pre
+                    textarea.form-control(name='content', rows='10')

@@ -1,13 +1,229 @@
 extends ../../../views/shared/_layout
 block StylesBlock
+    include ./includes/drag-style
 block ContentBlock
 
-    h3 #{pageTitle}
+    .row
+        .col-xs-12
+            h3.page-title #{pageTitle}
+    .row
+        .col-xs-12
+            .card
+                .card-header.text-center
+                    a.btn.btn-success.btn-sm(href='#create-config-modal', data-toggle='modal')= buttonsTxt.create
+                .card-block
+                    #accordion(role='tablist', aria-multiselectable='true')
+                        - each item, index in data.configs
+                            .panel.panel-default
+                                .panel-heading(role='tab', id='heading' + index)
+                                    h4
+                                        a(data-toggle='collapse', data-parent='#accordion', href='#collapse' + index, aria-expanded='true', aria-controls='collapse' + index)
+                                            if item.target_id[0] == 'W'
+                                                | #{agentConfig}&nbsp;"#{item.target_id}"
+                                            else if item.target_id[0] == 'G'
+                                                | #{groupConfig}&nbsp;"#{item.target_id}"
 
+                                        a.btn.btn-danger.btn-sm.pull-xs-right.delete-config(href='/haproxy/configs/' + item._id, title=buttonsTxt.delete): i.fa.fa-trash-o
+                                        a.btn.btn-success.btn-sm.pull-xs-right.margin-10-right(href='/haproxy/configs/' + item._id, title=buttonsTxt.edit): i.fa.fa-eye
+
+                                div.panel-collapse.collapse(role='tabpanel', id='collapse' + index, aria-labelledby='heading' + index)
+                                    pre(style='padding: 8px; border: 1px solid #ccc; border-radius: 4px; background: #eee')
+                                        code(style='padding: .5em; border: 1px solid #ccc; border-radius: 1px; display: block;')= item.container
+
+
+
+    #create-config-modal.modal.fade(tabindex='-1', role='dialog', aria-hidden='true')
+        .modal-dialog.modal-lg
+            .modal-content
+                form#create-config-form(method='POST', action='/haproxy/configs', autocomplete='off')
+                    input(type='hidden', name='_csrf', value='#{csrfToken}')
+                    .modal-header
+                        button.close(type='button', data-dismiss='modal', aria-label='Close')
+                            span(aria-hidden='true') &times;
+                        h4.modal-title= modal.title
+                    .modal-body.modal-align
+                        .configs-scope(style='max-width: 800px; min-width: 650px; margin: 0 auto;')
+                            .form-group(draggable='false')
+                                .card(style='margin-bottom: 0')
+                                    .card-header.form-inline
+                                        input.form-control.form-control-sm.margin-10-right(type='text', name='config-name', placeholder=configName, style='max-width: 300px;')
+                                        select.form-control.form-select-sm.margin-10-right(name='config-kind', style='min-width: 150px', disabled)
+                                            option(value=0) global
+                                            option(value=1) default
+                                            option(value=2) listen
+                                            option(value=3) frontend
+
+                                        a.btn.btn-sm.btn-success.slide-action.margin-10-right(role='button', title=slideDown)
+                                            i.fa.fa-caret-down
+
+                                        //-a.btn.btn-sm.btn-primary.margin-10-right(type='button')= insertTemplate
+                                    .card-block(style='display: none;')
+                                        pre
+                                            textarea.form-control(name='content', rows='10')
+                        .form-group.row
+                            label.col-md-4.form-control-label #{modal.fields.target}
+                            .col-md-8
+                                .block
+                                    select.form-control(name='target-id')
+                                        - each target in data.targets
+                                            option(value=target)= target
+                    .modal-footer
+                        button.btn.btn-default(type='button', data-dismiss='modal')= buttonsTxt.close
+                        button.btn.btn-success.add-template(type='button')= buttonsTxt.add
+                        button.btn.btn-primary.create-config(type='submit')
+                            i.fa.fa-refresh.fa-spin.hide(style='margin-right: 5px')
+                            | #{buttonsTxt.create}
+
+    include ./includes/config-template
 
 block ScriptsPluginBlock
 block ScriptsBlock
     script(type='application/javascript').
+        var words = {
+            slideDown: '!{slideDown}',
+            slideUp: '!{slideUp}',
+            successTask: '!{task.success}',
+            errorTask: '!{task.error}',
+            saveBtn: '!{task.created}',
+            serverError: '!{task.createError}'
+        };
+
+    include  ./includes/slide-action
+
+    script(type='application/javascript').
+
+        function onModalSubmit() {
+            var data = [];
+
+            var modal = $('#create-config-modal');
+            var isError = false;
+
+            modal.find('.configs-scope > div').each(function () {
+                var $elem = $(this);
+
+                var name = $elem.find('input[name="config-name"]').val();
+
+                if (!name.length) {
+                    $elem.find('input[name="config-name"]').addClass('form-control-danger').parent().addClass('has-danger');
+                    isError = true;
+                } else {
+                    $elem.find('input[name="config-name"]').removeClass('form-control-danger').parent().removeClass('has-danger');
+                }
+
+                var kind = parseInt($elem.find('select[name="config-kind"] > option:selected').val());
+                var content = $elem.find('textarea[name="content"]').val();
+
+                data.push({
+                    name: name,
+                    kind: kind,
+                    content: content
+                });
+            });
+
+            if (isError) {
+                return;
+            }
+
+            $.ajax({
+                url: '/haproxy/configs',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    _csrf: modal.find('input[name="_csrf"]').val(),
+                    configs: data,
+                    targetId: modal.find('select[name="target-id"] > option:selected').val()}),
+                dataType: 'json',
+                cache: false,
+                error: function (XMLHttpRequest, textStatus, errorThrow) {
+                    alert(XMLHttpRequest + '\n' + textStatus + '\n' + errorThrow);
+                },
+                success: function (result) {
+                    if (result.ok) {
+                        toastr.info(words.saveBtn);
+
+                        modal.find('.create-config').addClass('disabled').find('i').removeClass('hide');
+
+                        setTimeout(function () {
+                            waitTask(result.data, function (status) {
+                                modal.find('.create-config').removeClass('disabled').find('i').addClass('hide');
+
+                                if (status === 0) {
+                                    modal.modal('hide');
+                                    location.reload();
+                                }
+                            });
+                        }, taskCheckInterval);
+
+                    } else {
+                        toastr.danger(words.serverError);
+                    }
+                }
+            });
+        }
+
+        function onDeleteClick(e) {
+            e.preventDefault();
+
+            if (!confirm('Are you sure?')) {
+                return;
+            }
+
+            var data = {
+                _csrf: $('input[name="_csrf"]').val(),
+                targetId: $('input[name="target-id"]').val()
+            };
+
+            var $elem = $(this);
+
+            $.ajax({
+                url: $(this).attr('href'),
+                type: 'DELETE',
+                contentType: 'application/json',
+                data: JSON.stringify(data),
+                dataType: 'json',
+                cache: false,
+                error: function (XMLHttpRequest, textStatus, errorThrow) {
+                    alert(XMLHttpRequest + '\n' + textStatus + '\n' + errorThrow);
+                },
+                success: function (result) {
+                    if (result.ok) {
+                        toastr.info(words.saveBtn);
+
+                        $elem.addClass('disabled');
+
+                        setTimeout(function () {
+                            waitTask(result.data, function (status) {
+                                if (status === 0) {
+                                    $elem.closest('.panel').remove();
+                                }
+                            });
+                        }, taskCheckInterval);
+
+                    } else {
+                        toastr.error(words.serverError);
+                    }
+                }
+            });
+        }
+
         $(document).ready(function () {
             setActiveLink('#haproxy', '#hap-configs-sub');
+
+            $('#create-config-form').on('submit', function (e) {
+                e.preventDefault();
+
+                onModalSubmit();
+            });
+
+            $('#create-config-modal').on('show.bs.modal', function (e) {
+                var $global = $('.configs-scope > div').first().detach();
+
+                $global.find('input[name="config-name"]').val('');
+                $global.find('textarea[name="content"]').val('');
+
+                $('.configs-scope').empty().append($global);
+            });
+
+            $('.delete-config').on('click', onDeleteClick);
         });
+
