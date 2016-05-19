@@ -191,7 +191,11 @@ app.use((err, req, res, next) => {
             res.json({ok: false, error: 'server_error', msg: 'Server error'});
         }
     } else {
-        res.status(500).render('5xx');
+        if (err.hasOwnProperty('apiError') && err.apiError == 'not_found') {
+            res.status(404).render('404');
+        } else {
+            res.status(500).render('5xx');
+        }
     }
 
     logger.error(err.message);
@@ -201,7 +205,7 @@ app.use((err, req, res, next) => {
 //handle not found error
 app.use((req, res, next) => {
     if (req.xhr) {
-        res.json({status: 'err', error: 'not_found', msg: 'Not Found'});
+        res.json({ok: false, error: 'not_found', msg: 'Not Found'});
     } else {
         res.status(404).render('404');
     }
