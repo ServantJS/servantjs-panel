@@ -16,7 +16,5 @@ module.exports = () => {
         obj[name] = require(path.join(__dirname, '..', 'modules', name, 'languages'));
     });
 
-    console.log(obj);
-
     return obj;
 };
