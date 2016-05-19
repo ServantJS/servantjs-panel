@@ -13,6 +13,7 @@ html(lang='en')
 
         link(rel='stylesheet', href='/plugins/font-awesome/css/font-awesome.min.css')
         link(rel='stylesheet', href='/plugins/bootstrap/css/bootstrap.min.css')
+        link(rel='stylesheet', href='/plugins/toastr/toastr.min.css')
         link(rel='stylesheet', href='/css/styles.css')
 
         block StylesBlock
@@ -58,6 +59,16 @@ html(lang='en')
                                     a(href='/haproxy/configs')= haproxy.configs
                                 li#hap-settings-sub
                                     a(href='/haproxy/settings')= haproxy.settings
+                        li#cc.nav-item
+                            a.nav-link(href='#cc')
+                                i.fa.fa-sitemap
+                                | #{cc.menu}
+                                i.arrow.fa.fa-angle-left.pull-xs-right
+                            ul.sub-menu
+                                li#cc-info-sub
+                                    a(href='/cc/info')= cc.info
+                                li#cc-groups-sub
+                                    a(href='/cc/groups')= cc.groups
             .wrapper
                 .content
                     block ContentBlock
@@ -65,6 +76,7 @@ html(lang='en')
         script(src='/js/jquery-2.1.4.min.js', type='application/javascript')
         script(src='/plugins/tether/js/tether.min.js', type='application/javascript')
         script(src='/plugins/bootstrap/js/bootstrap.min.js', type='application/javascript')
+        script(src='/plugins/toastr/toastr.min.js', type='application/javascript')
         script(src='/js/app.js', type='application/javascript')
         block ScriptsPluginBlock
         block ScriptsBlock
