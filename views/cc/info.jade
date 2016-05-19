@@ -1,0 +1,73 @@
+extends ../shared/_layout
+block StylesBlock
+block ContentBlock
+
+    .row
+        .col-xs-12
+            h3.page-title #{pageTitle}
+    .row
+        - each server in data
+            .col-xs-12
+                .card
+                    .card-header
+                        i.fa.fa-sitemap
+                        | &nbsp;#{server.server_name}
+                    .card-block
+                        p
+                            b #{dt}:&nbsp;
+                            span.dt= server.dt
+                        p
+                            b #{status}:&nbsp;
+                            if server.status == -1
+                                span.label.label-info uninitialized
+                            else if server.status == 0
+                                span.label.label-info initialized
+                            else if server.status == 1
+                                span.label.label-success running
+                            else if server.status == 2
+                                span.label.label-warning stopped
+                            else if server.status == 3
+                                span.label.label-danger error
+                        p
+                            b #{ip}:&nbsp;
+                            span #{server.ip}:#{server.port}
+                        .workers-scope
+                            p: b #{agents}:
+                            table.table
+                                thead
+                                    tr
+                                        th #
+                                        th= sysName
+                                        th= serverName
+                                        th= dt
+                                        th= status
+                                        th= modules
+                                tbody
+                                    - each worker, index in server.workers
+                                        tr.tr-vertical
+                                            td= index + 1
+                                            td= worker.sys_id
+                                            td= worker.server_name
+                                            td= worker.dt
+                                            td
+                                                if worker.status == 1
+                                                    span.label.label-success running
+                                                else if worker.status == 2
+                                                    span.label.label-warning stopped
+                                                else if worker.status == 3
+                                                    span.label.label-danger error
+                                            td
+                                                ul.list-inline
+                                                    - each module in worker.modules
+                                                        li: span.label.label-info #{module}
+
+
+
+
+
+block ScriptsPluginBlock
+block ScriptsBlock
+    script(type='application/javascript').
+        $(document).ready(function () {
+            setActiveLink('#cc', '#cc-info-sub');
+        });

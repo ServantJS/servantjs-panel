@@ -1,0 +1,86 @@
+extends ../shared/_layout
+block StylesBlock
+block ContentBlock
+
+    .row
+        .col-xs-12
+            h3.page-title #{pageTitle}
+    .row
+        .col-xs-12
+            .card
+                .card-header
+                    | #{table.name}
+                    a.btn.btn-success.btn-sm.pull-xs-right(style='margin-top: -8px;', href='#create-group-modal', data-toggle='modal')= buttonsTxt.create
+                .card-block
+                    table.table
+                        thead
+                            tr
+                                th #
+                                th #{table.columns.sysName}
+                                th #{table.columns.name}
+                                th #{table.columns.cc}
+                                th #{table.columns.agents}
+                                th(style='width: 125px')
+                        tbody
+                            - var i = 1;
+                            - each group in data.groups
+                                tr.tr-vertical
+                                    input(name='id', type='hidden', value=group._id)
+                                    td #{i++}
+                                    td= group.sys_id
+                                    td= group.name
+                                    td= group.server_id.server_name
+                                    td
+                                        if group.workers.length == 1
+                                            span.label.label-success #{group.workers[0].server_name}
+                                        else
+                                            ul.list-inline
+                                                - each worker in group.workers
+                                                    li: span.label.label-success #{worker.server_name}
+                                    td
+                                        //-a.btn.btn-danger.delete-btn(href='/cc/groups/' + group._id, title=buttonsTxt.delete)
+                                            i.fa.fa-trash-o
+
+    #create-group-modal.modal.fade(tabindex='-1', role='dialog', aria-hidden='true')
+        .modal-dialog
+            .modal-content
+                form#create-group-form(method='POST', action='/cc/groups', autocomplete='off')
+                    input(type='hidden', name='_csrf', value='#{csrfToken}')
+                    .modal-header
+                        button.close(type='button', data-dismiss='modal', aria-label='Close')
+                            span(aria-hidden='true') &times;
+                        h4.modal-title= modal.title
+                    .modal-body.modal-align
+                        .form-group.row
+                            label.col-md-4.form-control-label #{modal.fields.name}
+                            .col-md-8
+                                .block
+                                    input.form-control(name='name', placeholder='', type='text')
+                        .form-group.row
+                            label.col-md-4.form-control-label #{modal.fields.ccServer}
+                            .col-md-8
+                                select.form-control(name='cc-server')
+                                    - each server in data.servers
+                                        option(value=server._id)= server.server_name
+                        .form-group.row
+                            label.col-md-4.form-control-label #{modal.fields.agents}
+                            .col-md-8
+                                - each worker in data.workers
+                                    .checkbox
+                                        label
+                                            input(name='worker', type='checkbox')
+                                            input(name='worker-id', type='hidden', value=worker._id)
+                                            | &nbsp;#{worker.server_name}
+
+
+                    .modal-footer
+                        button.btn.btn-default(type='button', data-dismiss='modal')= buttonsTxt.close
+                        button.btn.btn-primary(type='submit')= buttonsTxt.create
+
+
+block ScriptsPluginBlock
+block ScriptsBlock
+    script(type='application/javascript').
+        $(document).ready(function () {
+            setActiveLink('#cc', '#cc-groups-sub');
+        });
