@@ -53,30 +53,21 @@ body {
     margin: 0 !important;
     padding: 0 !important;
     border: 0 !important;
-
-    -moz-transition: background-color .25s ease-out;
-    -webkit-transition: background-color .25s ease-out;
-    -o-transition: background-color .25s ease-out;
-    -ms-transition: background-color .25s ease-out;
 }
 
 .side-panel > ul > .nav-item > a {
     color: /*#808080*/#fff;
     border-bottom: 1px #808080 solid;
     border-radius: 0;
-    padding: .7em 1em;
+    padding: 10px 14px;
     font-weight: 300;
 
+    -moz-transition: background-color .25s ease-out;, color .25s ease-out;
+    -webkit-transition: background-color .25s ease-out, color .25s ease-out;
+    -o-transition: background-color .25s ease-out, color .25s ease-out;
+    -ms-transition: background-color .25s ease-out, color .25s ease-out;
+
     position: relative;
-}
-
-.side-panel > ul > .nav-item > a:hover {
-    -moz-transition: color .25s ease-out;
-    -webkit-transition: color .25s ease-out;
-    -o-transition: color .25s ease-out;
-    -ms-transition: color .25s ease-out;
-
-    color: #000;
 }
 
 .side-panel > ul > .nav-item.active > a {
@@ -87,12 +78,13 @@ body {
 }
 
 .side-panel > ul > .nav-item > a:hover {
-    -moz-transition: background-color .25s ease-out;
-    -webkit-transition: background-color .25s ease-out;
-    -o-transition: background-color .25s ease-out;
-    -ms-transition: background-color .25s ease-out;
+    -moz-transition: background-color .25s ease-out;, color .25s ease-out;
+    -webkit-transition: background-color .25s ease-out, color .25s ease-out;
+    -o-transition: background-color .25s ease-out, color .25s ease-out;
+    -ms-transition: background-color .25s ease-out, color .25s ease-out;
 
     background-color: #ff8c00;
+    color: #000;
 }
 
 .side-panel > ul > .nav-item.active > a:hover {
@@ -111,11 +103,11 @@ body {
     width: 0;
     height: 0;
     border-style: solid;
-    border-width: 20px 0 20px 8px;
+    border-width: 18px 0 18px 8px;
     border-color: transparent transparent transparent #ff8c00;
 }
 
-li > a > i.fa, div > a > i.fa {
+.nav-item > a > i.fa, .dropdown-menu > a > i.fa {
     margin-right: 5px;
 }
 
@@ -129,29 +121,31 @@ li > a > i.fa, div > a > i.fa {
 
 .sub-menu > li > a {
     display: block;
-    color: /*#808080*/#fff;
+
     padding: 5px 0;
-    font-size: 16px;
+    font-size: 14px;
     font-weight: 300;
     padding-left: 30px !important;
     text-decoration: none;
+
+    -moz-transition: background-color .25s ease-out, color .25s ease-out;
+    -webkit-transition: background-color .25s ease-out, color .25s ease-out;
+    -o-transition: background-color .25s ease-out, color .25s ease-out;
+    -ms-transition: background-color .25s ease-out, color .25s ease-out;
+    transition: background-color .25s ease-out, color .25s ease-out;
+
+    background: none;
+    color: #fff;
 }
 
 .sub-menu > li > a:hover {
-    -moz-transition: background-color .25s ease-out;
-    -webkit-transition: background-color .25s ease-out;
-    -o-transition: background-color .25s ease-out;
-    -ms-transition: background-color .25s ease-out;
+    -moz-transition: background-color .25s ease-out, color .25s ease-out;
+    -webkit-transition: background-color .25s ease-out, color .25s ease-out;
+    -o-transition: background-color .25s ease-out, color .25s ease-out;
+    -ms-transition: background-color .25s ease-out, color .25s ease-out;
+    transition: background-color .25s ease-out, color .25s ease-out;
 
-    background: #b3ff00;
-}
-
-.sub-menu > li > a:hover {
-    -moz-transition: color .25s ease-out;
-    -webkit-transition: color .25s ease-out;
-    -o-transition: color .25s ease-out;
-    -ms-transition: color .25s ease-out;
-
+    background-color: #b3ff00;
     color: #000;
 }
 
@@ -165,7 +159,8 @@ li > a > i.fa, div > a > i.fa {
 }
 
 .dropdown-menu {
-    right: 0; left: auto;
+    right: 0;
+    left: auto;
     margin-top: 15px;
 }
 
@@ -186,7 +181,37 @@ li > a > i.fa, div > a > i.fa {
     text-align: left;
 }
 
+.margin-10-right {
+    margin-right: 10px;
+}
+
 .modal-align {
     font-size: 16px;
     line-height: 1.5;
+}
+
+.form-group.row > label {
+    text-align: right;
+}
+
+select.form-control {
+    height: 38px;
+}
+
+.label {
+    font-size: 13px;
+    font-weight: 300;
+    padding: 3px 6px 3px 6px;
+}
+
+.tr-vertical > td {
+    vertical-align: middle;
+}
+
+.hide {
+    display: none;
+}
+
+.form-select-sm {
+    height: 31.78px !important;
 }
