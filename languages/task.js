@@ -9,7 +9,7 @@ exports.ru = {
         task: 'Задание',
         userName: 'Имя пользователя',
         module: 'Модуль',
-        innerError: 'Внутренняя ошибка',created
+        innerError: 'Внутренняя ошибка',
         report: 'Отчет',
         error: 'Ошибки'
     }
