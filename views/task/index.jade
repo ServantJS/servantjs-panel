@@ -1,0 +1,100 @@
+extends ../shared/_layout
+block StylesBlock
+block ContentBlock
+
+    .row
+        .col-xs-12
+            .card
+                .card-header
+                    h4= pageTitle
+                    //-h5.panel-title
+                        | #{operation}&nbsp;
+                        b #{data.cmd}&nbsp;
+                        span.dt #{data.dt.toUTCString()}
+                        | &nbsp;
+                        span.status-input #{data.status}
+                .card-block
+                    form
+                        .form-group.row(style='margin-bottom: 0px')
+                            label.form-control-label.col-xs-2 #{dt}:
+                            .col-xs-10
+                                p.form-control-static.user-input= data.dt.toUTCString()
+                        .form-group.row(style='margin-bottom: 0px')
+                            label.form-control-label.col-xs-2 #{status}:
+                            .col-xs-10
+                                p.form-control-static.user-input.status-input= data.status
+                        .form-group.row(style='margin-bottom: 0px')
+                            label.form-control-label.col-xs-2 #{userName}:
+                            .col-xs-10
+                                p.form-control-static.user-input= data.username
+                        .form-group.row(style='margin-bottom: 0px')
+                            label.form-control-label.col-xs-2 #{module}:
+                            .col-xs-10
+                                p.form-control-static.user-input= data.module
+                        .form-group.row(style='margin-bottom: 0px')
+                            label.form-control-label.col-xs-2 #{cmd}:
+                            .col-xs-10
+                                p.form-control-static.user-input= data.cmd
+                        if data.internal_error
+                            .form-group.row(style='margin-bottom: 0px')
+                                label.form-control-label.col-xs-2 #{innerError}:
+                                .col-xs-10
+                                    p.form-control-static.user-input
+                                        b= data.internal_error
+                        .form-group.row(style='margin-bottom: 0px')
+                            label.form-control-label.col-xs-2 #{report}:
+                            .col-xs-10
+                                .form-control-static.well.report-input.hide
+                                    ul
+                                        - each error in data.report
+                                            li
+                                                span(style='font-weight: bold')
+                                                ul.worker-node
+                                                    - each stack in error.stack.split('\n')
+                                                        li= stack
+                        .form-group.row(style='margin-bottom: 0px')
+                            label.form-control-label.col-xs-2 #{error}:
+                            .col-xs-10
+                                .form-control-static.well.error-input.hide
+                                    ul
+                                        - each error in data.error
+                                            li
+                                                span(style='font-weight: bold')
+                                                ul.worker-node
+                                                    - each stack in error.stack.split('\n')
+                                                        li= stack
+
+
+
+block ScriptsPluginBlock
+block ScriptsBlock
+    script(type='application/javascript').
+
+        function initTasksList() {
+            var temp = parseInt($('.status-input').text());
+            var status = _convertStatus(temp);
+            $('.status-input').html('<span class="label label-' + status[0] + '">' + status[1] + '</span>');
+
+            $('.report-input .worker-node').each(function () {
+                var $last = $('li', this).first();
+                var worker = $last.text();
+                $last.remove();
+                $(this).parent().find('span').text(worker);
+            });
+
+            $('.error-input .worker-node').each(function () {
+                var $last = $('li', this).first();
+                var worker = $last.text();
+                $last.remove();
+                $(this).parent().find('span').text(worker);
+            });
+
+            $('.error-input').removeClass('hide');
+            $('.report-input').removeClass('hide');
+        }
+
+        $(document).ready(function () {
+            setActiveLink('#dashboard');
+
+            initTasksList();
+        });
