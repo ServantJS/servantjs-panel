@@ -115,6 +115,38 @@ module.exports = (parent) => {
         }
     });
 
+    router.param('id', function (req, res, next, id) {
+        try {
+            req.groupId = mongoose.Types.ObjectId(id);
+
+            db.WorkersGroupModel.findById(req.groupId, (err, group) => {
+                if (err) {
+                    next(err);
+                } else if (!group) {
+                    err = new Error('Group not found');
+                    err.apiError = 'not_found';
+                    next(err);
+                } else {
+                    req.currentGroup = group;
+                    next();
+                }
+            });
+        } catch (e) {
+            next(e);
+        }
+    });
+
+    core.logger.verbose(`\t\tDELETE -> ${prefix}/groups/:id`);
+    router.delete('/groups/:id', (req, res, next) => {
+        req.currentGroup.remove((err) => {
+            if (err) {
+                next(err);
+            } else {
+                res.json({ok: true});
+            }
+        });
+    });
+
     app.use(prefix, parent.authorize, router);
     parent.use(app);
 };

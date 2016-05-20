@@ -38,7 +38,7 @@ block ContentBlock
                                                 - each worker in group.workers
                                                     li: span.label.label-success #{worker.server_name}
                                     td
-                                        //-a.btn.btn-danger.delete-btn(href='/cc/groups/' + group._id, title=buttonsTxt.delete)
+                                        a.btn.btn-danger.delete-btn(href='/cc/groups/' + group._id, title=buttonsTxt.delete)
                                             i.fa.fa-trash-o
 
     #create-group-modal.modal.fade(tabindex='-1', role='dialog', aria-hidden='true')
@@ -83,4 +83,83 @@ block ScriptsBlock
     script(type='application/javascript').
         $(document).ready(function () {
             setActiveLink('#cc', '#cc-groups-sub');
+
+            $('#create-group-modal').on('submit', function (e) {
+                e.preventDefault();
+
+                var $elem = $(this);
+
+                $elem.find('button[type="submit"]').addClass('disabled');
+
+                var name = $elem.find('input[name="name"]').val();
+                var ccServer = $elem.find('select[name="cc-server"] > option:selected').val();
+                var agents = [];
+
+                $elem.find('input[name="worker"]').each(function () {
+                    if (this.checked) {
+                        agents.push($(this).parent().find('input[name="worker-id"]').val());
+                    }
+                });
+
+                $.ajax({
+                    url: '/cc/groups',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({
+                        _csrf: $elem.find('input[name="_csrf"]').val(),
+                        name: name,
+                        ccServer: ccServer,
+                        agents: agents
+                    }),
+                    dataType: 'json',
+                    cache: false,
+                    error: function (XMLHttpRequest, textStatus, errorThrow) {
+                        alert(XMLHttpRequest + '\n' + textStatus + '\n' + errorThrow);
+                    },
+                    success: function (result) {
+                        if (result.ok) {
+                            location.reload();
+                        } else {
+                            toastr.error(result.msg);
+                            $elem.removeClass('disabled');
+                        }
+                    }
+                });
+            });
+
+            $('.delete-btn').on('click', function (e) {
+                e.preventDefault();
+
+                if (!confirm('Are ypu sure?')) {
+                    return;
+                }
+
+                var $elem = $(this);
+
+                $elem.addClass('disabled');
+
+                $.ajax({
+                    url: $elem.attr('href'),
+                    type: 'DELETE',
+                    contentType: 'application/json',
+                    data: JSON.stringify({_csrf: $('input[name="_csrf"]').val()}),
+                    dataType: 'json',
+                    cache: false,
+                    error: function (XMLHttpRequest, textStatus, errorThrow) {
+                        alert(XMLHttpRequest + '\n' + textStatus + '\n' + errorThrow);
+                    },
+                    success: function (result) {
+                        if (result.ok) {
+                            $elem.closest('tr').remove();
+
+                            $('tbody').find('tr').each(function (index) {
+                                $(this).find('td').first().text(index + 1);
+                            });
+                        } else {
+                            toastr.error(result.msg);
+                            $elem.removeClass('disabled');
+                        }
+                    }
+                });
+            });
         });
