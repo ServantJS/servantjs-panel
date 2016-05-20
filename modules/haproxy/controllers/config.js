@@ -28,12 +28,12 @@ module.exports = (parent) => {
     router.get('/', (req, res, next) => {
         async.waterfall([
             (cb) => {
-                db.WorkerModel.distinct('sys_id', (err, list) => {
+                db.WorkerModel.find({}, 'sys_id server_name', (err, list) => {
                     cb(err, list);
                 });
             },
             (list, cb) => {
-                db.WorkersGroupModel.distinct('sys_id', (err, _list) => {
+                db.WorkersGroupModel.find({}, 'sys_id name', (err, _list) => {
                     if (err) {
                         cb(err);
                     } else {
