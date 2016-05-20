@@ -47,8 +47,8 @@ block ContentBlock
                                         tr.tr-vertical
                                             td= index + 1
                                             td= worker.sys_id
-                                            td= worker.server_name
-                                            td= worker.dt
+                                            td #{worker.server_name} [#{worker.ip}]
+                                            td= worker.dt.toUTCString()
                                             td
                                                 if worker.status == 1
                                                     span.label.label-success running
@@ -60,9 +60,6 @@ block ContentBlock
                                                 ul.list-inline
                                                     - each module in worker.modules
                                                         li: span.label.label-info #{module}
-
-
-
 
 
 block ScriptsPluginBlock
