@@ -60,17 +60,15 @@ module.exports = (parent) => {
         if (req.xhr) {
             res.json({ok: true, data: req.currentTask});
         } else {
-            res.render('index');
+            var content = parent.wordsList['task'][res.locals.lang]['index'];
+            content.data = req.currentTask;
+            res.render('index', content);
         }
     });
 
     core.logger.verbose(`\t\tGET -> ${prefix}/:id/status`);
     router.get('/:id/status', (req, res, next) => {
-        if (req.xhr) {
-            res.json({ok: true, data: {status: req.currentTask.status}});
-        } else {
-            res.render('index');
-        }
+        res.json({ok: true, data: {status: req.currentTask.status}});
     });
 
     app.use(prefix, parent.authorize, router);
