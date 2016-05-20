@@ -19,9 +19,15 @@ block ContentBlock
                                     h4
                                         a(data-toggle='collapse', data-parent='#accordion', href='#collapse' + index, aria-expanded='true', aria-controls='collapse' + index)
                                             if item.target_id[0] == 'W'
-                                                | #{agentConfig}&nbsp;"#{item.target_id}"
+                                                | #{agentConfig}&nbsp;
+                                                - each t in data.targets
+                                                    if (t.sys_id == item.target_id)
+                                                        span= '"' + t.server_name + '"'
                                             else if item.target_id[0] == 'G'
-                                                | #{groupConfig}&nbsp;"#{item.target_id}"
+                                                | #{groupConfig}&nbsp;
+                                                - each t in data.targets
+                                                    if (t.sys_id == item.target_id)
+                                                        span= '"' + t.name + '"'
 
                                         a.btn.btn-danger.btn-sm.pull-xs-right.delete-config(href='/haproxy/configs/' + item._id, title=buttonsTxt.delete): i.fa.fa-trash-o
                                         a.btn.btn-success.btn-sm.pull-xs-right.margin-10-right(href='/haproxy/configs/' + item._id, title=buttonsTxt.edit): i.fa.fa-eye
@@ -64,9 +70,10 @@ block ContentBlock
                             label.col-md-4.form-control-label #{modal.fields.target}
                             .col-md-8
                                 .block
-                                    select.form-control(name='target-id')
+                                    select.form-control(name='target-id', style='max-width: 300px')
                                         - each target in data.targets
-                                            option(value=target)= target
+                                            option(value=target.sys_id)= target.name || target.server_name
+
                     .modal-footer
                         button.btn.btn-default(type='button', data-dismiss='modal')= buttonsTxt.close
                         button.btn.btn-success.add-template(type='button')= buttonsTxt.add
