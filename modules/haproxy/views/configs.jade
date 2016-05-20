@@ -124,6 +124,8 @@ block ScriptsBlock
                 return;
             }
 
+            modal.find('.create-config').addClass('disabled').find('i').removeClass('hide');
+
             $.ajax({
                 url: '/haproxy/configs',
                 type: 'POST',
@@ -141,8 +143,6 @@ block ScriptsBlock
                     if (result.ok) {
                         toastr.info(words.saveBtn);
 
-                        modal.find('.create-config').addClass('disabled').find('i').removeClass('hide');
-
                         setTimeout(function () {
                             waitTask(result.data, function (status) {
                                 modal.find('.create-config').removeClass('disabled').find('i').addClass('hide');
@@ -155,7 +155,8 @@ block ScriptsBlock
                         }, taskCheckInterval);
 
                     } else {
-                        toastr.danger(words.serverError);
+                        toastr.error(words.serverError);
+                        modal.find('.create-config').removeClass('disabled').find('i').addClass('hide');
                     }
                 }
             });
@@ -169,11 +170,11 @@ block ScriptsBlock
             }
 
             var data = {
-                _csrf: $('input[name="_csrf"]').val(),
-                targetId: $('input[name="target-id"]').val()
+                _csrf: $('input[name="_csrf"]').val()
             };
 
             var $elem = $(this);
+            $elem.addClass('disabled');
 
             $.ajax({
                 url: $(this).attr('href'),
@@ -189,8 +190,6 @@ block ScriptsBlock
                     if (result.ok) {
                         toastr.info(words.saveBtn);
 
-                        $elem.addClass('disabled');
-
                         setTimeout(function () {
                             waitTask(result.data, function (status) {
                                 if (status === 0) {
@@ -201,6 +200,7 @@ block ScriptsBlock
 
                     } else {
                         toastr.error(words.serverError);
+                        $elem.removeClass('disabled');
                     }
                 }
             });
