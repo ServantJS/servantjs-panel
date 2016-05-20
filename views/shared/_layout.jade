@@ -78,5 +78,28 @@ html(lang='en')
         script(src='/plugins/bootstrap/js/bootstrap.min.js', type='application/javascript')
         script(src='/plugins/toastr/toastr.min.js', type='application/javascript')
         script(src='/js/app.js', type='application/javascript')
+        script(type='application/javascript').
+            var crudText = !{JSON.stringify(crudText)};
+
+            function _convertStatus(status) {
+                switch (status) {
+                    case -1:
+                        return ['info', crudText.status.created, 'create'];
+                    case 0:
+                        return ['success', crudText.status.success, 'success'];
+                    case 1:
+                        return ['primary', crudText.status.paused, 'pause'];
+                    case 2:
+                        return ['info', crudText.status.process, 'process'];
+                    case 3:
+                        return ['danger', crudText.status.error, 'error'];
+                    case 4:
+                        return ['default', crudText.status.deleted, 'delete'];
+                    case 5:
+                        return ['warning', crudText.status.warning, 'warning'];
+                    default:
+                        return ['default', crudText.status.unknown, 'unknown'];
+                }
+            }
         block ScriptsPluginBlock
         block ScriptsBlock
