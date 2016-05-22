@@ -15,17 +15,16 @@ block ContentBlock
                             tr
                                 th #
                                 th #{table.columns.email}
+                                th #{table.columns.token}
                                 th(style='width: 125px')
                         tbody
-                            - var i = 1;
-                            - each user in data
+                            - each user, index in data
                                 tr.tr-vertical
                                     input(name='user-id', type='hidden', value=user._id)
-                                    td #{i++}
-                                    td #{user.email}
+                                    td= index + 1
+                                    td= user.email
+                                    td= user.access_key
                                     td
-                                        //-a.btn.btn-danger.delete-btn(href='/users/' + user._id, title=buttonsTxt.delete)
-                                            i.fa.fa-trash-o
 
 
 block ScriptsPluginBlock
