@@ -5,7 +5,7 @@ block ContentBlock
 
     .row
         .col-xs-12
-            h3.page-title #{pageTitle}
+            h3.page-title= pageTitle
     .row
         .col-xs-12
             .card
@@ -176,10 +176,6 @@ block ScriptsBlock
                 return;
             }
 
-            var data = {
-                _csrf: $('input[name="_csrf"]').val()
-            };
-
             var $elem = $(this);
             $elem.addClass('disabled');
 
@@ -187,7 +183,7 @@ block ScriptsBlock
                 url: $(this).attr('href'),
                 type: 'DELETE',
                 contentType: 'application/json',
-                data: JSON.stringify(data),
+                data: JSON.stringify({_csrf: $('input[name="_csrf"]').val()}),
                 dataType: 'json',
                 cache: false,
                 error: function (XMLHttpRequest, textStatus, errorThrow) {
