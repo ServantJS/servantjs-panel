@@ -78,6 +78,16 @@ exports.ru = {
                 name: 'Наименование',
                 desc: 'Описание'
             }
+        },
+
+        editModal: {
+            title: 'Редактирование поля'
+        }
+    },
+
+    ajax: {
+        delete: {
+            ok: ' успешно удалено'
         }
     }
 };
@@ -85,11 +95,92 @@ exports.ru = {
 exports.us = {
     configs: {
         title: 'HAProxy config. files',
-        pageTitle: 'List of config files'
+        pageTitle: 'List of config files',
+
+        table: {
+            name: 'List'
+        },
+
+        groupConfig: 'Config of group',
+        agentConfig: 'Config for server',
+
+        slideUp: 'Slide up',
+        slideDown: 'Slide down',
+        insertTemplate: 'Insert template',
+
+        configName: 'Name',
+        addBlock: 'Add a block',
+
+        task: {
+            created: 'Task has been successfully sent to the queue.',
+            createError: 'An internal server error occurred while sending a task. Contact your administrator.',
+            success: 'Task completed successfully. <a href="/tasks/$id">View task.</a>',
+            error: 'Task failed. <a href="/tasks/$id">View task.</a>'
+        },
+
+        modal: {
+            title: 'Create a new config file',
+            fields: {
+                name: 'Name',
+                type: 'Type',
+                content: 'Content',
+                target: 'Target'
+            }
+        }
+    },
+
+    overview: {
+        title: 'Edit config',
+        pageTitle: 'Edit config',
+
+        slideUp: 'Slide up',
+        slideDown: 'Slide down',
+        insertTemplate: 'Insert template',
+
+        task: {
+            created: 'Task has been successfully sent to the queue.',
+            createError: 'An internal server error occurred while sending a task. Contact your administrator.',
+            success: 'Task completed successfully. <a href="/tasks/$id">View task.</a>',
+            error: 'Task failed. <a href="/tasks/$id">View task.</a>'
+        },
+
+        configName: 'Name',
+        addBlock: 'Add a block',
+
+        actions: {
+            pause: 'Turn off',
+            resume: 'Turn on'
+        }
     },
 
     settings: {
         title: 'HAProxy settings',
-        pageTitle: 'List of settings'
+        pageTitle: 'List of settings',
+
+        table: {
+            name: 'List of custom fields',
+            columns: {
+                name: 'Name',
+                desc: 'Description'
+            }
+        },
+
+        modal: {
+            title: 'Create a new field',
+            fields: {
+                name: 'Name',
+                desc: 'Description'
+            }
+        },
+
+        editModal: {
+            title: 'Edit field'
+        }
+    },
+
+    ajax: {
+        delete: {
+            ok: ' successfully removed'
+        }
     }
 };
