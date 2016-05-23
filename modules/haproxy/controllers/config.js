@@ -7,6 +7,7 @@ const async = require('async');
 const util = require('util');
 
 const db = require('../../../lib/db');
+const checkIdOnRequest = require('../../common').checkIdOnRequest;
 const moduleDB = require('../db');
 
 const app = express();
@@ -95,31 +96,14 @@ module.exports = (parent) => {
         });
     });
 
-    router.param('id', function (req, res, next, id) {
-        try {
-            req.configId = mongoose.Types.ObjectId(id);
-
-            moduleDB.HAProxyConfigModel.findById(req.configId, (err, config) => {
-                if (err) {
-                    next(err);
-                } else if (!config) {
-                    err = new Error('Config not found');
-                    err.apiError = 'not_found';
-                    next(err);
-                } else {
-                    req.currentConfig = config;
-                    next();
-                }
-            });
-        } catch (e) {
-            next(e);
-        }
-    });
+    router.param('id', checkIdOnRequest({
+        model: moduleDB.HAProxyConfigModel
+    }));
 
     core.logger.verbose(`\t\tGET -> ${prefix}/:target`);
     router.get('/:id', (req, res, next) => {
         const content = parent.wordsList[controller][res.locals.lang]['overview'];
-        content.data = req.currentConfig;
+        content.data = req.currentModel;
         res.render('overview', content);
     });
 
@@ -133,13 +117,13 @@ module.exports = (parent) => {
             }
 
             const data = {
-                id: req.configId,
+                id: req.currentModel._id,
                 container: configs
             };
 
             const task = new db.TaskModel({
                 username: req.currentUser.email,
-                target_id: req.currentConfig.target_id,
+                target_id: req.currentModel.target_id,
                 module: controller,
                 cmd: 'update-config',
 
@@ -162,7 +146,7 @@ module.exports = (parent) => {
     router.delete('/:id', (req, res, next) => {
         const task = new db.TaskModel({
             username: req.currentUser.email,
-            target_id: req.currentConfig.target_id,
+            target_id: req.currentModel.target_id,
             module: controller,
             cmd: 'remove-config',
 
