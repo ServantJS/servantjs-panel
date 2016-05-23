@@ -75,8 +75,6 @@ module.exports = (parent) => {
         });
     });
 
-
-
     app.use(prefix, router);
     parent.use(app);
 };

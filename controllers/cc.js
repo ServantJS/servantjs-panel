@@ -6,6 +6,7 @@ const path = require('path');
 const async = require('async');
 
 const db = require('../lib/db');
+const checkIdOnRequest = require('../modules/common').checkIdOnRequest;
 
 const app = express();
 const router = express.Router();
@@ -115,30 +116,13 @@ module.exports = (parent) => {
         }
     });
 
-    router.param('id', function (req, res, next, id) {
-        try {
-            req.groupId = mongoose.Types.ObjectId(id);
-
-            db.WorkersGroupModel.findById(req.groupId, (err, group) => {
-                if (err) {
-                    next(err);
-                } else if (!group) {
-                    err = new Error('Group not found');
-                    err.apiError = 'not_found';
-                    next(err);
-                } else {
-                    req.currentGroup = group;
-                    next();
-                }
-            });
-        } catch (e) {
-            next(e);
-        }
-    });
+    router.param('id', checkIdOnRequest({
+        model: db.WorkersGroupModel
+    }));
 
     core.logger.verbose(`\t\tDELETE -> ${prefix}/groups/:id`);
     router.delete('/groups/:id', (req, res, next) => {
-        req.currentGroup.remove((err) => {
+        req.currentModel.remove((err) => {
             if (err) {
                 next(err);
             } else {

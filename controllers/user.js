@@ -22,7 +22,6 @@ module.exports = (parent) => {
     core.logger.verbose(`\t\tGET -> ${prefix}`);
 
     router.get('/', (req, res, next) => {
-
         db.UserModel.find().exec((err, users) => {
             if (err) {
                 next(err);

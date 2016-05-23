@@ -5,6 +5,7 @@ const express  = require('express');
 const path  = require('path');
 
 const db = require('../lib/db');
+const checkIdOnRequest = require('../modules/common').checkIdOnRequest;
 
 const app = express();
 const router = express.Router();
@@ -34,41 +35,24 @@ module.exports = (parent) => {
         });
     });
 
-    router.param('id', function (req, res, next, id) {
-        try {
-            req.taskId = mongoose.Types.ObjectId(id);
-
-            db.TaskModel.findById(req.taskId, (err, task) => {
-                if (err) {
-                    next(err);
-                } else if (!task) {
-                    err = new Error('Task not found');
-                    err.apiError = 'not_found';
-                    next(err);
-                } else {
-                    req.currentTask = task;
-                    next();
-                }
-            });
-        } catch (e) {
-            next(e);
-        }
-    });
+    router.param('id', checkIdOnRequest({
+        model: db.TaskModel
+    }));
 
     core.logger.verbose(`\t\tGET -> ${prefix}/:id`);
     router.get('/:id', (req, res, next) => {
         if (req.xhr) {
-            res.json({ok: true, data: req.currentTask});
+            res.json({ok: true, data: req.currentModel});
         } else {
             var content = parent.wordsList['task'][res.locals.lang]['index'];
-            content.data = req.currentTask;
+            content.data = req.currentModel;
             res.render('index', content);
         }
     });
 
     core.logger.verbose(`\t\tGET -> ${prefix}/:id/status`);
     router.get('/:id/status', (req, res, next) => {
-        res.json({ok: true, data: {status: req.currentTask.status}});
+        res.json({ok: true, data: {status: req.currentModel.status}});
     });
 
     app.use(prefix, parent.authorize, router);
