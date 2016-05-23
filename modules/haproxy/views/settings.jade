@@ -25,10 +25,10 @@ block ContentBlock
                                 tr.tr-vertical
                                     input(name='id', type='hidden', value=setting._id)
                                     td #{i++}
-                                    td= setting.token_name
-                                    td= setting.description
+                                    td.name= setting.token_name
+                                    td.desc= setting.description
                                     td
-                                        a.btn.btn-success.delete-btn.margin-10-right(href='#edit', title=buttonsTxt.edit)
+                                        a.btn.btn-success.edit-btn.margin-10-right(href='#edit', title=buttonsTxt.edit)
                                             i.fa.fa-pencil
                                         a.btn.btn-danger.delete-btn(href='#delete', title=buttonsTxt.delete)
                                             i.fa.fa-trash-o
@@ -37,30 +37,199 @@ block ContentBlock
         .modal-dialog
             .modal-content
                 form#create-setting-form(method='POST', action='/haproxy/settings', autocomplete='off')
-                    input(type='hidden', name='_csrf', value='#{csrfToken}')
                     .modal-header
                         button.close(type='button', data-dismiss='modal', aria-label='Close')
                             span(aria-hidden='true') &times;
                         h4.modal-title= modal.title
                     .modal-body.modal-align
                         .form-group.row
-                            label.col-md-4.form-control-label #{modal.fields.name}
-                            .col-md-8
-                                .block
-                                    input.form-control(name='name', placeholder='', type='text')
+                            label.col-xs-4.form-control-label= modal.fields.name
+                            .col-xs-8
+                                input.form-control(name='name', placeholder='', type='text')
                         .form-group.row
-                            label.col-md-4.form-control-label #{modal.fields.desc}
-                            .col-md-8
-                                .block
-                                    input.form-control(name='desc', placeholder='', type='text')
+                            label.col-xs-4.form-control-label= modal.fields.desc
+                            .col-xs-8
+                                input.form-control(name='desc', placeholder='', type='text')
 
                     .modal-footer
                         button.btn.btn-default(type='button', data-dismiss='modal')= buttonsTxt.close
-                        button.btn.btn-primary(type='submit')= buttonsTxt.create
+                        button.btn.btn-primary.create-btn(type='submit')
+                            i.fa.fa-refresh.fa-spin.hide(style='margin-right: 5px')
+                            | #{buttonsTxt.create}
+
+    #edit-setting-modal.modal.fade(tabindex='-1', role='dialog', aria-hidden='true')
+        .modal-dialog
+            .modal-content
+                form#edit-setting-form(method='POST', action='/haproxy/settings', autocomplete='off')
+                    input.form-control(name='id', type='hidden')
+                    .modal-header
+                        button.close(type='button', data-dismiss='modal', aria-label='Close')
+                            span(aria-hidden='true') &times;
+                        h4.modal-title= editModal.title
+                    .modal-body.modal-align
+                        .form-group.row
+                            label.col-xs-4.form-control-label= modal.fields.name
+                            .col-xs-8
+                                input.form-control(name='name', placeholder='', type='text')
+                        .form-group.row
+                            label.col-xs-4.form-control-label= modal.fields.desc
+                            .col-xs-8
+                                input.form-control(name='desc', placeholder='', type='text')
+
+                    .modal-footer
+                        button.btn.btn-default(type='button', data-dismiss='modal')= buttonsTxt.close
+                        button.btn.btn-success.save-btn(type='submit')
+                            i.fa.fa-refresh.fa-spin.hide(style='margin-right: 5px')
+                            | #{buttonsTxt.save}
 
 block ScriptsPluginBlock
 block ScriptsBlock
+    script(src='/js/jquery.validate.min.js', type='application/javascript')
+    script(src='/js/form-validation.js', type='application/javascript')
     script(type='application/javascript').
+
         $(document).ready(function () {
             setActiveLink('#haproxy', '#hap-settings-sub');
+
+            var $createModal = $('#create-setting-modal');
+            var $editModal = $('#edit-setting-modal');
+
+            validateModal($createModal,
+                    {
+                        name: {
+                            required: true,
+                            maxlength: 15
+                        },
+                        desc: {
+                            required: true,
+                            maxlength: 300
+                        }
+                    },
+                    {
+                        //TODO add language support
+                    },
+                    function () {
+                        var data = {
+                            _csrf: _csrf,
+                            name: $('input[name="name"]', $createModal).val(),
+                            desc: $('input[name="desc"]', $createModal).val()
+                        };
+
+                        $('.create-btn').toggleClass('disabled').find('i').toggleClass('hide');
+
+                        $.ajax({
+                            url: '/haproxy/settings',
+                            type: 'POST',
+                            contentType: 'application/json',
+                            data: JSON.stringify(data),
+                            dataType: 'json',
+                            error: function (XMLHttpRequest, textStatus, errorThrow) {
+                                alert(XMLHttpRequest + '\n' + textStatus + '\n' + errorThrow);
+                            },
+                            success: function (result) {
+                                if (result.ok) {
+                                    $editModal.modal('hide');
+                                    location.reload();
+                                }
+
+                                $('.save-btn').toggleClass('disabled').find('i').toggleClass('hide');
+                            }
+                        });
+                    }
+            );
+
+            validateModal($editModal,
+                    {
+                        name: {
+                            required: true,
+                            maxlength: 15
+                        },
+                        desc: {
+                            required: true,
+                            maxlength: 300
+                        }
+                    },
+                    {
+                        //TODO add language support
+                    },
+                    function () {
+                        var data = {
+                            _csrf: _csrf,
+                            name: $('input[name="name"]', $editModal).val(),
+                            desc: $('input[name="desc"]', $editModal).val()
+                        };
+
+                        $('.save-btn').toggleClass('disabled').find('i').toggleClass('hide');
+
+                        $.ajax({
+                            url: '/haproxy/settings/' + $('input[name="id"]', $editModal).val(),
+                            type: 'PUT',
+                            contentType: 'application/json',
+                            data: JSON.stringify(data),
+                            dataType: 'json',
+                            error: function (XMLHttpRequest, textStatus, errorThrow) {
+                                alert(XMLHttpRequest + '\n' + textStatus + '\n' + errorThrow);
+                            },
+                            success: function (result) {
+                                if (result.ok) {
+                                    $editModal.modal('hide');
+                                    location.reload();
+                                }
+
+                                $('.save-btn').toggleClass('disabled').find('i').toggleClass('hide');
+                            }
+                        });
+                    }
+            );
+
+            $('.edit-btn').on('click', function (e) {
+                e.preventDefault();
+
+                var $tr = $(this).closest('tr');
+
+                var id = $tr.children('input[name="id"]').val();
+                var name = $tr.children('.name').text();
+                var desc = $tr.children('.desc').text();
+
+                $('#edit-setting-form input[name="id"]').val(id);
+                $('#edit-setting-form input[name="name"]').val(name);
+                $('#edit-setting-form input[name="desc"]').val(desc);
+
+                $('#edit-setting-modal').modal('show');
+            });
+
+            $('.delete-btn').on('click', function (e) {
+                e.preventDefault();
+
+                var $elem = $(this);
+                var $tr = $(this).closest('tr');
+
+                var id = $tr.children('input[name="id"]').val();
+
+                if (!confirm('Are you sure?')) {
+                    return;
+                }
+
+                $elem.toggleClass('disabled');
+
+                $.ajax({
+                    url: '/haproxy/settings/' + id,
+                    type: 'DELETE',
+                    contentType: 'application/json',
+                    data: JSON.stringify({_csrf: _csrf}),
+                    dataType: 'json',
+                    error: function (XMLHttpRequest, textStatus, errorThrow) {
+                        alert(XMLHttpRequest + '\n' + textStatus + '\n' + errorThrow);
+                    },
+                    success: function (result) {
+                        if (result.ok) {
+                            $tr.remove();
+                            toastr.info(result.msg);
+                        } else {
+                            $elem.toggleClass('disabled');
+                            toastr.error(result.msg);
+                        }
+                    }
+                });
+            });
         });
