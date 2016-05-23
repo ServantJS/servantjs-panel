@@ -5,6 +5,7 @@ const express  = require('express');
 const path  = require('path');
 
 const db = require('../../../lib/db');
+const checkIdOnRequest = require('../../common').checkIdOnRequest;
 const moduleDB = require('../db');
 
 const app = express();
@@ -48,6 +49,40 @@ module.exports = (parent) => {
                 next(err);
             } else {
                 res.json({ok: true});
+            }
+        });
+    });
+
+    router.param('id', checkIdOnRequest({
+        model: moduleDB.HAProxySettingModel,
+        current: 'currentModel'
+    }));
+
+    core.logger.verbose(`\t\tPUT -> ${prefix}`);
+    router.put('/:id', (req, res, next) => {
+        let name = req.body.name;
+        let desc = req.body.desc;
+
+        req.currentModel.token_name = name;
+        req.currentModel.description = desc;
+
+        req.currentModel.save((err) => {
+            if (err) {
+                next(err);
+            } else {
+                res.json({ok: true});
+            }
+        });
+    });
+
+    core.logger.verbose(`\t\tDELETE -> ${prefix}`);
+    router.delete('/:id', (req, res, next) => {
+        req.currentModel.remove((err) => {
+            if (err) {
+                next(err);
+            } else {
+                const msg = parent.wordsList['haproxy'][res.locals.lang]['ajax'].delete.ok;
+                res.json({ok: true, msg: req.currentModel.token_name + msg});
             }
         });
     });
