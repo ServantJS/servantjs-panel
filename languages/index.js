@@ -13,7 +13,9 @@ module.exports = () => {
     });
 
     fs.readdirSync(path.join(__dirname, '..', 'modules')).forEach((name) => {
-        obj[name] = require(path.join(__dirname, '..', 'modules', name, 'languages'));
+        if (!name.endsWith('.js')) {
+            obj[name] = require(path.join(__dirname, '..', 'modules', name, 'languages'));
+        }
     });
 
     return obj;
