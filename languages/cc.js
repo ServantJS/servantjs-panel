@@ -42,11 +42,40 @@ exports.ru = {
 exports.us = {
     info: {
         title: 'Command center',
-        pageTitle: 'Command center'
+        pageTitle: 'Command center',
+
+        dt: 'Date',
+        status: 'Status',
+        ip: 'IP',
+
+        serverName: 'Server',
+        sysName: 'System name',
+        modules: 'Modules',
+
+        agents: 'Agents'
     },
 
     groups: {
         title: 'Agents\' group list',
-        pageTitle: 'Agents\' group list'
+        pageTitle: 'Agents\' group list',
+
+        table: {
+            name: 'Groups',
+            columns: {
+                name: 'Name',
+                cc: 'Target server',
+                sysName: 'System name',
+                agents: 'Agents'
+            }
+        },
+
+        modal: {
+            title: 'Create a new group',
+            fields: {
+                name: 'Name',
+                ccServer: 'Target server',
+                agents: 'Agents'
+            }
+        }
     }
 };
