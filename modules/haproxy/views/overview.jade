@@ -4,7 +4,7 @@ block StylesBlock
 block ContentBlock
     .row
         .col-xs-12
-            h3.page-title #{pageTitle}
+            h3.page-title= pageTitle
     .row
         .col-xs-12
             .card
@@ -43,7 +43,7 @@ block ContentBlock
                     a.btn.btn-danger.margin-10-right.delete-config(role='button', href='#delete-config')
                         i.fa.fa-refresh.fa-spin.hide(style='margin-right: 5px')
                         | #{buttonsTxt.delete}
-                    a.btn.btn-success.margin-10-right.add-template(role='button', href='#add-template')= buttonsTxt.add
+                    a.btn.btn-success.margin-10-right.add-template(role='button', href='#add-template')= addBlock
                     a.btn.btn-warning.margin-10-right.save-config(role='button', href='#save')
                         i.fa.fa-refresh.fa-spin.hide(style='margin-right: 5px')
                         | #{buttonsTxt.save}
@@ -147,6 +147,8 @@ block ScriptsBlock
                 _csrf: $('input[name="_csrf"]').val()
             };
 
+            $('.delete-config').addClass('disabled').find('i').removeClass('hide');
+
             $.ajax({
                 url: '/haproxy/configs/' + $('#config-id').val(),
                 type: 'DELETE',
@@ -160,8 +162,6 @@ block ScriptsBlock
                 success: function (result) {
                     if (result.ok) {
                         toastr.info(words.saveBtn);
-
-                        $('.delete-config').addClass('disabled').find('i').removeClass('hide');
 
                         setTimeout(function () {
                             waitTask(result.data, function (status) {
