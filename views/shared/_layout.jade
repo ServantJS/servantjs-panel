@@ -8,6 +8,7 @@ html(lang='en')
         meta(content='ServantJS web panel', name='description')
         meta(content='Vitaliy Orlov', name='author')
         meta(content='320', name='MobileOptimized')
+        meta(content='#{csrfToken}', name='_csrf')
 
         title ServantJS | #{title}
 
@@ -80,6 +81,7 @@ html(lang='en')
         script(src='/js/app.js', type='application/javascript')
         script(type='application/javascript').
             var crudText = !{JSON.stringify(crudText)};
+            var _csrf = null;
 
             function _convertStatus(status) {
                 switch (status) {
@@ -101,5 +103,9 @@ html(lang='en')
                         return ['default', crudText.status.unknown, 'unknown'];
                 }
             }
+
+            $(document).ready(function () {
+                _csrf = $('meta[name="_csrf"]').attr('content');
+            });
         block ScriptsPluginBlock
         block ScriptsBlock
