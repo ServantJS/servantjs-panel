@@ -128,7 +128,7 @@ exports.ru = {
     },
 
     home: {
-        menu: 'Домашняя',
+        menu: 'Приборная панель',
         index: ''
     },
 
@@ -146,8 +146,8 @@ exports.ru = {
         settings: 'Настройки'
     },
 
-    cc: {
-        menu: 'Командный центр',
+    server: {
+        menu: 'Сервера',
         info: 'Информация',
         groups: 'Группы'
     },
@@ -277,8 +277,8 @@ exports.us = {
         settings: 'Settings'
     },
 
-    cc: {
-        menu: 'Command center',
+    server: {
+        menu: 'Servers',
         info: 'Info',
         groups: 'Groups'
     },

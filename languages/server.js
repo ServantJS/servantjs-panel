@@ -1,7 +1,7 @@
 exports.ru = {
     info: {
-        title: 'Командный центр',
-        pageTitle: 'Командный центр',
+        title: 'Информация о серверах',
+        pageTitle: 'Информация о серверах',
 
         dt: 'Дата',
         status: 'Статус',
@@ -41,8 +41,8 @@ exports.ru = {
 
 exports.us = {
     info: {
-        title: 'Command center',
-        pageTitle: 'Command center',
+        title: 'Servers info',
+        pageTitle: 'Servers info',
 
         dt: 'Date',
         status: 'Status',

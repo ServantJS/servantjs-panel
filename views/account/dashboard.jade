@@ -2,11 +2,92 @@ extends ../shared/_layout
 block StylesBlock
 block ContentBlock
 
-    h1 Hello
+    .row
+        .col-xs-12
+            h3.page-title= pageTitle
+
+    .row
+        .col-xs-6
+            - each server in data.servers
+                .row
+                    .col-xs-12
+                        .card
+                            .card-header
+                                h4 "#{server.server_name}" #{serverInfoTitle}
+                            .card-block
+                                p
+                                    b #{host}:&nbsp;
+                                    span #{server.ip}:#{server.port}
+                                p
+                                    b #{status}:&nbsp;
+                                    if server.status == -1
+                                        span.label.label-info uninitialized
+                                    else if server.status == 0
+                                        span.label.label-info initialized
+                                    else if server.status == 1
+                                        span.label.label-success running
+                                    else if server.status == 2
+                                        span.label.label-warning stopped
+                                    else if server.status == 3
+                                        span.label.label-danger error
+                                    | &nbsp;
+                                    span= server.dt.toUTCString()
+                                .workers-scope
+                                    p: b #{agents}:
+                                    table.table
+                                        thead
+                                            tr
+                                                th #
+                                                th= serverName
+                                                th= status
+                                                th= modules
+                                        tbody
+                                            - each worker, index in server.workers
+                                                tr.tr-vertical
+                                                    td= index + 1
+                                                    td= worker.server_name
+                                                    td
+                                                        if worker.status == 1
+                                                            span.label.label-success running
+                                                        else if worker.status == 2
+                                                            span.label.label-warning stopped
+                                                        else if worker.status == 3
+                                                            span.label.label-danger error
+                                                    td
+                                                        ul.list-inline
+                                                            - each module in worker.modules
+                                                                li: span.label.label-info #{module}
+        .col-xs-6
+            .card
+                .card-header
+                    h4= lastTasksTitle
+                .card-block
+                    table.table
+                        thead
+                            tr
+                                th= tasksTable.columns.dt
+                                th= tasksTable.columns.username
+                                th= tasksTable.columns.status
+                                th= tasksTable.columns.module
+                        tbody
+                            - each task in data.tasks
+                                tr
+                                    td: a(href='/tasks/' + task._id)=task.dt.toUTCString()
+
+                                    td= task.username
+                                    td.status= task.status
+                                    td #{task.module}[#{task.cmd}]
+
+
 
 block ScriptsPluginBlock
 block ScriptsBlock
     script(type='application/javascript').
         $(function () {
             setActiveLink('#dashboard');
+
+            $('.status').each(function () {
+                var status = _convertStatus(parseInt($(this).text()));
+                $(this).html('<span class="label label-' + status[0] + '">' + status[1] + '</span>')
+            })
         });

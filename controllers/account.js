@@ -3,6 +3,7 @@
 const mongoose = require('mongoose');
 const express  = require('express');
 const path  = require('path');
+const async  = require('async');
 
 const db = require('../lib/db');
 
@@ -25,15 +26,48 @@ module.exports = (parent) => {
             if (err) {
                 next(err);
             } else {
-                //var content = words[req.selectedLanguage]['dashboard'];
-                res.render('dashboard');
+
+                async.waterfall([
+                    (cb) => {
+                        db.TaskModel.find({}).sort('-dt').limit(10).exec((err, list) => {
+                            cb(err, list);
+                        });
+                    },
+                    (tasks, cb) => {
+                        db.ServerModel.find({}).exec((err, list) => {
+                            cb(err, {tasks: tasks, servers: list});
+                        });
+                    },
+                    (data, cb) => {
+                        db.WorkerModel.find({}).lean().exec((err, workers) => {
+                            if (err) {
+                                cb(err);
+                            } else {
+                                let i = data.servers.length;
+                                while (i--) {
+                                    data.servers[i].workers = workers.filter((x) => x.server_id.equals(data.servers[i]._id));
+                                }
+
+                                cb(null, data);
+                            }
+                        });
+                    }
+                ], (err, data) => {
+                    if (err) {
+                        next(err);
+                    } else {
+                        const content = parent.wordsList['dashboard'][res.locals.lang]['index'];
+                        content.data = data;
+                        res.render('dashboard', content);
+                    }
+                });
             }
         });
     });
 
     core.logger.verbose(`\t\tGET -> ${prefix}signin`);
     router.get('/signin', (req, res, next) => {
-        var content = parent.wordsList['account'][res.locals.lang]['signin'];
+        const content = parent.wordsList['account'][res.locals.lang]['signin'];
         content.redirect = req.query.r || '/';
         res.render('signin', content);
     });

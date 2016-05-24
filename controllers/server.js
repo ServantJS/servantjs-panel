@@ -13,8 +13,8 @@ const router = express.Router();
 
 const core = require('../src/core');
 
-const controller = 'cc';
-const prefix = '/cc';
+const controller = 'server';
+const prefix = '/servers';
 
 module.exports = (parent) => {
     app.disable('x-powered-by');
@@ -27,7 +27,7 @@ module.exports = (parent) => {
     router.get('/info', (req, res, next) => {
         async.waterfall([
             (cb) => {
-                db.CCServerModel.find({}).lean().exec((err, servers) => {
+                db.ServerModel.find({}).lean().exec((err, servers) => {
                     cb(err, servers);
                 });
             },
@@ -68,7 +68,7 @@ module.exports = (parent) => {
                     });
             },
             (groups, cb) => {
-                db.CCServerModel.find({}).lean().exec((err, servers) => {
+                db.ServerModel.find({}).lean().exec((err, servers) => {
                    cb(err, groups, servers);
                 });
             },

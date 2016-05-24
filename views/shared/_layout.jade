@@ -23,7 +23,7 @@ html(lang='en')
             .header
                 nav.navbar.navbar-full.navbar-dark.bg-inverse
                     a(href='/', style='float: left;')
-                        img(src='/img/change servantjs-long.1.png', alt='ServantJS')
+                        img(src='/img/servantjs-long.1.png', alt='ServantJS')
                     ul.nav.navbar-nav.pull-xs-right(style='margin-right: 40px')
                         li.nav-item.dropdown
                             a#account-menu.nav-link.dropdown-toggle(href='#', data-toggle='dropdown', role='button', aria-haspopup='true', aria-expanded='false')
@@ -41,7 +41,7 @@ html(lang='en')
                     ul.nav.nav-pills.nav-stacked
                         li#dashboard.nav-item
                             a.nav-link(href='/')
-                                i.fa.fa-home
+                                i.fa.fa-dashboard
                                 | #{home.menu}
                         li#managment.nav-item
                             a.nav-link(href='#managment')
@@ -61,16 +61,16 @@ html(lang='en')
                                     a(href='/haproxy/configs')= haproxy.configs
                                 li#hap-settings-sub
                                     a(href='/haproxy/settings')= haproxy.settings
-                        li#cc.nav-item
-                            a.nav-link(href='#cc')
+                        li#server.nav-item
+                            a.nav-link(href='#servers')
                                 i.fa.fa-sitemap
-                                | #{cc.menu}
+                                | #{server.menu}
                                 i.arrow.fa.fa-angle-left.pull-xs-right
                             ul.sub-menu
-                                li#cc-info-sub
-                                    a(href='/cc/info')= cc.info
-                                li#cc-groups-sub
-                                    a(href='/cc/groups')= cc.groups
+                                li#server-info-sub
+                                    a(href='/servers/info')= server.info
+                                li#server-groups-sub
+                                    a(href='/servers/groups')= server.groups
             .wrapper
                 .content
                     block ContentBlock
