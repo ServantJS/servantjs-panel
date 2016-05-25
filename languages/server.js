@@ -22,7 +22,7 @@ exports.ru = {
             name: 'Группы',
             columns: {
                 name: 'Наименование',
-                cc: 'Целевой сервер',
+                server: 'Целевой сервер',
                 sysName: 'Системное имя',
                 agents: 'Агенты'
             }
@@ -32,7 +32,7 @@ exports.ru = {
             title: 'Создание новой группы',
             fields: {
                 name: 'Наименование',
-                ccServer: 'Целевой сервер',
+                server: 'Целевой сервер',
                 agents: 'Агенты'
             }
         }
@@ -63,7 +63,7 @@ exports.us = {
             name: 'Groups',
             columns: {
                 name: 'Name',
-                cc: 'Target server',
+                server: 'Target server',
                 sysName: 'System name',
                 agents: 'Agents'
             }
@@ -73,7 +73,7 @@ exports.us = {
             title: 'Create a new group',
             fields: {
                 name: 'Name',
-                ccServer: 'Target server',
+                server: 'Target server',
                 agents: 'Agents'
             }
         }

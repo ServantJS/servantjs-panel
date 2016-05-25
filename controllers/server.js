@@ -91,16 +91,22 @@ module.exports = (parent) => {
     core.logger.verbose(`\t\tPOST -> ${prefix}/groups`);
     router.post('/groups', (req, res, next) => {
         let name = req.body.name;
-        let ccServer = req.body.ccServer;
+        let server = req.body.server;
         let agents = req.body.agents;
 
         try {
-            ccServer = mongoose.Types.ObjectId(ccServer);
+            if (!(name && name.length)) {
+                const err = new Error('Missing name param');
+                return next(err);
+            }
+
+
+            server = mongoose.Types.ObjectId(server);
             agents = agents.map((item) => mongoose.Types.ObjectId(item));
 
             var model = new db.WorkersGroupModel({
                 name: name,
-                server_id: ccServer,
+                server_id: server,
                 workers: agents
             });
 

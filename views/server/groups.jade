@@ -18,7 +18,7 @@ block ContentBlock
                                 th #
                                 th #{table.columns.sysName}
                                 th #{table.columns.name}
-                                th #{table.columns.cc}
+                                th #{table.columns.server}
                                 th #{table.columns.agents}
                                 th(style='width: 125px')
                         tbody
@@ -38,13 +38,13 @@ block ContentBlock
                                                 - each worker in group.workers
                                                     li: span.label.label-success #{worker.server_name}
                                     td
-                                        a.btn.btn-danger.delete-btn(href='/cc/groups/' + group._id, title=buttonsTxt.delete)
+                                        a.btn.btn-danger.delete-btn(href='/servers/groups/' + group._id, title=buttonsTxt.delete)
                                             i.fa.fa-trash-o
 
     #create-group-modal.modal.fade(tabindex='-1', role='dialog', aria-hidden='true')
         .modal-dialog
             .modal-content
-                form#create-group-form(method='POST', action='/cc/groups', autocomplete='off')
+                form#create-group-form(method='POST', action='/servers/groups', autocomplete='off')
                     input(type='hidden', name='_csrf', value='#{csrfToken}')
                     .modal-header
                         button.close(type='button', data-dismiss='modal', aria-label='Close')
@@ -57,9 +57,9 @@ block ContentBlock
                                 .block
                                     input.form-control(name='name', placeholder='', type='text')
                         .form-group.row
-                            label.col-md-4.form-control-label #{modal.fields.ccServer}
+                            label.col-md-4.form-control-label #{modal.fields.server}
                             .col-md-8
-                                select.form-control(name='cc-server')
+                                select.form-control(name='server')
                                     - each server in data.servers
                                         option(value=server._id)= server.server_name
                         .form-group.row
@@ -89,10 +89,10 @@ block ScriptsBlock
 
                 var $elem = $(this);
 
-                $elem.find('button[type="submit"]').addClass('disabled');
+                $elem.find('button[type="submit"]').attr('disabled', true);
 
                 var name = $elem.find('input[name="name"]').val();
-                var ccServer = $elem.find('select[name="cc-server"] > option:selected').val();
+                var server = $elem.find('select[name="server"] > option:selected').val();
                 var agents = [];
 
                 $elem.find('input[name="worker"]').each(function () {
@@ -102,13 +102,13 @@ block ScriptsBlock
                 });
 
                 $.ajax({
-                    url: '/cc/groups',
+                    url: '/servers/groups',
                     type: 'POST',
                     contentType: 'application/json',
                     data: JSON.stringify({
                         _csrf: $elem.find('input[name="_csrf"]').val(),
                         name: name,
-                        ccServer: ccServer,
+                        server: server,
                         agents: agents
                     }),
                     dataType: 'json',
@@ -121,7 +121,7 @@ block ScriptsBlock
                             location.reload();
                         } else {
                             toastr.error(result.msg);
-                            $elem.removeClass('disabled');
+                            $elem.find('button[type="submit"]').attr('disabled', false);
                         }
                     }
                 });
