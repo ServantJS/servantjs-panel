@@ -1,4 +1,10 @@
 script(type='application/javascript').
+    var slideWords = {
+        down: '!{slideDown}',
+        up: '!{slideUp}'
+    };
+
+script(type='application/javascript').
     var taskCheckInterval = 1000;
 
     function waitTask(taskId, cb) {
@@ -35,11 +41,11 @@ script(type='application/javascript').
     function onSlideAction(e) {
         e.preventDefault();
 
-        var text = words.slideUp;
+        var text = slideWords.up;
         var b = true;
 
         if ($('.card-block:visible', $(this).closest('.card')).length) {
-            text = words.slideDown;
+            text = slideWords.down;
             b = false;
         }
 
