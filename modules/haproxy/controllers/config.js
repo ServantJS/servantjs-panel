@@ -5,6 +5,9 @@ const express  = require('express');
 const path  = require('path');
 const async = require('async');
 const util = require('util');
+const multer = require('multer');
+const os = require('os');
+const fs = require('fs');
 
 const db = require('../../../lib/db');
 const checkIdOnRequest = require('../../common').checkIdOnRequest;
@@ -17,6 +20,13 @@ const core = require('../../../src/core');
 
 const controller = 'haproxy';
 const prefix = '/haproxy/configs';
+
+const upload = multer({
+    dest: os.tmpdir(),
+    limits: {
+        fileSize: 1024 * 1024 * 20
+    }
+}).fields([{name: 'config', maxCount: 1}]);
 
 module.exports = (parent) => {
     app.disable('x-powered-by');
@@ -96,6 +106,122 @@ module.exports = (parent) => {
         });
     });
 
+    core.logger.verbose(`\t\tPOST -> ${prefix}`);
+    router.post('/import', (req, res, next) => {
+        upload(req, res, (err) => {
+            if (err) {
+                next(err);
+            } else {
+                if (req.files && req.files.config && req.files.config.length) {
+                    const file = req.files.config[0];
+
+                    fs.readFile(file.path, 'utf8', (err, content) => {
+                        if (err) {
+                            next(err);
+                        } else {
+                            const arr = content.split('\n');
+                            const blocks = [];
+
+                            const re = /^\S+\s(\S+)/;
+                            let index = 0;
+                            let defCount = 0;
+                            let currentBlock = null;
+                            
+                            async.whilst(
+                                () => index < arr.length,
+                                (next) => {
+                                    try {
+                                        let kind = -1;
+                                        let name = '';
+
+                                        if (arr[index].startsWith('global')) {
+                                            kind = 0;
+                                            name = 'global';
+                                        } else if (arr[index].startsWith('defaults')) {
+                                            kind = 1;
+                                            name = 'defaults' + (defCount > 0 ? defCount : '');
+                                            defCount++;
+                                        } else if (arr[index].startsWith('listen')) {
+                                            kind = 2;
+                                        } else if (arr[index].startsWith('frontend')) {
+                                            kind = 3;
+                                        } else if (arr[index].startsWith('backend')) {
+                                            kind = 4;
+                                        }
+
+                                        if (kind >= 2) {
+                                            let m;
+                                            if ((m = re.exec(arr[index])) !== null) {
+                                                name = m[1];
+                                            }
+                                        }
+
+                                        if (kind != -1) {
+                                            if (currentBlock == null) {
+                                                currentBlock = {content: []};
+                                            } else {
+                                                currentBlock.content = currentBlock.content.join('\n');
+                                                blocks.push(currentBlock);
+                                                currentBlock = {content: []};
+                                            }
+
+                                            currentBlock.content.push(arr[index]);
+                                            currentBlock.name = name;
+                                            currentBlock.kind = kind;
+                                            currentBlock.status = 0;
+                                        } else {
+
+                                            if (currentBlock)
+                                                currentBlock.content.push(arr[index]);
+                                        }
+
+                                        index++;
+                                        next();
+                                    } catch (e) {
+                                        next(e);
+                                    }
+                                },
+                                (err) => {
+                                    if (err) {
+                                        next(err);
+                                    } else {
+                                        currentBlock.content = currentBlock.content.join('\n');
+                                        blocks.push(currentBlock);
+                                        
+                                        fs.unlink(file.path, (err) => {
+                                            if (err) {
+                                                next(err);
+                                            } else {
+                                                const task = new db.TaskModel({
+                                                    username: req.currentUser.email,
+                                                    target_id: req.body.targetId,
+                                                    module: controller,
+                                                    cmd: 'create-config',
+
+                                                    params: JSON.stringify({container: blocks})
+                                                });
+
+                                                task.save((err) => {
+                                                    if (err) {
+                                                        next(err);
+                                                    } else {
+                                                        res.json({ok: true, data: task._id});
+                                                    }
+                                                });
+                                            }
+                                        });
+                                    }
+                                }
+                            );
+                        }
+                    });
+                } else {
+                    next(new Error('Missing config file'));
+                }
+            }
+        });
+    });
+
     router.param('id', checkIdOnRequest({
         model: moduleDB.HAProxyConfigModel
     }));
@@ -150,7 +276,7 @@ module.exports = (parent) => {
             module: controller,
             cmd: 'remove-config',
 
-            params: JSON.stringify({id: req.configId})
+            params: JSON.stringify({id: req.currentModel._id})
         });
 
         task.save((err) => {
