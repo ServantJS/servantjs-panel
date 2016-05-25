@@ -1,0 +1,23 @@
+script(src='/js/jquery.validate.min.js', type='application/javascript')
+script(src='/js/form-validation.js', type='application/javascript')
+script(type='application/javascript').
+        jQuery.extend(jQuery.validator.messages, {
+            required: '!{validation.required}',
+            remote: '!{validation.remote}',
+            email: '!{validation.email}',
+            url: '!{validation.url}',
+            date: '!{validation.required}',
+            dateISO: '!{validation.dateISO}',
+            number: '!{validation.number}',
+            digits: '!{validation.digits}',
+            creditcard: '!{validation.creditcard}',
+            equalTo: '!{validation.equalTo}',
+            accept: '!{validation.accept}',
+
+            maxlength: jQuery.validator.format('!{validation.maxlength}'),
+            minlength: jQuery.validator.format('!{validation.minlength}'),
+            rangelength: jQuery.validator.format('!{validation.rangelength}'),
+            range: jQuery.validator.format('!{validation.range}'),
+            max: jQuery.validator.format('!{validation.max}'),
+            min: jQuery.validator.format('!{validation.min}')
+        });
