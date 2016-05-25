@@ -1,0 +1,13 @@
+script(type='application/javascript').
+    var taskWords = {
+        successComplete: '!{task.success}',
+        errorComplete: '!{task.error}',
+        onCreateSuccess: '!{task.created}',
+        onCreateError: '!{task.createError}',
+
+        title: {
+            success: '!{task.title.success}',
+            warning: '!{task.title.warning}',
+            danger: '!{task.title.danger}'
+        }
+    };
