@@ -56,14 +56,11 @@ block ScriptsBlock
     script(type='application/javascript').
         var words = {
             slideDown: '!{slideDown}',
-            slideUp: '!{slideUp}',
-            successTask: '!{task.success}',
-            errorTask: '!{task.error}',
-            saveBtn: '!{task.created}',
-            serverError: '!{task.createError}'
+            slideUp: '!{slideUp}'
         };
 
     include ./includes/slide-action
+    include ../../../views/shared/_task
 
     script(type='application/javascript').
 
@@ -119,7 +116,7 @@ block ScriptsBlock
                 },
                 success: function (result) {
                     if (result.ok) {
-                        toastr.info(words.saveBtn);
+                        toastr.info(taskWords.onCreateSuccess);
 
                         $('.save-config').addClass('disabled').find('i').removeClass('hide');
 
@@ -130,7 +127,7 @@ block ScriptsBlock
                         }, taskCheckInterval);
 
                     } else {
-                        toastr.error(words.serverError);
+                        toastr.error(taskWords.onCreateError);
                     }
                 }
             });
@@ -161,7 +158,7 @@ block ScriptsBlock
                 },
                 success: function (result) {
                     if (result.ok) {
-                        toastr.info(words.saveBtn);
+                        toastr.info(taskWords.onCreateSuccess);
 
                         setTimeout(function () {
                             waitTask(result.data, function (status) {
@@ -172,7 +169,7 @@ block ScriptsBlock
                         }, taskCheckInterval);
 
                     } else {
-                        toastr.error(words.serverError);
+                        toastr.error(taskWords.onCreateError);
                     }
                 }
             });

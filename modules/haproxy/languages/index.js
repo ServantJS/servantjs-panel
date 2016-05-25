@@ -16,14 +16,7 @@ exports.ru = {
 
         configName: 'Наименование',
         addBlock: 'Добавить блок',
-
-        task: {
-            created: 'Задание успешно отправлено в очередь.',
-            createError: 'Произошла внутренняя ошибка сервера при отправке задания. Обратитесь к администратору.',
-            success: 'Задание успешно выполнено. <a href="/tasks/$id">Открыть задание.</a>',
-            error: 'Задание завершилось с ошибкой. <a href="/tasks/$id">Открыть задание.</a>'
-        },
-
+        
         modal: {
             title: 'Создать новый конфигурационный файл',
             fields: {
@@ -43,14 +36,7 @@ exports.ru = {
         slideUp: 'Свернуть',
         slideDown: 'Развернуть',
         insertTemplate: 'Вставить шаблон',
-
-        task: {
-            created: 'Задание успешно отправлено в очередь.',
-            createError: 'Произошла внутренняя ошибка сервера при отправке задания. Обратитесь к администратору.',
-            success: 'Задание успешно выполнено. <a href="/tasks/$id">Открыть задание.</a>',
-            error: 'Задание завершилось с ошибкой. <a href="/tasks/$id">Открыть задание.</a>'
-        },
-
+        
         configName: 'Наименование',
         addBlock: 'Добавить блок',
 
@@ -110,14 +96,7 @@ exports.us = {
 
         configName: 'Name',
         addBlock: 'Add a block',
-
-        task: {
-            created: 'Task has been successfully sent to the queue.',
-            createError: 'An internal server error occurred while sending a task. Contact your administrator.',
-            success: 'Task completed successfully. <a href="/tasks/$id">View task.</a>',
-            error: 'Task failed. <a href="/tasks/$id">View task.</a>'
-        },
-
+        
         modal: {
             title: 'Create a new config file',
             fields: {
@@ -136,14 +115,7 @@ exports.us = {
         slideUp: 'Slide up',
         slideDown: 'Slide down',
         insertTemplate: 'Insert template',
-
-        task: {
-            created: 'Task has been successfully sent to the queue.',
-            createError: 'An internal server error occurred while sending a task. Contact your administrator.',
-            success: 'Task completed successfully. <a href="/tasks/$id">View task.</a>',
-            error: 'Task failed. <a href="/tasks/$id">View task.</a>'
-        },
-
+        
         configName: 'Name',
         addBlock: 'Add a block',
 

@@ -88,14 +88,11 @@ block ScriptsBlock
     script(type='application/javascript').
         var words = {
             slideDown: '!{slideDown}',
-            slideUp: '!{slideUp}',
-            successTask: '!{task.success}',
-            errorTask: '!{task.error}',
-            saveBtn: '!{task.created}',
-            serverError: '!{task.createError}'
+            slideUp: '!{slideUp}'
         };
 
     include  ./includes/slide-action
+    include ../../../views/shared/_task
 
     script(type='application/javascript').
 
@@ -148,7 +145,7 @@ block ScriptsBlock
                 },
                 success: function (result) {
                     if (result.ok) {
-                        toastr.info(words.saveBtn);
+                        toastr.info(taskWords.onCreateSuccess);
 
                         setTimeout(function () {
                             waitTask(result.data, function (status) {
@@ -162,7 +159,7 @@ block ScriptsBlock
                         }, taskCheckInterval);
 
                     } else {
-                        toastr.error(words.serverError);
+                        toastr.error(taskWords.onCreateError);
                         modal.find('.create-config').removeClass('disabled').find('i').addClass('hide');
                     }
                 }
@@ -191,7 +188,7 @@ block ScriptsBlock
                 },
                 success: function (result) {
                     if (result.ok) {
-                        toastr.info(words.saveBtn);
+                        toastr.info(taskWords.onCreateSuccess);
 
                         setTimeout(function () {
                             waitTask(result.data, function (status) {
@@ -202,7 +199,7 @@ block ScriptsBlock
                         }, taskCheckInterval);
 
                     } else {
-                        toastr.error(words.serverError);
+                        toastr.error(taskWords.onCreateError);
                         $elem.removeClass('disabled');
                     }
                 }

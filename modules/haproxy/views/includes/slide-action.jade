@@ -8,9 +8,9 @@ script(type='application/javascript').
             if (result.ok) {
                 if (result.data.status !== -1 && result.data.status !== 2) {
                     if (result.data.status == 0) {
-                        toastr.success(words.successTask.replace('$id', taskId));
+                        toastr.success(taskWords.successComplete.replace('$id', taskId));
                     } else {
-                        toastr.warning(words.errorTask.replace('$id', taskId));
+                        toastr.warning(taskWords.errorComplete.replace('$id', taskId));
                     }
 
                     refresh = false;
