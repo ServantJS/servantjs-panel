@@ -21,14 +21,9 @@ html(lang='en')
             a(href='/')
                 img(src='/img/servantjs.png', height='100px', alt='ServantJS')
         .content
-            if messages.error
-                .alert.alert-danger
-                    button.close(data-close='alert')
-                    span #{messages.error}
-
-            form(action='/signin', method='post')
+            .msg-block
+            form#signin-form(action='/signin', method='post')
                 h3.form-title= formTitle
-                input(type='hidden', name='_csrf', value=csrfToken)
                 input(type='hidden', name='redirect', value=redirect)
                 .form-group
                     .input-icon
@@ -49,5 +44,48 @@ html(lang='en')
 
         script(src='/js/jquery-2.1.4.min.js', type='application/javascript')
 
+        include ../shared/_validate
+
+        script(type='application/javascript').
+            $(function () {
+                var $form = $('#signin-form');
+                validateForm({errorPlace: '.form-group'}, $form,
+                        {
+                            email: {
+                                required: true,
+                                email: true
+                            },
+                            password: {
+                                required: true,
+                                maxlength: 300
+                            }
+                        },
+                        function () {
+                            $('button[type="submit"]').addClass('disabled');
+
+                            var data = {
+                                _csrf: '!{csrfToken}',
+                                email: $form.find('input[name="email"]').val(),
+                                password: $form.find('input[name="password"]').val(),
+                                remember: $form.find('input[name="remember"]').prop('checked')
+                            };
+
+                            var r = $form.find('input[name="redirect"]').val();
+
+                            $.post('/signin', data, function (result) {
+                                $('button[type="submit"]').removeClass('disabled');
+
+                                if (result.ok) {
+                                    location.href = r;
+                                } else {
+                                    $('.msg-block')
+                                            .empty()
+                                            .append('<div class="alert alert-danger"><button class="close" data-close="alert"></button><span>'
+                                                    + result.msg +
+                                                    '</span></span></div>');
+                                }
+                            });
+                        });
+            });
         block ScriptsPluginBlock
         block ScriptsBlock
