@@ -26,6 +26,14 @@ exports.ru = {
                 target: 'Цель'
 
             }
+        },
+
+        importModal: {
+            title: 'Импортирование конфигурационного файла',
+            importBtn: 'Импорт',
+            fields: {
+                file: 'Файл'
+            }
         }
     },
 
@@ -104,6 +112,14 @@ exports.us = {
                 type: 'Type',
                 content: 'Content',
                 target: 'Target'
+            }
+        },
+
+        importModal: {
+            title: 'Import a configuration file',
+            importBtn: 'Import',
+            fields: {
+                file: 'File'
             }
         }
     },
