@@ -23,6 +23,7 @@ block ContentBlock
                                         option(value=1, selected=config.kind === 1) default
                                         option(value=2, selected=config.kind === 2) listen
                                         option(value=3, selected=config.kind === 3) frontend
+                                        option(value=4, selected=config.kind === 4) backend
 
                                     a.btn.btn-sm.btn-success.slide-action.margin-10-right(role='button', title=slideDown)
                                         i.fa.fa-caret-down
@@ -53,12 +54,6 @@ block ContentBlock
 
 block ScriptsPluginBlock
 block ScriptsBlock
-    script(type='application/javascript').
-        var words = {
-            slideDown: '!{slideDown}',
-            slideUp: '!{slideUp}'
-        };
-
     include ./includes/slide-action
     include ../../../views/shared/_task
 
