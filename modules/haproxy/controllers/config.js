@@ -60,12 +60,22 @@ module.exports = (parent) => {
                     } else {
                         let i = configs.length;
                         while (i--) {
-                            configs[i].container = configs[i].container.map((item) => item.content).join('\n\n');
+                            configs[i].container = configs[i].container.map((item) => (item.kind > 0 ? '#' + item.meta.map((item) => `${item.token_name}: ${item.value}`).join(', ') + '\n' : '') + item.content).join('\n\n');
                         }
 
                         cb(null, {configs: configs, targets: list});
                     }
                 });
+            },
+            (data, cb) => {
+                moduleDB.HAProxySettingModel.find({}).exec((err, meta) => {
+                    if (err) {
+                        cb(err);
+                    } else {
+                        data.meta = meta;
+                        cb(null, data);
+                    }
+                })
             }
         ], (err, list) => {
             if (err) {
@@ -228,9 +238,17 @@ module.exports = (parent) => {
 
     core.logger.verbose(`\t\tGET -> ${prefix}/:target`);
     router.get('/:id', (req, res, next) => {
-        const content = parent.wordsList[controller][res.locals.lang]['overview'];
-        content.data = req.currentModel;
-        res.render('overview', content);
+
+        moduleDB.HAProxySettingModel.find({}).exec((err, meta) => {
+            if (err) {
+                next(err);
+            } else {
+                const content = parent.wordsList[controller][res.locals.lang]['overview'];
+                content.data = req.currentModel;
+                content.data.meta = meta;
+                res.render('overview', content);
+            }
+        });
     });
 
     core.logger.verbose(`\t\tPUT -> ${prefix}/:id`);

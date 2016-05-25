@@ -140,10 +140,22 @@ block ScriptsBlock
                 var kind = parseInt($elem.find('select[name="config-kind"] > option:selected').val());
                 var content = $elem.find('textarea[name="content"]').val();
 
+                var $metaList = $elem.find('.meta');
+                var meta = [];
+                if ($metaList.length) {
+                    $metaList.each(function () {
+                        meta.push({
+                            token_name: $(this).find('label').text(),
+                            value: $(this).find('input').val()
+                        });
+                    });
+                }
+
                 data.push({
                     name: name,
                     kind: kind,
-                    content: content
+                    content: content,
+                    meta: meta
                 });
             });
 

@@ -40,6 +40,11 @@ block ContentBlock
                                 .card-block(style='display: none;')
                                     pre
                                         textarea.form-control(name='content', rows='10', style='z-index: 1050;')= config.content
+                                    each meta in config.meta
+                                        .form-group.row.meta
+                                            label.col-xs-2.form-control-label= meta.token_name
+                                            .col-xs-10
+                                                input.form-control(name='value', type='text', value=meta.value)
                 .card-footer.text-center
                     a.btn.btn-danger.margin-10-right.delete-config(role='button', href='#delete-config')
                         i.fa.fa-refresh.fa-spin.hide(style='margin-right: 5px')
@@ -87,11 +92,23 @@ block ScriptsBlock
                     name = $elem.find('input[name="config-name"]').attr('placeholder');
                 }
 
+                var $metaList = $elem.find('.meta');
+                var meta = [];
+                if ($metaList.length) {
+                    $metaList.each(function () {
+                        meta.push({
+                            token_name: $(this).find('label').text(),
+                            value: $(this).find('input').val()
+                        });
+                    });
+                }
+
                 data.configs.push({
                     name: name,
                     status: parseInt($elem.find('input[name="status"]').val()),
                     content: $elem.find('textarea[name="content"]').val(),
-                    kind: parseInt($elem.find('select[name="config-kind"] > option:selected').val())
+                    kind: parseInt($elem.find('select[name="config-kind"] > option:selected').val()),
+                    meta: meta
                 });
             });
 

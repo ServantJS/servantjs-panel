@@ -20,3 +20,8 @@
             .card-block(style='display: none;')
                 pre
                     textarea.form-control(name='content', rows='10')
+                each meta in data.meta
+                    .form-group.row.meta
+                        label.col-xs-2.form-control-label= meta.token_name
+                        .col-xs-10
+                            input.form-control(name='value', type='text', placeholder=meta.description)
