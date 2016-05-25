@@ -89,14 +89,12 @@ module.exports = (parent) => {
         var email = req.body.email;
         var password = req.body.password;
         var remember = req.body.remember;
-        var redirect = req.body.redirect;
 
         db.UserModel.authorize(email, password, function (err, result) {
             if (err) {
                 next(err);
             } else if (!result) {
-                res.message('error', parent.wordsList['account'][res.locals.lang]['signin'].controllerMsg.incorrect);
-                res.redirect('/signin?r=' + (redirect || '/'));
+                res.json({ok: false, msg: parent.wordsList['account'][res.locals.lang]['signin'].controllerMsg.incorrect});
             } else {
                 if (remember) {
                     req.session.cookie.expires = false;
@@ -104,7 +102,7 @@ module.exports = (parent) => {
                 }
 
                 req.session.userId = result._id;
-                res.redirect(redirect);
+                res.json({ok: true});
             }
         });
     });
