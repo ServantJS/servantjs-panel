@@ -86,3 +86,7 @@ input:focus {
 .form-actions {
     padding-bottom: 40px;
 }
+
+.error-span {
+    color: #d9534f;
+}
