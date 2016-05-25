@@ -84,8 +84,8 @@ block ContentBlock
 
 block ScriptsPluginBlock
 block ScriptsBlock
-    script(src='/js/jquery.validate.min.js', type='application/javascript')
-    script(src='/js/form-validation.js', type='application/javascript')
+    include ../../../views/shared/_validate
+
     script(type='application/javascript').
 
         $(function () {
@@ -94,7 +94,7 @@ block ScriptsBlock
             var $createModal = $('#create-setting-modal');
             var $editModal = $('#edit-setting-modal');
 
-            validateModal($createModal,
+            validateModal(null, $createModal,
                     {
                         name: {
                             required: true,
@@ -104,9 +104,6 @@ block ScriptsBlock
                             required: true,
                             maxlength: 300
                         }
-                    },
-                    {
-                        //TODO add language support
                     },
                     function () {
                         var data = {
@@ -138,7 +135,7 @@ block ScriptsBlock
                     }
             );
 
-            validateModal($editModal,
+            validateModal(null, $editModal,
                     {
                         name: {
                             required: true,
@@ -148,9 +145,6 @@ block ScriptsBlock
                             required: true,
                             maxlength: 300
                         }
-                    },
-                    {
-                        //TODO add language support
                     },
                     function () {
                         var data = {
