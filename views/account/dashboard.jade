@@ -8,7 +8,7 @@ block ContentBlock
 
     .row
         .col-xs-6
-            - each server in data.servers
+            each server in data.servers
                 .row
                     .col-xs-12
                         .card
@@ -42,7 +42,7 @@ block ContentBlock
                                                 th= status
                                                 th= modules
                                         tbody
-                                            - each worker, index in server.workers
+                                            each worker, index in server.workers
                                                 tr.tr-vertical
                                                     td= index + 1
                                                     td= worker.server_name
@@ -55,7 +55,7 @@ block ContentBlock
                                                             span.label.label-danger error
                                                     td
                                                         ul.list-inline
-                                                            - each module in worker.modules
+                                                            each module in worker.modules
                                                                 li: span.label.label-info #{module}
         .col-xs-6
             .card
@@ -70,7 +70,7 @@ block ContentBlock
                                 th= tasksTable.columns.status
                                 th= tasksTable.columns.module
                         tbody
-                            - each task in data.tasks
+                            each task in data.tasks
                                 tr
                                     td: a(href='/tasks/' + task._id)=task.dt.toUTCString()
 
