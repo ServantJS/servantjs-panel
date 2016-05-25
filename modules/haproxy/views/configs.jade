@@ -10,7 +10,8 @@ block ContentBlock
         .col-xs-12
             .card
                 .card-header.text-center
-                    a.btn.btn-success.btn-sm(href='#create-config-modal', data-toggle='modal')= buttonsTxt.create
+                    a.btn.btn-success.btn-sm.margin-10-right(href='#create-config-modal', data-toggle='modal')= buttonsTxt.create
+                    a.btn.btn-success.btn-sm(href='#import-config-modal', data-toggle='modal')= importModal.importBtn
                 .card-block
                     #accordion(role='tablist', aria-multiselectable='true')
                         - each item, index in data.configs
@@ -58,6 +59,7 @@ block ContentBlock
                                             option(value=1) default
                                             option(value=2) listen
                                             option(value=3) frontend
+                                            option(value=4) backend
 
                                         a.btn.btn-sm.btn-success.slide-action.margin-10-right(role='button', title=slideDown)
                                             i.fa.fa-caret-down
@@ -67,7 +69,7 @@ block ContentBlock
                                         pre
                                             textarea.form-control(name='content', rows='10')
                         .form-group.row
-                            label.col-md-4.form-control-label #{modal.fields.target}
+                            label.col-md-4.form-control-label= modal.fields.target
                             .col-md-8
                                 .block
                                     select.form-control(name='target-id', style='max-width: 300px')
@@ -81,22 +83,44 @@ block ContentBlock
                             i.fa.fa-refresh.fa-spin.hide(style='margin-right: 5px')
                             | #{buttonsTxt.create}
 
+    #import-config-modal.modal.fade(tabindex='-1', role='dialog', aria-hidden='true')
+        .modal-dialog
+            .modal-content
+                form#import-config-form(method='POST', action='/haproxy/configs/import', autocomplete='off', enctype='multipart/form-data')
+                    input(type='hidden', name='_csrf', value='#{csrfToken}')
+                    .modal-header
+                        button.close(type='button', data-dismiss='modal', aria-label='Close')
+                            span(aria-hidden='true') &times;
+                        h4.modal-title= importModal.title
+                    .modal-body.modal-align
+                        .form-group.row
+                            label.col-xs-2.form-control-label= importModal.fields.file
+                            .col-xs-10
+                                input.form-control(type='file', name='config')
+                        .form-group.row
+                            label.col-xs-2.form-control-label= modal.fields.target
+                            .col-xs-10
+                                select.form-control(name='targetId')
+                                    - each target in data.targets
+                                        option(value=target.sys_id)= target.name || target.server_name
+                    .modal-footer
+                        button.btn.btn-default(type='button', data-dismiss='modal')= buttonsTxt.close
+                        button.btn.btn-primary.import-config(type='submit')
+                            i.fa.fa-refresh.fa-spin.hide(style='margin-right: 5px')
+                            | #{importModal.importBtn}
+
     include ./includes/config-template
 
 block ScriptsPluginBlock
 block ScriptsBlock
-    script(type='application/javascript').
-        var words = {
-            slideDown: '!{slideDown}',
-            slideUp: '!{slideUp}'
-        };
-
     include  ./includes/slide-action
     include ../../../views/shared/_task
+    include ../../../views/shared/_validate
 
     script(type='application/javascript').
 
-        function onModalSubmit() {
+        function onModalSubmit(e) {
+            e.preventDefault();
             var data = [];
 
             var modal = $('#create-config-modal');
@@ -104,7 +128,6 @@ block ScriptsBlock
 
             modal.find('.configs-scope > div').each(function () {
                 var $elem = $(this);
-
                 var name = $elem.find('input[name="config-name"]').val();
 
                 if (!name.length) {
@@ -206,14 +229,53 @@ block ScriptsBlock
             });
         }
 
+        function onImport(form) {
+            e.preventDefault();
+
+            var $form = $(this);
+            var data = new FormData(this);
+
+            $form.find('.import-config').addClass('disabled').find('i').removeClass('hide');
+
+            $.ajax({
+                url: '/haproxy/configs/import',
+                type: 'POST',
+                data: data,
+                cache: false,
+                contentType: false,
+                headers: {
+                    'x-xsrf-token': '!{csrfToken}'
+                },
+                dataType: 'json',
+                processData: false,
+                error: function (XMLHttpRequest, textStatus, errorThrow) {
+                    alert(XMLHttpRequest + '\n' + textStatus + '\n' + errorThrow);
+                },
+                success: function (result) {
+                    if (result.ok) {
+                        toastr.info(taskWords.onCreateSuccess);
+
+                        setTimeout(function () {
+                            waitTask(result.data, function (status) {
+                                $form.find('.import-config').removeClass('disabled').find('i').addClass('hide');
+
+                                if (status === 0) {
+                                    $form.closest('.modal').modal('hide');
+                                    location.reload();
+                                }
+                            });
+                        }, taskCheckInterval);
+
+                    } else {
+                        toastr.error(taskWords.onCreateError);
+                        $form.find('.import-config').removeClass('disabled').find('i').addClass('hide');
+                    }
+                }
+            });
+        }
+
         $(function () {
             setActiveLink('#haproxy', '#hap-configs-sub');
-
-            $('#create-config-form').on('submit', function (e) {
-                e.preventDefault();
-
-                onModalSubmit();
-            });
 
             $('#create-config-modal').on('show.bs.modal', function (e) {
                 var $global = $('.configs-scope > div').first().detach();
@@ -225,5 +287,54 @@ block ScriptsBlock
             });
 
             $('.delete-config').on('click', onDeleteClick);
+            $('#create-config-form').on('submit', onModalSubmit);
+            //$('#import-config-form').on('submit', onImport);
+
+            var $form = $('#import-config-form');
+            validateForm(null, $form, {
+                config: {
+                    required: true
+                }
+            }, function () {
+                var data = new FormData($form[0]);
+
+                $form.find('.import-config').addClass('disabled').find('i').removeClass('hide');
+
+                $.ajax({
+                    url: '/haproxy/configs/import',
+                    type: 'POST',
+                    data: data,
+                    cache: false,
+                    contentType: false,
+                    headers: {
+                        'x-xsrf-token': '!{csrfToken}'
+                    },
+                    dataType: 'json',
+                    processData: false,
+                    error: function (XMLHttpRequest, textStatus, errorThrow) {
+                        alert(XMLHttpRequest + '\n' + textStatus + '\n' + errorThrow);
+                    },
+                    success: function (result) {
+                        if (result.ok) {
+                            toastr.info(taskWords.onCreateSuccess);
+
+                            setTimeout(function () {
+                                waitTask(result.data, function (status) {
+                                    $form.find('.import-config').removeClass('disabled').find('i').addClass('hide');
+
+                                    if (status === 0) {
+                                        $form.closest('.modal').modal('hide');
+                                        location.reload();
+                                    }
+                                });
+                            }, taskCheckInterval);
+
+                        } else {
+                            toastr.error(taskWords.onCreateError);
+                            $form.find('.import-config').removeClass('disabled').find('i').addClass('hide');
+                        }
+                    }
+                });
+            });
         });
 
