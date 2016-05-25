@@ -6,14 +6,16 @@ function resetValidation(form) {
         .find('.form-control-danger').removeClass('form-control-danger');
 }
 
-function validateForm(form, rules, messages, callback) {
+function validateForm(options, form, rules, callback) {
+    options = options || {};
+    var place = options.errorPlace || 'div';
+    
     form.validate({
         errorElement: 'span',
         errorClass: 'error-span',
         focusInvalid: false,
 
         rules: rules,
-        messages: messages,
 
         highlight: function (element) {
             $(element)
@@ -31,7 +33,7 @@ function validateForm(form, rules, messages, callback) {
         },
 
         errorPlacement: function (error, element) {
-            element.closest('div').append(error);
+            element.closest(place).append(error);
         },
 
         submitHandler: function (form) {
@@ -50,8 +52,8 @@ function validateForm(form, rules, messages, callback) {
     });
 }
 
-function validateModal(modal, rules, messages, callback) {
-    validateForm(modal.find('form'), rules, messages, callback);
+function validateModal(options, modal, rules, messages, callback) {
+    validateForm(options, modal.find('form'), rules, messages, callback);
 
     modal.on('.show.bs.modal', function () {
         resetValidation('#edit-setting-form');
