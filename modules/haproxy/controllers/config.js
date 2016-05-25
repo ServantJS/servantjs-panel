@@ -60,7 +60,7 @@ module.exports = (parent) => {
                     } else {
                         let i = configs.length;
                         while (i--) {
-                            configs[i].container = configs[i].container.map((item) => (item.kind > 0 ? '#' + item.meta.map((item) => `${item.token_name}: ${item.value}`).join(', ') + '\n' : '') + item.content).join('\n\n');
+                            configs[i].container = configs[i].container.map((item) => (item.kind !== 0 && item.kind !== 1 ? '#' + item.meta.map((item) => `${item.token_name}: ${item.value}`).join(', ') + '\n' : '') + item.content).join('\n\n');
                         }
 
                         cb(null, {configs: configs, targets: list});
