@@ -118,6 +118,9 @@ block ScriptsBlock
     include ../../../views/shared/_validate
 
     script(type='application/javascript').
+        var words = {
+            empty: '!{emptyBlock}'
+        };
 
         function onModalSubmit(e) {
             e.preventDefault();
@@ -140,9 +143,16 @@ block ScriptsBlock
                 var kind = parseInt($elem.find('select[name="config-kind"] > option:selected').val());
                 var content = $elem.find('textarea[name="content"]').val();
 
+                if (!content.length) {
+                    $elem.find('textarea[name="content"]').parent().addClass('has-danger');
+                    isError = true;
+                } else {
+                    $elem.find('textarea[name="content"]').parent().removeClass('has-danger');
+                }
+
                 var $metaList = $elem.find('.meta');
                 var meta = [];
-                if ($metaList.length) {
+                if (kind > 1 && $metaList.length) {
                     $metaList.each(function () {
                         meta.push({
                             token_name: $(this).find('label').text(),
@@ -160,10 +170,11 @@ block ScriptsBlock
             });
 
             if (isError) {
+                toastr.warning(words.empty);
                 return;
             }
 
-            modal.find('.create-config').addClass('disabled').find('i').removeClass('hide');
+            modal.find('.create-config').attr('disabled', true).find('i').removeClass('hide');
 
             $.ajax({
                 url: '/haproxy/configs',
@@ -184,7 +195,7 @@ block ScriptsBlock
 
                         setTimeout(function () {
                             waitTask(result.data, function (status) {
-                                modal.find('.create-config').removeClass('disabled').find('i').addClass('hide');
+                                modal.find('.create-config').attr('disabled', false).find('i').addClass('hide');
 
                                 if (status === 0) {
                                     modal.modal('hide');
@@ -195,7 +206,7 @@ block ScriptsBlock
 
                     } else {
                         toastr.error(taskWords.onCreateError);
-                        modal.find('.create-config').removeClass('disabled').find('i').addClass('hide');
+                        modal.find('.create-config').attr('disabled', false).find('i').addClass('hide');
                     }
                 }
             });
@@ -247,7 +258,7 @@ block ScriptsBlock
             var $form = $(this);
             var data = new FormData(this);
 
-            $form.find('.import-config').addClass('disabled').find('i').removeClass('hide');
+            $form.find('.import-config').attr('disabled', true).find('i').removeClass('hide');
 
             $.ajax({
                 url: '/haproxy/configs/import',
@@ -269,7 +280,7 @@ block ScriptsBlock
 
                         setTimeout(function () {
                             waitTask(result.data, function (status) {
-                                $form.find('.import-config').removeClass('disabled').find('i').addClass('hide');
+                                $form.find('.import-config').attr('disabled', false).find('i').addClass('hide');
 
                                 if (status === 0) {
                                     $form.closest('.modal').modal('hide');
@@ -280,7 +291,7 @@ block ScriptsBlock
 
                     } else {
                         toastr.error(taskWords.onCreateError);
-                        $form.find('.import-config').removeClass('disabled').find('i').addClass('hide');
+                        $form.find('.import-config').attr('disabled', false).find('i').addClass('hide');
                     }
                 }
             });
@@ -310,7 +321,7 @@ block ScriptsBlock
             }, function () {
                 var data = new FormData($form[0]);
 
-                $form.find('.import-config').addClass('disabled').find('i').removeClass('hide');
+                $form.find('.import-config').attr('disabled', true).find('i').removeClass('hide');
 
                 $.ajax({
                     url: '/haproxy/configs/import',
@@ -332,7 +343,7 @@ block ScriptsBlock
 
                             setTimeout(function () {
                                 waitTask(result.data, function (status) {
-                                    $form.find('.import-config').removeClass('disabled').find('i').addClass('hide');
+                                    $form.find('.import-config').attr('disabled', false).find('i').addClass('hide');
 
                                     if (status === 0) {
                                         $form.closest('.modal').modal('hide');
@@ -343,7 +354,7 @@ block ScriptsBlock
 
                         } else {
                             toastr.error(taskWords.onCreateError);
-                            $form.find('.import-config').removeClass('disabled').find('i').addClass('hide');
+                            $form.find('.import-config').attr('disabled', false).find('i').addClass('hide');
                         }
                     }
                 });

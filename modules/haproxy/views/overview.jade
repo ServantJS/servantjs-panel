@@ -63,6 +63,9 @@ block ScriptsBlock
     include ../../../views/shared/_task
 
     script(type='application/javascript').
+        var words = {
+            empty: '!{emptyBlock}'
+        };
 
         function onSave(e) {
             e.preventDefault();
@@ -92,9 +95,19 @@ block ScriptsBlock
                     name = $elem.find('input[name="config-name"]').attr('placeholder');
                 }
 
+                var content = $elem.find('textarea[name="content"]').val();
+                var kind = parseInt($elem.find('select[name="config-kind"] > option:selected').val());
+                if (!content.length) {
+                    $elem.find('textarea[name="content"]').parent().addClass('has-danger');
+                    isError = true;
+                } else {
+                    $elem.find('textarea[name="content"]').parent().removeClass('has-danger');
+                }
+
+
                 var $metaList = $elem.find('.meta');
                 var meta = [];
-                if ($metaList.length) {
+                if (kind > 1 && $metaList.length) {
                     $metaList.each(function () {
                         meta.push({
                             token_name: $(this).find('label').text(),
@@ -106,13 +119,14 @@ block ScriptsBlock
                 data.configs.push({
                     name: name,
                     status: parseInt($elem.find('input[name="status"]').val()),
-                    content: $elem.find('textarea[name="content"]').val(),
-                    kind: parseInt($elem.find('select[name="config-kind"] > option:selected').val()),
+                    content: content,
+                    kind: kind,
                     meta: meta
                 });
             });
 
             if (isError) {
+                toastr.warning(words.empty);
                 return;
             }
 

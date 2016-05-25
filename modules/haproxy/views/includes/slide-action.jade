@@ -165,7 +165,7 @@ script(type='application/javascript').
                     .val($elem.data('status'));
     }
 
-    $(document).ready(function () {
+    $(function () {
 
         $('.slide-action').on('click', onSlideAction);
 
@@ -179,6 +179,16 @@ script(type='application/javascript').
 
             $elem.find('.pause-config').on('click', onPauseClick);
             $elem.find('.resume-config').on('click', onResumeClick);
+
+            $elem.find('select').on('change', function (e) {
+                var value = $('option:selected', this).val();
+
+                if (value == 1) {
+                    $elem.find('.meta').addClass('hide');
+                } else {
+                    $elem.find('.meta').removeClass('hide');
+                }
+            });
 
             $('.configs-scope').append($elem);
 
