@@ -16,7 +16,9 @@ exports.ru = {
 
         configName: 'Наименование',
         addBlock: 'Добавить блок',
-        
+
+        emptyBlock: 'Для одного из блоков отсутствует наименование или отсутствует содержимое контента.',
+
         modal: {
             title: 'Создать новый конфигурационный файл',
             fields: {
@@ -47,6 +49,8 @@ exports.ru = {
         
         configName: 'Наименование',
         addBlock: 'Добавить блок',
+
+        emptyBlock: 'Для одного из блоков отсутствует наименование или отсутствует содержимое контента.',
 
         actions: {
             pause: 'Выключить',
@@ -104,7 +108,9 @@ exports.us = {
 
         configName: 'Name',
         addBlock: 'Add a block',
-        
+
+        emptyBlock: 'For one of the blocks is no name or not the contents of the content.',
+
         modal: {
             title: 'Create a new config file',
             fields: {
@@ -134,6 +140,8 @@ exports.us = {
         
         configName: 'Name',
         addBlock: 'Add a block',
+
+        emptyBlock: 'For one of the blocks is no name or not the contents of the content.',
 
         actions: {
             pause: 'Turn off',
