@@ -23,9 +23,6 @@ exports.ru = {
         download: 'Скачать'
     },
 
-    allNotifications: 'Посмотреть все уведомления',
-    lastNotifications: 'Список последних операций внутри модуля',
-
     dateTime: {
         seconds: 'Только что',
         minutes: {
@@ -89,44 +86,6 @@ exports.ru = {
         }
     },
 
-    taskModal: {
-        title: 'Информация по последней операции для ',
-        date: 'Дата',
-        user: 'Пользователь',
-        cmd: 'Команда',
-        status: 'Статус',
-        report: 'Отчет',
-        errors: 'Ошибки'
-    },
-
-    breadcrumb: {
-        home: 'Домой',
-        users: 'Пользователи',
-        groups: 'Группы',
-        roles: 'Роли',
-        borders: 'Бордеры',
-        secureips: 'Защищенные IP',
-        tunnels: 'Тоннели',
-        interfaces: 'Интерфейсы',
-        cc: 'Командный центр',
-        domains: 'Домены',
-        templates: 'Шаблоны',
-        hosting: 'Хостинг',
-        voxility: 'Voxility',
-        nscrub: 'NSCrub',
-        nginxDomains: 'Домены NGINX',
-        nginxRequests: 'Активность NGINX',
-        listenIP: 'Список IP',
-        lb: 'Балансировка нагрузки',
-        account: 'Учетная запись',
-        charts: 'Графики',
-        cisco: 'Cisco',
-        devices: 'Устройства',
-        tunnelIp: 'Тоннельные IP',
-        securePool: 'Группы защищенных IP',
-        secureNetwork: 'Защищенные сети'
-    },
-
     home: {
         menu: 'Приборная панель',
         index: ''
@@ -152,15 +111,37 @@ exports.ru = {
         groups: 'Группы'
     },
 
-    ajax: {
-        notFound: 'Запрошенный адрес не найден',
-        serverError: 'Упс! Произошла ошибка сервера',
+    task: {
+        created: 'Задание успешно отправлено в очередь.',
+        createError: 'Произошла внутренняя ошибка сервера при отправке задания. Обратитесь к администратору.',
+        success: 'Задание успешно выполнено. <a href="/tasks/$id">Открыть задание.</a>',
+        error: 'Задание завершилось с ошибкой. <a href="/tasks/$id">Открыть задание.</a>',
 
         title: {
             success: 'Успешно',
             warning: 'Предупреждение',
             danger: 'Ошибка'
         }
+    },
+
+    validation: {
+        required: "Поле обязательное для ввода.",
+        remote: "Исправьте это поле.",
+        email: "Введите корректный email адрес.",
+        url: "Введите корректный URL адрес.",
+        date: "Введите корректную дату.",
+        dateISO: "Введите корректную дату (ISO формат).",
+        number: "Введите число.",
+        digits: "Введите целое число.",
+        creditcard: "Введите корректный номер карты.",
+        equalTo: "Введите тоже самое значение еще раз",
+        accept: "Введите значение с допустимым расширением.",
+        maxlength: "Введите не более чем {0} символов.",
+        minlength: "Введите не менее чем {0} символов.",
+        rangelength: "Введите значение, содержащие от {0} до {1} символов.",
+        range: "Введите значение в диапозоне от {0} до {1}.",
+        max: "Введите значение, которое меньше или равно {0}.",
+        min: "Введите значение, которое больше или равно {0}."
     }
 };
 
@@ -188,9 +169,6 @@ exports.us = {
         change: 'Change',
         download: 'Download'
     },
-
-    allNotifications: 'See all notifications',
-    lastNotifications: 'The list of last operations inside',
 
     dateTime: {
         seconds: 'Just now',
@@ -242,23 +220,6 @@ exports.us = {
         }
     },
 
-    taskModal: {
-        title: 'The information about last task of ',
-        date: 'Date',
-        user: 'User',
-        cmd: 'Command',
-        status: 'Status',
-        report: 'Report',
-        errors: 'Errors'
-    },
-
-    breadcrumb: {
-        home: 'Home',
-        users: 'Users',
-        cc: 'Command center',
-        account: 'Account'
-    },
-
     home: {
         menu: 'Dashboard',
         index: ''
@@ -283,14 +244,36 @@ exports.us = {
         groups: 'Groups'
     },
 
-    ajax: {
-        notFound: 'Request not found',
-        serverError: 'Oops! A server error occurred',
+    task: {
+        created: 'Task has been successfully sent to the queue.',
+        createError: 'An internal server error occurred while sending a task. Contact your administrator.',
+        success: 'Task completed successfully. <a href="/tasks/$id">View task.</a>',
+        error: 'Task failed. <a href="/tasks/$id">View task.</a>',
 
         title: {
             success: 'Success',
             warning: 'Warning',
             danger: 'Error'
         }
+    },
+
+    validation: {
+        required: 'This field is required.',
+        remote: "Please fix this field.",
+        email: "Please enter a valid email address.",
+        url: "Please enter a valid URL.",
+        date: "Please enter a valid date.",
+        dateISO: "Please enter a valid date (ISO).",
+        number: "Please enter a valid number.",
+        digits: "Please enter only digits.",
+        creditcard: "Please enter a valid credit card number.",
+        equalTo: "Please enter the same value again.",
+        accept: "Please enter a value with a valid extension.",
+        maxlength: "Please enter no more than {0} characters.",
+        minlength: "Please enter at least {0} characters.",
+        rangelength: "Please enter a value between {0} and {1} characters long.",
+        range: "Please enter a value between {0} and {1}.",
+        max: "Please enter a value less than or equal to {0}.",
+        min: "Please enter a value greater than or equal to {0}."
     }
 };
