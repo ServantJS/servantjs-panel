@@ -5,6 +5,8 @@ const express  = require('express');
 const path  = require('path');
 
 const db = require('../../../lib/db');
+
+const _ = require('../../common');
 const checkIdOnRequest = require('../../common').checkIdOnRequest;
 const moduleDB = require('../db');
 
@@ -39,6 +41,14 @@ module.exports = (parent) => {
         let name = req.body.name;
         let desc = req.body.desc;
 
+        if (!_.isStringParam(req.body, 'name')) {
+            return next(new Error('Missing "name" property'));
+        }
+
+        if (!_.isStringParam(req.body, 'desc')) {
+            return next(new Error('Missing "desc" property'));
+        }
+
         var model = new moduleDB.HAProxySettingModel({
             token_name: name,
             description: desc
@@ -62,6 +72,14 @@ module.exports = (parent) => {
     router.put('/:id', (req, res, next) => {
         let name = req.body.name;
         let desc = req.body.desc;
+
+        if (!_.isStringParam(req.body, 'name')) {
+            return next(new Error('Missing "name" property'));
+        }
+
+        if (!_.isStringParam(req.body, 'desc')) {
+            return next(new Error('Missing "desc" property'));
+        }
 
         req.currentModel.token_name = name;
         req.currentModel.description = desc;
