@@ -71,7 +71,7 @@ block ScriptsBlock
             e.preventDefault();
 
             var data = {
-                _csrf: $('input[name="_csrf"]').val(),
+                _csrf: _csrf,
                 configs: []
             };
 
@@ -167,7 +167,7 @@ block ScriptsBlock
             }
 
             var data = {
-                _csrf: $('input[name="_csrf"]').val()
+                _csrf: _csrf
             };
 
             $('.delete-config').addClass('disabled').find('i').removeClass('hide');
