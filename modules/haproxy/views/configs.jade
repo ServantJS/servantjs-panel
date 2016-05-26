@@ -181,7 +181,7 @@ block ScriptsBlock
                 data: JSON.stringify({
                     _csrf: _csrf,
                     configs: data,
-                    targetId: modal.find('select[name="target-id"] > option:selected').val()}),
+                    targetId: modal.find('select[name="targetId"] > option:selected').val()}),
                 dataType: 'json',
                 cache: false,
                 error: function (XMLHttpRequest, textStatus, errorThrow) {
@@ -263,10 +263,9 @@ block ScriptsBlock
             });
 
             $('.delete-config').on('click', onDeleteClick);
-            $('#create-config-form').on('submit', onModalSubmit);
+            //$('#create-config-form').on('submit', onModalSubmit);
 
-            var $formCreate = $('#create-config-form');
-            validateForm(null, $formCreate, {
+            validateForm(null, $('#create-config-form'), {
                 targetId: {
                     required: true
                 }
