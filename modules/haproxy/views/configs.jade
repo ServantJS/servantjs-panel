@@ -170,8 +170,7 @@ block ScriptsBlock
             });
 
             if (isError) {
-                toastr.warning(words.empty);
-                return;
+                return toastr.warning(words.empty);
             }
 
             modal.find('.create-config').attr('disabled', true).find('i').removeClass('hide');
@@ -252,51 +251,6 @@ block ScriptsBlock
             });
         }
 
-        function onImport(form) {
-            e.preventDefault();
-
-            var $form = $(this);
-            var data = new FormData(this);
-
-            $form.find('.import-config').attr('disabled', true).find('i').removeClass('hide');
-
-            $.ajax({
-                url: '/haproxy/configs/import',
-                type: 'POST',
-                data: data,
-                cache: false,
-                contentType: false,
-                headers: {
-                    'x-xsrf-token': _csrf
-                },
-                dataType: 'json',
-                processData: false,
-                error: function (XMLHttpRequest, textStatus, errorThrow) {
-                    alert(XMLHttpRequest + '\n' + textStatus + '\n' + errorThrow);
-                },
-                success: function (result) {
-                    if (result.ok) {
-                        toastr.info(taskWords.onCreateSuccess);
-
-                        setTimeout(function () {
-                            waitTask(result.data, function (status) {
-                                $form.find('.import-config').attr('disabled', false).find('i').addClass('hide');
-
-                                if (status === 0) {
-                                    $form.closest('.modal').modal('hide');
-                                    location.reload();
-                                }
-                            });
-                        }, taskCheckInterval);
-
-                    } else {
-                        toastr.error(taskWords.onCreateError);
-                        $form.find('.import-config').attr('disabled', false).find('i').addClass('hide');
-                    }
-                }
-            });
-        }
-
         $(function () {
             setActiveLink('#haproxy', '#hap-configs-sub');
 
@@ -311,7 +265,6 @@ block ScriptsBlock
 
             $('.delete-config').on('click', onDeleteClick);
             $('#create-config-form').on('submit', onModalSubmit);
-            //$('#import-config-form').on('submit', onImport);
 
             var $form = $('#import-config-form');
             validateForm(null, $form, {
