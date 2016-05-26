@@ -6,6 +6,7 @@ const path = require('path');
 const async = require('async');
 
 const db = require('../lib/db');
+const _ = require('../modules/common');
 const checkIdOnRequest = require('../modules/common').checkIdOnRequest;
 
 const app = express();
@@ -94,13 +95,19 @@ module.exports = (parent) => {
         let server = req.body.server;
         let agents = req.body.agents;
 
+        if (!_.isStringParam(req.body, 'name')) {
+            return next(new Error('Missing "name" property'));
+        }
+
+        if (!_.isStringParam(req.body, 'server')) {
+            return next(new Error('Missing "server" property'));
+        }
+        
+        if (!_.isNotEmptyArrayParam(req.body, 'agents')) {
+            return next(new Error('Missing "agents" property'));
+        }
+        
         try {
-            if (!(name && name.length)) {
-                const err = new Error('Missing name param');
-                return next(err);
-            }
-
-
             server = mongoose.Types.ObjectId(server);
             agents = agents.map((item) => mongoose.Types.ObjectId(item));
 
