@@ -72,7 +72,7 @@ block ContentBlock
                             label.col-md-4.form-control-label= modal.fields.target
                             .col-md-8
                                 .block
-                                    select.form-control(name='target-id', style='max-width: 300px')
+                                    select.form-control(name='targetId', style='max-width: 300px')
                                         - each target in data.targets
                                             option(value=target.sys_id)= target.name || target.server_name
 
@@ -122,8 +122,7 @@ block ScriptsBlock
             empty: '!{emptyBlock}'
         };
 
-        function onModalSubmit(e) {
-            e.preventDefault();
+        function onModalSubmit() {
             var data = [];
 
             var modal = $('#create-config-modal');
@@ -266,9 +265,19 @@ block ScriptsBlock
             $('.delete-config').on('click', onDeleteClick);
             $('#create-config-form').on('submit', onModalSubmit);
 
+            var $formCreate = $('#create-config-form');
+            validateForm(null, $formCreate, {
+                targetId: {
+                    required: true
+                }
+            }, onModalSubmit);
+
             var $form = $('#import-config-form');
             validateForm(null, $form, {
                 config: {
+                    required: true
+                },
+                targetId: {
                     required: true
                 }
             }, function () {
