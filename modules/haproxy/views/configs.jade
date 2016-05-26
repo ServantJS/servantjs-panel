@@ -181,7 +181,7 @@ block ScriptsBlock
                 type: 'POST',
                 contentType: 'application/json',
                 data: JSON.stringify({
-                    _csrf: modal.find('input[name="_csrf"]').val(),
+                    _csrf: _csrf,
                     configs: data,
                     targetId: modal.find('select[name="target-id"] > option:selected').val()}),
                 dataType: 'json',
@@ -226,7 +226,7 @@ block ScriptsBlock
                 url: $(this).attr('href'),
                 type: 'DELETE',
                 contentType: 'application/json',
-                data: JSON.stringify({_csrf: $('input[name="_csrf"]').val()}),
+                data: JSON.stringify({_csrf: _csrf}),
                 dataType: 'json',
                 cache: false,
                 error: function (XMLHttpRequest, textStatus, errorThrow) {
@@ -267,7 +267,7 @@ block ScriptsBlock
                 cache: false,
                 contentType: false,
                 headers: {
-                    'x-xsrf-token': '!{csrfToken}'
+                    'x-xsrf-token': _csrf
                 },
                 dataType: 'json',
                 processData: false,
@@ -330,7 +330,7 @@ block ScriptsBlock
                     cache: false,
                     contentType: false,
                     headers: {
-                        'x-xsrf-token': '!{csrfToken}'
+                        'x-xsrf-token': _csrf
                     },
                     dataType: 'json',
                     processData: false,
