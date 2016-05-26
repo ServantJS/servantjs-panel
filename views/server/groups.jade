@@ -52,19 +52,19 @@ block ContentBlock
                         h4.modal-title= modal.title
                     .modal-body.modal-align
                         .form-group.row
-                            label.col-md-4.form-control-label #{modal.fields.name}
-                            .col-md-8
+                            label.col-xs-4.form-control-label #{modal.fields.name}
+                            .col-xs-8
                                 .block
                                     input.form-control(name='name', placeholder='', type='text')
                         .form-group.row
-                            label.col-md-4.form-control-label #{modal.fields.server}
-                            .col-md-8
+                            label.col-xs-4.form-control-label #{modal.fields.server}
+                            .col-xs-8
                                 select.form-control(name='server')
                                     - each server in data.servers
                                         option(value=server._id)= server.server_name
                         .form-group.row
-                            label.col-md-4.form-control-label #{modal.fields.agents}
-                            .col-md-8
+                            label.col-xs-4.form-control-label #{modal.fields.agents}
+                            .col-xs-8
                                 - each worker in data.workers
                                     .checkbox
                                         label
@@ -80,33 +80,48 @@ block ContentBlock
 
 block ScriptsPluginBlock
 block ScriptsBlock
+    include ../shared/_validate
     script(type='application/javascript').
+        var words = {
+            empty: '!{emptyAgents}'
+        };
+
         $(function () {
             setActiveLink('#server', '#server-groups-sub');
 
-            $('#create-group-modal').on('submit', function (e) {
-                e.preventDefault();
+            var $createModal = $('#create-group-modal');
 
-                var $elem = $(this);
-
-                $elem.find('button[type="submit"]').attr('disabled', true);
-
-                var name = $elem.find('input[name="name"]').val();
-                var server = $elem.find('select[name="server"] > option:selected').val();
+            validateModal(null, $createModal, {
+                name: {
+                    required: true,
+                    maxlength: 100
+                },
+                server: {
+                    required: true
+                }
+            }, function () {
+                var name = $('input[name="name"]', $createModal).val();
+                var server = $('select[name="server"] > option:selected', $createModal).val();
                 var agents = [];
 
-                $elem.find('input[name="worker"]').each(function () {
+                $('input[name="worker"]', $createModal).each(function () {
                     if (this.checked) {
                         agents.push($(this).parent().find('input[name="worker-id"]').val());
                     }
                 });
+
+                if (!agents.length) {
+                    return toastr.warning(words.empty);
+                }
+
+                $('button[type="submit"]', $createModal).attr('disabled', true);
 
                 $.ajax({
                     url: '/servers/groups',
                     type: 'POST',
                     contentType: 'application/json',
                     data: JSON.stringify({
-                        _csrf: $elem.find('input[name="_csrf"]').val(),
+                        _csrf: _csrf,
                         name: name,
                         server: server,
                         agents: agents
@@ -121,7 +136,7 @@ block ScriptsBlock
                             location.reload();
                         } else {
                             toastr.error(result.msg);
-                            $elem.find('button[type="submit"]').attr('disabled', false);
+                            $('button[type="submit"]', $createModal).attr('disabled', false);
                         }
                     }
                 });
@@ -142,7 +157,7 @@ block ScriptsBlock
                     url: $elem.attr('href'),
                     type: 'DELETE',
                     contentType: 'application/json',
-                    data: JSON.stringify({_csrf: $('input[name="_csrf"]').val()}),
+                    data: JSON.stringify({_csrf: _csrf}),
                     dataType: 'json',
                     cache: false,
                     error: function (XMLHttpRequest, textStatus, errorThrow) {
