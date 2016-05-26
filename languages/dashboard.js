@@ -3,7 +3,7 @@ exports.ru = {
         title: 'Приборная панель',
         pageTitle: 'Приборная панель',
 
-        serverInfoTitle: 'информация',
+        serverInfoTitle: 'Сервер',
         lastTasksTitle: 'Последние задания',
 
         host: 'Хост',
@@ -29,7 +29,7 @@ exports.us = {
         title: 'Dashboard',
         pageTitle: 'Dashboard',
 
-        serverInfoTitle: 'information',
+        serverInfoTitle: 'Server',
         lastTasksTitle: 'Latest tasks',
 
         host: 'Host',

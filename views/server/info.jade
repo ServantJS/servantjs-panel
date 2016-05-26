@@ -6,7 +6,13 @@ block ContentBlock
         .col-xs-12
             h3.page-title #{pageTitle}
     .row
-        - each server in data
+        if !data.length
+            .col-xs-12
+                .alert.alert-warning(role='alert')
+                    strong= warning
+                    | &nbsp;#{empty}
+
+        each server in data
             .col-xs-12
                 .card
                     .card-header
@@ -57,7 +63,7 @@ block ContentBlock
                                                 else if worker.status == 3
                                                     span.label.label-danger error
                                             td
-                                                ul.list-inline
+                                                ul.list-inline(style='margin-bottom: 0')
                                                     - each module in worker.modules
                                                         li: span.label.label-info #{module}
 

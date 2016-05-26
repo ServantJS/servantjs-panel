@@ -3,6 +3,9 @@ exports.ru = {
         title: 'Информация о серверах',
         pageTitle: 'Информация о серверах',
 
+        warning: 'Внимание!',
+        empty: 'В данной системе не найден ни один сервер.',
+
         dt: 'Дата',
         status: 'Статус',
         ip: 'IP',
@@ -45,6 +48,9 @@ exports.us = {
     info: {
         title: 'Servers info',
         pageTitle: 'Servers info',
+
+        warning: 'Warning!',
+        empty: 'It does not match any server in the system.',
 
         dt: 'Date',
         status: 'Status',

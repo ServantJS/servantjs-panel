@@ -7,87 +7,161 @@ block ContentBlock
             h3.page-title= pageTitle
 
     .row
-        .col-xs-6
-            each server in data.servers
-                .row
-                    .col-xs-12
-                        .card
-                            .card-header
-                                h4 "#{server.server_name}" #{serverInfoTitle}
-                            .card-block
-                                p
-                                    b #{host}:&nbsp;
-                                    span #{server.ip}:#{server.port}
-                                p
-                                    b #{status}:&nbsp;
-                                    if server.status == -1
-                                        span.label.label-info uninitialized
-                                    else if server.status == 0
-                                        span.label.label-info initialized
-                                    else if server.status == 1
-                                        span.label.label-success running
-                                    else if server.status == 2
-                                        span.label.label-warning stopped
-                                    else if server.status == 3
-                                        span.label.label-danger error
-                                    | &nbsp;
-                                    span= server.dt.toUTCString()
-                                .workers-scope
-                                    p: b #{agents}:
-                                    table.table
-                                        thead
-                                            tr
-                                                th #
-                                                th= serverName
-                                                th= status
-                                                th= modules
-                                        tbody
-                                            each worker, index in server.workers
-                                                tr.tr-vertical
-                                                    td= index + 1
-                                                    td= worker.server_name
-                                                    td
-                                                        if worker.status == 1
-                                                            span.label.label-success running
-                                                        else if worker.status == 2
-                                                            span.label.label-warning stopped
-                                                        else if worker.status == 3
-                                                            span.label.label-danger error
-                                                    td
-                                                        ul.list-inline
-                                                            each module in worker.modules
-                                                                li: span.label.label-info #{module}
+        if data.servers
+            .col-xs-6
+                each server in data.servers
+                    .row
+                        .col-xs-12
+                            .card
+                                .card-header
+                                    h4 #{serverInfoTitle} "#{server.server_name}"
+                                .card-block
+                                    p
+                                        b #{host}:&nbsp;
+                                        span #{server.ip}:#{server.port}
+                                    p
+                                        b #{status}:&nbsp;
+                                        if server.status == -1
+                                            span.label.label-info uninitialized
+                                        else if server.status == 0
+                                            span.label.label-info initialized
+                                        else if server.status == 1
+                                            span.label.label-success running
+                                        else if server.status == 2
+                                            span.label.label-warning stopped
+                                        else if server.status == 3
+                                            span.label.label-danger error
+                                        | &nbsp;
+                                        span= server.dt.toUTCString()
+                                    .workers-scope
+                                        p: b #{agents}:
+                                        table.table
+                                            thead
+                                                tr
+                                                    th #
+                                                    th= serverName
+                                                    th= status
+                                                    th= modules
+                                            tbody
+                                                each worker, index in server.workers
+                                                    tr.tr-vertical
+                                                        td= index + 1
+                                                        td= worker.server_name
+                                                        td
+                                                            if worker.status == 1
+                                                                span.label.label-success running
+                                                            else if worker.status == 2
+                                                                span.label.label-warning stopped
+                                                            else if worker.status == 3
+                                                                span.label.label-danger error
+                                                        td
+                                                            ul.list-inline(style='margin-bottom: 0')
+                                                                each module in worker.modules
+                                                                    li: span.label.label-info #{module}
         .col-xs-6
             .card
                 .card-header
                     h4= lastTasksTitle
                 .card-block
-                    table.table
-                        thead
-                            tr
-                                th= tasksTable.columns.dt
-                                th= tasksTable.columns.username
-                                th= tasksTable.columns.status
-                                th= tasksTable.columns.module
-                        tbody
-                            each task in data.tasks
-                                tr
-                                    td: a(href='/tasks/' + task._id)=task.dt.toUTCString()
-
-                                    td= task.username
-                                    td.status= task.status
-                                    td #{task.module}[#{task.cmd}]
+                    ul.list-unstyled
+                        each task in data.tasks
+                            li(style='background-color: #fafafa; margin-bottom: 5px')
+                                div(style='padding: 5px;')
+                                    span.label.label-default(style='padding: 6px;', data-status=task.status): i.fa.fa-bullhorn
+                                    | &nbsp;
+                                    a.alert-link(href='/tasks/' + task._id, target='_blank', style='color: #000') #{task.module}[#{task.cmd}]
+                                    | &nbsp;
+                                    span.label(style='background-color: #f3565d; padding: 6px;'): i.fa.fa-user
+                                    | &nbsp;#{task.username}
+                                    span.elapsed-time.pull-xs-right(style='color: #818a91; padding-top: 5px')= task.dt.toUTCString()
 
 
 
 block ScriptsPluginBlock
 block ScriptsBlock
     script(type='application/javascript').
+
+        function getTimeElapse(startTime) {
+            var dateTime = !{JSON.stringify(dateTime)};
+            var endTime = new Date((new Date).toUTCString());
+
+            var timeObj = {};
+            var timeDiff = endTime - startTime;
+            timeDiff = timeDiff / 1000;
+            timeObj.seconds = Math.round(timeDiff % 60);
+            timeDiff = Math.floor(timeDiff / 60);
+            timeObj.minutes = Math.round(timeDiff % 60);
+            timeDiff = Math.floor(timeDiff / 60);
+            timeObj.hours = Math.round(timeDiff % 24);
+            timeDiff = Math.floor(timeDiff / 24);
+            timeObj.days = timeDiff;
+
+            timeObj.days = timeObj.days || -1;
+
+            var day = timeObj.days;
+            if (timeObj.days > 20) {
+                day %= 10;
+            }
+
+            if (day == 0) {
+                return timeObj.days + ' ' + dateTime.days.max;
+            } else if (day == 1) {
+                return timeObj.days + ' ' + dateTime.days.min;
+            } else if (day > 1 && day < 5) {
+                return timeObj.days + ' ' + dateTime.days.middle;
+            } else if (day >= 5 && day <= 7) {
+                return timeObj.days + ' ' + dateTime.days.max;
+            } else if (day > 7) {
+                return startTime.toLocaleDateString();
+            }
+
+            timeObj.hours = timeObj.hours || -1;
+
+            var hour = timeObj.hours;
+            if (timeObj.hours > 20) {
+                hour %= 10;
+            }
+
+            if (hour == 0) {
+                return timeObj.hours + ' ' + dateTime.hours.max;
+            } else if (hour == 1) {
+                return timeObj.hours + ' ' + dateTime.hours.min;
+            } else if (hour > 1 && hour < 5) {
+                return timeObj.hours + ' ' + dateTime.hours.middle;
+            } else if (hour >= 5) {
+                return timeObj.hours + ' ' + dateTime.hours.max;
+            }
+
+            timeObj.minutes = timeObj.minutes || -1;
+
+            var min = timeObj.minutes;
+            if (timeObj.minutes > 20) {
+                min %= 10;
+            }
+
+            if (min == 0) {
+                return timeObj.minutes + ' ' + dateTime.minutes.max;
+            } else if (min == 1) {
+                return timeObj.minutes + ' ' + dateTime.minutes.min;
+            } else if (min > 1 && min < 5) {
+                return timeObj.minutes + ' ' + dateTime.minutes.middle;
+            } else if (min >= 5) {
+                return timeObj.minutes + ' ' + dateTime.minutes.max;
+            }
+
+            return dateTime.seconds;
+        }
+
         $(function () {
             setActiveLink('#dashboard');
 
-            $('.status').each(function () {
-                var status = _convertStatus(parseInt($(this).text()));
-                $(this).html('<span class="label label-' + status[0] + '">' + status[1] + '</span>')
-            })
+            $('.label-default').each(function () {
+                var status = _convertStatus(parseInt($(this).data('status')));
+                $(this).removeClass('label-default').addClass('label-' + status[0]);
+                //$(this).html('<span class="label label-' + status[0] + '">' + status[1] + '</span>')
+            });
+
+            $('.elapsed-time').each(function () {
+                $(this).text(getTimeElapse(new Date($(this).text())));
+            });
         });
