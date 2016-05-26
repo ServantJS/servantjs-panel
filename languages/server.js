@@ -18,6 +18,8 @@ exports.ru = {
         title: 'Список групп агентов',
         pageTitle: 'Список групп агентов',
 
+        emptyAgents: 'Выберите хотя бы одного агента для группы.',
+
         table: {
             name: 'Группы',
             columns: {
@@ -58,6 +60,8 @@ exports.us = {
     groups: {
         title: 'Agents\' group list',
         pageTitle: 'Agents\' group list',
+
+        emptyAgents: 'Select at least one agent for the group.',
 
         table: {
             name: 'Groups',
