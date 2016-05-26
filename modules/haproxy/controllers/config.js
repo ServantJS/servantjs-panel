@@ -10,6 +10,8 @@ const os = require('os');
 const fs = require('fs');
 
 const db = require('../../../lib/db');
+
+const _ = require('../../common');
 const checkIdOnRequest = require('../../common').checkIdOnRequest;
 const moduleDB = require('../db');
 
@@ -75,7 +77,7 @@ module.exports = (parent) => {
                         data.meta = meta;
                         cb(null, data);
                     }
-                })
+                });
             }
         ], (err, list) => {
             if (err) {
@@ -90,11 +92,11 @@ module.exports = (parent) => {
 
     core.logger.verbose(`\t\tPOST -> ${prefix}`);
     router.post('/', (req, res, next) => {
-        if (!req.body.targetId || !req.body.targetId.length) {
+        if (!_.isStringParam(req.body, 'targetId')) {
             return next(new Error('Missing "targetId" property'));
         }
-
-        if (!Array.isArray(req.body.configs)) {
+        
+        if (!_.isNotEmptyArrayParam(req.body, 'configs')) {
             return next(new Error('Configs must be an array'));
         }
 
@@ -122,9 +124,13 @@ module.exports = (parent) => {
             if (err) {
                 next(err);
             } else {
+                if (!_.isStringParam(req.body, 'targetId')) {
+                    return next(new Error('Missing "targetId" property'));
+                }
+                
                 if (req.files && req.files.config && req.files.config.length) {
                     const file = req.files.config[0];
-
+                    
                     fs.readFile(file.path, 'utf8', (err, content) => {
                         if (err) {
                             next(err);
@@ -238,7 +244,6 @@ module.exports = (parent) => {
 
     core.logger.verbose(`\t\tGET -> ${prefix}/:target`);
     router.get('/:id', (req, res, next) => {
-
         moduleDB.HAProxySettingModel.find({}).exec((err, meta) => {
             if (err) {
                 next(err);
@@ -256,7 +261,7 @@ module.exports = (parent) => {
         try {
             let configs = req.body.configs;
 
-            if (!Array.isArray(configs)) {
+            if (!_.isNotEmptyArrayParam(req.body, 'configs')) {
                 return next(new Error('Configs must be an array'));
             }
 
