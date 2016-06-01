@@ -35,7 +35,7 @@ exports.ru = {
         metricName: 'Метрика',
         serverName: 'Сервер',
         
-        interval: 'Интервал (сек.):',
+        interval: 'Интервал (мин.):',
         repeat: 'Кол-во повторений для срабатывания:',
         isActive: 'Активирован',
         threshold: {

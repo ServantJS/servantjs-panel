@@ -155,6 +155,7 @@ block ScriptsBlock
             validateForm({elementErrorClass: 'dummy'}, $('#settings-form'), {
                 interval: {
                     required: true,
+                    min: 1,
                     digits: true
                 },
                 repeat: {
