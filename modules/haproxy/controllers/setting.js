@@ -64,8 +64,7 @@ module.exports = (parent) => {
     });
 
     router.param('id', checkIdOnRequest({
-        model: moduleDB.HAProxySettingModel,
-        current: 'currentModel'
+        model: moduleDB.HAProxySettingModel
     }));
 
     core.logger.verbose(`\t\tPUT -> ${prefix}`);
