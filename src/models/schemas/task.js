@@ -41,10 +41,12 @@ TaskSchema.pre('save', function (next) {
 
     let search = null;
 
-    if (this.target_id[0] === 'W') {
+    if (this.target_id && this.target_id[0] === 'W') {
         search = db.WorkerModel;
-    } else if (this.target_id[0] === 'G') {
+    } else if (this.target_id && this.target_id[0] === 'G') {
         search = db.WorkersGroupModel;
+    } else if (this.target_id === 'SERVER') {
+        return next();
     } else {
         return next(new Error('Unsupported target id'));
     }
