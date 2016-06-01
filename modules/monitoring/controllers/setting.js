@@ -100,17 +100,37 @@ module.exports = (parent) => {
                 if (status.n == 0) {
                     moduleDB.MetricModel.update({_id: req.id}, {$push: {'settings': req.body}}, (err, status) => {
                         cb(err, status);
-                    })
+                    });
                 } else {
                     cb(null, status);
                 }
+            },
+            (status, cb) => {
+                if (status.nModified) {
+                    const task = new db.TaskModel({
+                        username: req.currentUser.email,
+                        server_id: req.serverId,
+                        target_id: 'SERVER',
+                        module: 'monitoring',
+                        cmd: 'update-settings',
+
+                        params: JSON.stringify({id: req.id})
+                    });
+
+                    task.save((err) => {
+                        const msg = parent.wordsList['monitoring'][res.locals.lang]['settings'].save.success;
+                        cb(err, msg, false);
+                    });
+                } else {
+                    const msg = parent.wordsList['monitoring'][res.locals.lang]['settings'].save.notModify;
+                    cb(null, msg, true);
+                }
             }
-        ], (err, status) => {
+        ], (err, msg, warning) => {
             if (err) {
                 next(err);
             } else {
-                const msg = parent.wordsList['monitoring'][res.locals.lang]['settings'].save.success;
-                res.json({ok: true, msg: msg});
+                res.json({ok: true, warning: warning, msg: msg});
             }
         });
     });

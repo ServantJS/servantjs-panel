@@ -113,7 +113,11 @@ block ScriptsBlock
                 },
                 success: function (result) {
                     if (result.ok) {
-                        toastr.success(result.msg);
+                        if (result.warning) {
+                            toastr.warning(result.msg);
+                        } else {
+                            toastr.success(result.msg);
+                        }
                     } else {
                         toastr.error(result.msg);
                     }
@@ -156,6 +160,7 @@ block ScriptsBlock
                 interval: {
                     required: true,
                     min: 1,
+                    max: 60,
                     digits: true
                 },
                 repeat: {
