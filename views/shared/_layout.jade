@@ -53,7 +53,7 @@ html(lang='en')
                                     a(href='/users')= management.users
                         li#haproxy.nav-item
                             a.nav-link(href='#haproxy')
-                                i.fa.fa-shield
+                                i.fa.fa-share-alt
                                 | #{haproxy.menu}
                                 i.arrow.fa.fa-angle-left.pull-xs-right
                             ul.sub-menu
@@ -61,6 +61,14 @@ html(lang='en')
                                     a(href='/haproxy/configs')= haproxy.configs
                                 li#hap-settings-sub
                                     a(href='/haproxy/settings')= haproxy.settings
+                        li#monitoring.nav-item
+                            a.nav-link(href='#monitoring')
+                                i.fa.fa-line-chart
+                                | #{monitoring.menu}
+                                i.arrow.fa.fa-angle-left.pull-xs-right
+                            ul.sub-menu
+                                li#monitoring-settings-sub
+                                    a(href='/monitoring/settings')= monitoring.settings
                         li#server.nav-item
                             a.nav-link(href='#servers')
                                 i.fa.fa-sitemap

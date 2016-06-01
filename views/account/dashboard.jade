@@ -14,7 +14,7 @@ block ContentBlock
                         .col-xs-12
                             .card
                                 .card-header
-                                    h4 #{serverInfoTitle} "#{server.server_name}"
+                                    h5 #{serverInfoTitle} "#{server.server_name}"
                                 .card-block
                                     p
                                         b #{host}:&nbsp;
@@ -61,7 +61,7 @@ block ContentBlock
         .col-xs-6
             .card
                 .card-header
-                    h4= lastTasksTitle
+                    h5= lastTasksTitle
                 .card-block
                     ul.list-unstyled
                         each task in data.tasks

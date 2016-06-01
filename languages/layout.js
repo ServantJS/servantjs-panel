@@ -105,6 +105,10 @@ exports.ru = {
         settings: 'Настройки'
     },
 
+    monitoring: {
+        menu: 'Мониторинг',
+        settings: 'Настройки'
+    },
     server: {
         menu: 'Сервера',
         info: 'Информация',
@@ -235,6 +239,11 @@ exports.us = {
     haproxy: {
         menu: 'HAProxy',
         configs: 'Configs',
+        settings: 'Settings'
+    },
+
+    monitoring: {
+        menu: 'Monitoring',
         settings: 'Settings'
     },
 

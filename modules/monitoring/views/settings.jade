@@ -1,0 +1,173 @@
+extends ../../../views/shared/_layout
+block StylesBlock
+block ContentBlock
+
+    .row
+        .col-xs-12
+            h3.page-title #{pageTitle}
+
+    mixin insertModule(module)
+        .col-xs-6
+            .card
+                .card-header= module.name[lang]
+                .card-block
+                    p= module.description[lang]
+                    p
+                        b= settingsTitle + ':'
+                    if !module.metrics.length
+                        .alert.alert-warning!= emptyMetrics
+
+
+                    - each metric in module.metrics
+                        .card
+                            .card-header
+                                | #{metricName} "#{metric.name[lang]}". #{serverName}:&nbsp;
+                                select.form-select-sm(name='server')
+                                    - each server in data.servers
+                                        option(value=server._id)= server.server_name
+                            .card-block
+                                p= metric.description[lang]
+                                form#settings-form(method='POST', action='/monitoring/settings', autocomplete='off')
+                                    input(name='id', type='hidden', value=metric._id)
+                                    .form-group.row
+                                        label.col-xs-2.form-control-label= interval
+                                        .col-xs-4
+                                            input.form-control.form-control-sm(name='interval', type='text')
+                                    .form-group.row
+                                        .checkbox.col-xs-12
+                                            label
+                                                input(name='active', type='checkbox')
+                                                | &nbsp;#{isActive}
+                                    p.font-weight-bold= threshold.name
+                                    .form-group.row.form-inline
+                                        label.col-xs-4.form-control-label= repeat
+                                        .col-xs-4
+                                            input.form-control.form-control-sm(name='repeat', type='text')
+                                    .form-group.row.form-inline
+                                        label.col-xs-4.form-control-label= threshold.warning
+                                        .col-xs-4
+                                            input.form-control.form-control-sm(name='warning-value', type='text')
+                                        .col-xs-4
+                                            select.form-control.form-select-sm(name='warning-measurement')
+                                                option(value='%') %
+                                                option(value='v') raw
+                                    .form-group.row.form-inline
+                                        label.col-xs-4.form-control-label= threshold.critical
+                                        .col-xs-4
+                                            input.form-control.form-control-sm(name='critical-value', type='text')
+                                        .col-xs-4
+                                            select.form-control.form-select-sm(name='critical-measurement')
+                                                option(value='%') %
+                                                option(value='v') raw
+                                    button.btn.btn-success.center-block(type='submit')
+                                        i.fa.fa-refresh.fa-spin.hide(style='margin-right: 5px')
+                                        | #{buttonsTxt.save}
+
+
+    - for (var i = 0; i < data.modules.length; i+=2)
+        .row
+            +insertModule(data.modules[i])
+            +insertModule(data.modules[i + 1])
+
+
+block ScriptsPluginBlock
+block ScriptsBlock
+    include ../../../views/shared/_validate
+
+    script(type='application/javascript').
+        function onSaveMetricSettings() {
+            var $form = $('#settings-form');
+
+            var data = {
+                _csrf: _csrf,
+
+                isActive: $('input[name="active"]', $form).prop('checked'),
+                interval: $('input[name="interval"]', $form).val(),
+
+                threshold: {
+                    repeat: $('input[name="repeat"]', $form).val(),
+                    warning: {
+                        value: $('input[name="warning-value"]', $form).val(),
+                        measurement: $('select[name="warning-measurement"] > option:selected', $form).val()
+                    },
+                    critical: {
+                        value: $('input[name="critical-value"]', $form).val(),
+                        measurement: $('select[name="critical-measurement"] > option:selected', $form).val()
+                    }
+                }
+            };
+
+            var id = $('input[name="id"]', $form).val();
+            var serverId = $form.closest('.card').find('select[name="server"] > option:selected').val();
+
+            $form.attr('disabled', true).find('i').toggleClass('hide');
+
+            $.ajax({
+                url: '/monitoring/settings/' + id + '/servers/' + serverId,
+                type: 'PUT',
+                contentType: 'application/json',
+                data: JSON.stringify(data),
+                dataType: 'json',
+                error: function (XMLHttpRequest, textStatus, errorThrow) {
+                    alert(XMLHttpRequest + '\n' + textStatus + '\n' + errorThrow);
+                },
+                success: function (result) {
+                    if (result.ok) {
+                        toastr.success(result.msg);
+                    } else {
+                        toastr.error(result.msg);
+                    }
+
+                    $form.attr('disabled', false).find('i').toggleClass('hide');
+                }
+            });
+        }
+
+        $(function () {
+            setActiveLink('#monitoring', '#monitoring-settings-sub');
+
+            $('select[name="server"]').on('change', function (e) {
+                var self = this;
+                var metricId = $(this).closest('.card').find('input[name="id"]').val();
+                var serverId = $('option:selected', this).val();
+
+                $(this).closest('.card').find('.empty-settings').remove();
+
+                $.get('/monitoring/settings/' + metricId + '/servers/' + serverId, function (result) {
+                    if (result.ok && !result.data) {
+                        $(self).closest('.card').find('.card-block').prepend('<div class="empty-settings alert alert-warning" role="alert">!{emptySettings}</div>')
+                    } else if (result.ok) {
+                        var $form = $(self).closest('.card').find('form');
+
+                        $('input[name="active"]', $form).prop('checked', result.data.isActive);
+                        $('input[name="interval"]', $form).val(result.data.interval);
+                        $('input[name="repeat"]', $form).val(result.data.threshold.repeat);
+                        $('input[name="warning-value"]', $form).val(result.data.threshold.warning.value);
+                        $('input[name="critical-value"]', $form).val(result.data.threshold.critical.value);
+                        $('select[name="warning-measurement"]', $form).val(result.data.threshold.warning.measurement);
+                        $('select[name="critical-measurement"]', $form).val(result.data.threshold.critical.measurement);
+                    } else {
+                        toastr.error(result.msg);
+                    }
+                });
+            }).trigger('change');
+
+            validateForm({elementErrorClass: 'dummy'}, $('#settings-form'), {
+                interval: {
+                    required: true,
+                    digits: true
+                },
+                repeat: {
+                    required: true,
+                    digits: true
+                },
+                'warning-value': {
+                    required: true,
+                    number: true
+                },
+                'critical-value': {
+                    required: true,
+                    number: true
+                }
+            }, onSaveMetricSettings);
+        });
