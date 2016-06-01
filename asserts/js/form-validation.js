@@ -9,6 +9,7 @@ function resetValidation(form) {
 function validateForm(options, form, rules, callback) {
     options = options || {};
     var place = options.errorPlace || 'div';
+    var elementErrorClass = options.elementErrorClass || 'form-control-danger';
     
     form.validate({
         errorElement: 'span',
@@ -19,7 +20,7 @@ function validateForm(options, form, rules, callback) {
 
         highlight: function (element) {
             $(element)
-                .addClass('form-control-danger')
+                .addClass(elementErrorClass)
                 .closest('.form-group').addClass('has-danger');
         },
 
@@ -28,7 +29,7 @@ function validateForm(options, form, rules, callback) {
                 .closest('.form-group')
                 .removeClass('has-danger')
                 .find('input')
-                .removeClass('form-control-danger');
+                .removeClass(elementErrorClass);
             label.remove();
         },
 
