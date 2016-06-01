@@ -228,3 +228,15 @@ select.form-control {
 .error-span {
     color: #d9534f;
 }
+
+.has-danger .form-control {
+    border-color: #ccc;
+}
+
+.has-danger input.form-control {
+    border-color: #d9534f;
+}
+
+.has-danger input.form-control-select {
+    border-color: #d9534f;
+}
