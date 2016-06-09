@@ -107,6 +107,7 @@ exports.ru = {
 
     monitoring: {
         menu: 'Мониторинг',
+        servers: 'Сервера',
         settings: 'Настройки'
     },
     server: {
@@ -244,6 +245,7 @@ exports.us = {
 
     monitoring: {
         menu: 'Monitoring',
+        servers: 'Servers',
         settings: 'Settings'
     },
 
