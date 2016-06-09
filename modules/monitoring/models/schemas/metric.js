@@ -4,7 +4,11 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 var SettingItemSchema = new Schema({
-    name: String,
+    name: {
+        ru: String,
+        us: String
+    },
+    sys_name: String,
     value: String
 }, {_id: false});
 
@@ -13,6 +17,8 @@ const MetricSettingSchema = exports.MetricSettingSchema = new Schema({
     
     isActive: Boolean,
     interval: Number,
+
+    view_order: Number,
 
     threshold: {
         repeat: Number,
@@ -41,8 +47,9 @@ const MetricSchema = exports.MetricSchema = new Schema({
         us: String
     },
 
-    settings: [MetricSettingSchema]
-    
+    isDetail: Boolean,
+    settings: [MetricSettingSchema],
+    events: [SettingItemSchema]
 }, {collection: 'monitoring.metrics'});
 
 mongoose.model('Metric', MetricSchema);
