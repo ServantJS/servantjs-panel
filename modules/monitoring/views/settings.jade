@@ -27,38 +27,50 @@ block ContentBlock
                                         option(value=server._id)= server.server_name
                             .card-block
                                 p= metric.description[lang]
-                                form#settings-form(method='POST', action='/monitoring/settings', autocomplete='off')
+                                form.settings-form(method='POST', action='/monitoring/settings', autocomplete='off')
                                     input(name='id', type='hidden', value=metric._id)
-                                    .form-group.row
-                                        label.col-xs-2.form-control-label= interval
-                                        .col-xs-4
-                                            input.form-control.form-control-sm(name='interval', type='text')
+
+                                    if !metric.isDetail
+                                        .form-group.row
+                                            label.col-xs-2.form-control-label= interval
+                                            .col-xs-4
+                                                input.form-control.form-control-sm(name='interval', type='text')
                                     .form-group.row
                                         .checkbox.col-xs-12
                                             label
                                                 input(name='active', type='checkbox')
                                                 | &nbsp;#{isActive}
-                                    p.font-weight-bold= threshold.name
-                                    .form-group.row.form-inline
-                                        label.col-xs-4.form-control-label= repeat
-                                        .col-xs-4
-                                            input.form-control.form-control-sm(name='repeat', type='text')
-                                    .form-group.row.form-inline
-                                        label.col-xs-4.form-control-label= threshold.warning
-                                        .col-xs-4
-                                            input.form-control.form-control-sm(name='warning-value', type='text')
-                                        .col-xs-4
-                                            select.form-control.form-select-sm(name='warning-measurement')
-                                                option(value='%') %
-                                                option(value='v') raw
-                                    .form-group.row.form-inline
-                                        label.col-xs-4.form-control-label= threshold.critical
-                                        .col-xs-4
-                                            input.form-control.form-control-sm(name='critical-value', type='text')
-                                        .col-xs-4
-                                            select.form-control.form-select-sm(name='critical-measurement')
-                                                option(value='%') %
-                                                option(value='v') raw
+                                    if !metric.isDetail
+                                        p.font-weight-bold= threshold.name
+                                        .form-group.row.form-inline
+                                            label.col-xs-4.form-control-label= repeat
+                                            .col-xs-4
+                                                input.form-control.form-control-sm(name='repeat', type='text')
+                                        .form-group.row.form-inline
+                                            label.col-xs-4.form-control-label= threshold.warning
+                                            .col-xs-4
+                                                input.form-control.form-control-sm(name='warning-value', type='text')
+                                            .col-xs-4
+                                                select.form-control.form-select-sm(name='warning-measurement')
+                                                    option(value='%') %
+                                                    option(value='v') raw
+                                        .form-group.row.form-inline
+                                            label.col-xs-4.form-control-label= threshold.critical
+                                            .col-xs-4
+                                                input.form-control.form-control-sm(name='critical-value', type='text')
+                                            .col-xs-4
+                                                select.form-control.form-select-sm(name='critical-measurement')
+                                                    option(value='%') %
+                                                    option(value='v') raw
+                                    if metric.events && metric.events.length
+                                        p.font-weight-bold= events
+                                        .form-group
+                                            select.form-select-sm.margin-bottom-10(name='event')
+                                                - each event in metric.events
+                                                    option(value=event.sys_name)= event.name[lang]
+                                            .b
+                                                textarea.form-control(rows=10)
+                                                //input.form-control.form-control-sm(name='event-action', type='text')
                                     button.btn.btn-success.center-block(type='submit')
                                         i.fa.fa-refresh.fa-spin.hide(style='margin-right: 5px')
                                         | #{buttonsTxt.save}
@@ -67,7 +79,8 @@ block ContentBlock
     - for (var i = 0; i < data.modules.length; i+=2)
         .row
             +insertModule(data.modules[i])
-            +insertModule(data.modules[i + 1])
+            - if ((i + 1) != data.modules.length)
+                +insertModule(data.modules[i + 1])
 
 
 block ScriptsPluginBlock
@@ -75,9 +88,7 @@ block ScriptsBlock
     include ../../../views/shared/_validate
 
     script(type='application/javascript').
-        function onSaveMetricSettings() {
-            var $form = $('#settings-form');
-
+        function onSaveMetricSettings($form) {
             var data = {
                 _csrf: _csrf,
 
@@ -96,6 +107,8 @@ block ScriptsBlock
                     }
                 }
             };
+
+
 
             var id = $('input[name="id"]', $form).val();
             var serverId = $form.closest('.card').find('select[name="server"] > option:selected').val();
@@ -117,6 +130,8 @@ block ScriptsBlock
                             toastr.warning(result.msg);
                         } else {
                             toastr.success(result.msg);
+
+                            $form.closest('.card-block').find('.empty-settings').remove();
                         }
                     } else {
                         toastr.error(result.msg);
@@ -156,24 +171,30 @@ block ScriptsBlock
                 });
             }).trigger('change');
 
-            validateForm({elementErrorClass: 'dummy'}, $('#settings-form'), {
-                interval: {
-                    required: true,
-                    min: 1,
-                    max: 60,
-                    digits: true
-                },
-                repeat: {
-                    required: true,
-                    digits: true
-                },
-                'warning-value': {
-                    required: true,
-                    number: true
-                },
-                'critical-value': {
-                    required: true,
-                    number: true
-                }
-            }, onSaveMetricSettings);
+            $('.settings-form').each(function () {
+                var form = $(this);
+                validateForm({elementErrorClass: 'dummy'}, form, {
+                    interval: {
+                        required: true,
+                        min: 1,
+                        max: 60,
+                        digits: true
+                    },
+                    repeat: {
+                        required: true,
+                        digits: true
+                    },
+                    'warning-value': {
+                        required: true,
+                        number: true
+                    },
+                    'critical-value': {
+                        required: true,
+                        number: true
+                    }
+                }, function () {
+                    onSaveMetricSettings(form)
+                });
+            });
+
         });
