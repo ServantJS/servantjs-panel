@@ -67,6 +67,8 @@ html(lang='en')
                                 | #{monitoring.menu}
                                 i.arrow.fa.fa-angle-left.pull-xs-right
                             ul.sub-menu
+                                li#monitoring-servers-sub
+                                    a(href='/monitoring/servers')= monitoring.servers
                                 li#monitoring-settings-sub
                                     a(href='/monitoring/settings')= monitoring.settings
                         li#server.nav-item
@@ -91,6 +93,7 @@ html(lang='en')
         script(type='application/javascript').
             var crudText = !{JSON.stringify(crudText)};
             var _csrf = null;
+            var lang = '!{lang}';
 
             function _convertStatus(status) {
                 switch (status) {
