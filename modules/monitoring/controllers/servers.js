@@ -33,7 +33,7 @@ module.exports = (parent) => {
                 });
             },
             (servers, cb) => {
-                db.WorkerModel.find({status: 1}).lean().exec((err, workers) => {
+                db.WorkerModel.find({modules: 'monitoring'}).lean().exec((err, workers) => {
                     if (err) {
                         cb(err);
                     } else {
