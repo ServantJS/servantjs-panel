@@ -179,7 +179,73 @@ exports.us = {
     },
 
     settings: {
-        title: 'Monitoring settings',
-        pageTitle: 'Monitoring settings'
+        title: 'Configuring monitoring',
+        pageTitle: 'Configuring monitoring',
+        panelTitle: 'Settings for the server metrics',
+
+        settingsTitle: 'Settings for metrics',
+        emptySettings: 'Server settings are missing. Enter and save the value to activate the metric.',
+
+        save: {
+            success: 'Metric settings saved successfully.',
+            notModify: 'Make any changes for the metric.'
+        },
+
+        emptyMetrics: '<string>Attention!</string> There are no metrics setting for this module.',
+
+        metricName: 'Metrics',
+        serverName: 'Server',
+
+        interval: 'Interval (min.):',
+        repeat: 'Number of repetitions for triggering:',
+        isActive: 'Activated',
+        threshold: {
+            name: 'Thresholds',
+            warning: 'Warning:',
+            critical: 'Critical:'
+        },
+        events: 'Events'
+    },
+
+    servers: {
+        title: 'Monitoring server',
+        pageTitle: 'Monitoring server',
+
+        agentChooseTitle: 'Select the agent on the server',
+        agent: 'Agent',
+        selectAgent: '--Choose agent--',
+
+        commonModule: {
+            emptyData: 'No data available'
+        },
+
+        nodeModule: {
+            os: 'Operation system',
+            version: 'Version',
+            platform: 'Platform',
+            arch: 'Architecture',
+            kernel: 'Kernel',
+            uptime: 'Last boot',
+            inet: 'Default network interface',
+            host: 'Hostname',
+            status: {
+                title: 'State',
+                up: 'up',
+                down: 'down'
+            },
+            ip: 'IP',
+            mac: 'MAC'
+        },
+
+        osModule: {
+            bytes: {
+                input: 'Receive\\sec',
+                output: 'Send\\sec'
+            },
+            packets: {
+                input: 'Incoming packets\\sec',
+                output: 'Outgoing packets\\sec'
+            }
+        }
     }
 };
