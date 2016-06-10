@@ -20,6 +20,7 @@ exports.ru = {
         send: 'Отправить',
         show: 'Показать',
         change: 'Сменить',
+        refresh: 'Обновить',
         download: 'Скачать'
     },
 
@@ -70,6 +71,7 @@ exports.ru = {
         waitForOperation: 'Дождитесь обработки текущего процесса заданий прежде чем начать новый',
         warning: 'Внимание',
         success: 'Успешно',
+        refresh: 'Обновить',
         empty: 'Выберите задания для отправки',
         done: 'Обработка заданий завершена.',
         operation: 'Операция',
@@ -172,6 +174,7 @@ exports.us = {
         send: 'Send',
         show: 'Show',
         change: 'Change',
+        refresh: 'Refresh',
         download: 'Download'
     },
 
@@ -209,6 +212,7 @@ exports.us = {
         waitForOperation: 'Wait for the current processing of tasks before beginning the new',
         warning: 'Warning',
         success: 'Success',
+        refresh: 'Refresh',
         empty: 'Select tasks for processing',
         done: 'Processing the tasks is completed.',
         operation: 'Operation',
