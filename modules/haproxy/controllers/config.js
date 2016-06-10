@@ -124,6 +124,7 @@ module.exports = (parent) => {
             if (err) {
                 next(err);
             } else {
+                req.body = Object.assign({}, req.body);
                 if (!_.isStringParam(req.body, 'targetId')) {
                     return next(new Error('Missing "targetId" property'));
                 }
@@ -138,7 +139,7 @@ module.exports = (parent) => {
                             const arr = content.split('\n');
                             const blocks = [];
 
-                            const re = /^\S+\s(\S+)/;
+                            const re = /^\S+\s+(\S+)/;
                             let index = 0;
                             let defCount = 0;
                             let currentBlock = null;
@@ -163,6 +164,9 @@ module.exports = (parent) => {
                                             kind = 3;
                                         } else if (arr[index].startsWith('backend')) {
                                             kind = 4;
+                                        } else if (arr[index].startsWith('#')) {
+                                            index++;
+                                            return next();
                                         }
 
                                         if (kind >= 2) {
