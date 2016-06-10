@@ -24,9 +24,19 @@ NodeModule.prototype.fillData = function (metric, data) {
         return;
     }
 
+    var status;
+    var statusWord = data.status ? this.words.status.up : this.words.status.down;
+    if (data.status) {
+        status = '<i class="fa fa-circle" style="color: green"></i> ' + statusWord;
+    } else {
+        status = '<i class="fa fa-circle" style="color: red"></i> ' + statusWord;
+    }
+    
+    
     this.$moduleBlock.find('.card-block')
         .css('font-size', '12px')
         .append('<span>' + metric.name[lang] + ':</span>')
+        .append('<div class="row"><div class="' + leftColumn + '">' + this.words.status.title + ':</div><div class="' + rightColumn + '">' + status + '</div></div>')
         .append('<div class="row"><div class="' + leftColumn + '">' + this.words.os + ':</div><div class="' + rightColumn + '">' + data.os.name + '</div></div>')
         .append('<div class="row"><div class="' + leftColumn + '">' + this.words.version + ':</div><div class="' + rightColumn + '">' + data.os.version + '</div></div>')
         .append('<div class="row"><div class="' + leftColumn + '">' + this.words.platform + ':</div><div class="' + rightColumn + '">' + data.os.type + '</div></div>')
