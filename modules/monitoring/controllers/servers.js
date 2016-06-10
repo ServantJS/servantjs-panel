@@ -89,7 +89,7 @@ module.exports = (parent) => {
         moduleDB.MonitoringModuleModel.find({}).populate({
             path: 'metrics',
             match: {'settings.server_id': req.serverId},
-            select: `name.${res.locals.lang} description.${res.locals.lang} sys_name settings.$`
+            select: `name.${res.locals.lang} description.${res.locals.lang} view_order sys_name settings.$`
         }).exec((err, modules) => {
             if (err) {
                 next(err);
@@ -114,6 +114,9 @@ module.exports = (parent) => {
                         break;
                     case 'os_ram':
                         model = moduleDB.RAMEventModel;
+                        break;
+                    case 'os_net_a':
+                        model = moduleDB.NetActivityEventModel;
                         break;
                     case 'node_details':
                         model = moduleDB.NodeDetailsModel;

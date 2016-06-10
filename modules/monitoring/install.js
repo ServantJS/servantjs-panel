@@ -69,20 +69,60 @@ module.exports = () => {
                 events: [{
                     sys_name: 'on_normal',
                     name: {
-                        ru: lang.ru.db.systemModule.metric.cpu.event.on_normal,
-                        us: lang.us.db.systemModule.metric.cpu.event.on_normal
+                        ru: lang.ru.db.systemModule.metric.ram.event.on_normal,
+                        us: lang.us.db.systemModule.metric.ram.event.on_normal
                     }
                 }, {
                     sys_name: 'on_warning',
                     name: {
-                        ru: lang.ru.db.systemModule.metric.cpu.event.on_warning,
-                        us: lang.us.db.systemModule.metric.cpu.event.on_warning
+                        ru: lang.ru.db.systemModule.metric.ram.event.on_warning,
+                        us: lang.us.db.systemModule.metric.ram.event.on_warning
                     }
                 }, {
                     sys_name: 'on_critical',
                     name: {
-                        ru: lang.ru.db.systemModule.metric.cpu.event.on_critical,
-                        us: lang.us.db.systemModule.metric.cpu.event.on_critical
+                        ru: lang.ru.db.systemModule.metric.ram.event.on_critical,
+                        us: lang.us.db.systemModule.metric.ram.event.on_critical
+                    }
+                }]
+            })).save((err) => {
+                cb(null, metrics);
+            });
+        },
+        (metrics, cb) => {
+            const id = new mongoose.Types.ObjectId();
+            metrics.push(id);
+            (new moduleDB.MetricModel({
+                _id: id,
+                sys_name: 'os_net_a',
+                name: {
+                    ru: lang.ru.db.systemModule.metric.netA.name,
+                    us: lang.us.db.systemModule.metric.netA.name
+                },
+                description: {
+                    ru: lang.ru.db.systemModule.metric.netA.desc,
+                    us: lang.us.db.systemModule.metric.netA.desc
+                },
+                view_order: 2,
+                isDetail: false,
+                settings: [],
+                events: [{
+                    sys_name: 'on_normal',
+                    name: {
+                        ru: lang.ru.db.systemModule.metric.netA.event.on_normal,
+                        us: lang.us.db.systemModule.metric.netA.event.on_normal
+                    }
+                }, {
+                    sys_name: 'on_warning',
+                    name: {
+                        ru: lang.ru.db.systemModule.metric.netA.event.on_warning,
+                        us: lang.us.db.systemModule.metric.netA.event.on_warning
+                    }
+                }, {
+                    sys_name: 'on_critical',
+                    name: {
+                        ru: lang.ru.db.systemModule.metric.netA.event.on_critical,
+                        us: lang.us.db.systemModule.metric.netA.event.on_critical
                     }
                 }]
             })).save((err) => {

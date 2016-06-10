@@ -81,3 +81,7 @@ BootstrapTable.prototype.deleteColumn = function ($column) {
     
     //TODO iterate all table to check free space
 };
+
+BootstrapTable.prototype.empty = function () {
+    this.$scope.empty();    
+};

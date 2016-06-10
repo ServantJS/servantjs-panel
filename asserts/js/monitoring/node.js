@@ -64,7 +64,9 @@ NodeModule.prototype.handleSummary = function () {
         });
     });
 
-    self.table.appendColumn(6).append(self.$moduleBlock);
+    if (this.metrics.length) {
+        self.table.appendColumn(6).append(self.$moduleBlock);
+    }
 };
 
 var InitNODE = function(table, workerId, module, words) {

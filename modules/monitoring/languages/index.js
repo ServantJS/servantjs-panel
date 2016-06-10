@@ -22,6 +22,15 @@ exports.ru = {
                         on_warning: 'Превышение предупреждающего порога',
                         on_critical: 'Превышение критического порога'
                     }
+                },
+                netA: {
+                    name: 'Сетевая активность',
+                    desc: 'Информация о трафике на сетевых интерфейсах.',
+                    event: {
+                        on_normal: 'Возврат к норме',
+                        on_warning: 'Превышение предупреждающего порога',
+                        on_critical: 'Превышение критического порога'
+                    }
                 }
             }
         },
@@ -98,7 +107,14 @@ exports.ru = {
         },
 
         osModule: {
-            
+            bytes: {
+                input: 'Получено\\сек',
+                output: 'Отправлено\\сек'
+            },
+            packets: {
+                input: 'Пакеты входящие\\сек',
+                output: 'Пакеты исходящие\\сек'
+            }
         }
     }
 };
@@ -122,6 +138,15 @@ exports.us = {
                 ram: {
                     name: 'RAM',
                     desc: 'RAM usage information.',
+                    event: {
+                        on_normal: 'Return to normal',
+                        on_warning: 'Exceeding the warning threshold',
+                        on_critical: 'Exceeding the critical threshold'
+                    }
+                },
+                netA: {
+                    name: 'Network activity',
+                    desc: 'Network activity information.',
                     event: {
                         on_normal: 'Return to normal',
                         on_warning: 'Exceeding the warning threshold',
