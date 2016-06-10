@@ -24,7 +24,7 @@ module.exports = () => {
                     us: lang.us.db.systemModule.metric.cpu.desc
                 },
                 view_order: 0,
-                isDetail: false,
+                is_detail: false,
                 settings: [],
                 events: [{
                     sys_name: 'on_normal',
@@ -64,7 +64,7 @@ module.exports = () => {
                     us: lang.us.db.systemModule.metric.ram.desc
                 },
                 view_order: 1,
-                isDetail: false,
+                is_detail: false,
                 settings: [],
                 events: [{
                     sys_name: 'on_normal',
@@ -104,7 +104,7 @@ module.exports = () => {
                     us: lang.us.db.systemModule.metric.netA.desc
                 },
                 view_order: 2,
-                isDetail: false,
+                is_detail: false,
                 settings: [],
                 events: [{
                     sys_name: 'on_normal',
@@ -160,7 +160,7 @@ module.exports = () => {
                     ru: lang.ru.db.nodeDetailsModule.metric.details.desc,
                     us: lang.us.db.nodeDetailsModule.metric.details.desc
                 },
-                isDetail: true,
+                is_detail: true,
                 settings: []
             })).save((err) => {
                 cb(null, [id]);
