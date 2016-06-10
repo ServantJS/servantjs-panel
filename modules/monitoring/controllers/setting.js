@@ -34,7 +34,7 @@ module.exports = (parent) => {
             },
             (servers, cb) => {
                 moduleDB.MonitoringModuleModel.find({})
-                    .populate('metrics', `name.${res.locals.lang} description.${res.locals.lang} sys_name isDetail events`)
+                    .populate('metrics', `name.${res.locals.lang} description.${res.locals.lang} sys_name is_detail events`)
                     .select(`name.${res.locals.lang} description.${res.locals.lang} sys_name metrics`)
                     .exec((err, modules) => {
                         if (err) {
