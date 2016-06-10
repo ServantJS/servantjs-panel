@@ -30,26 +30,31 @@ block ContentBlock
                                 form.settings-form(method='POST', action='/monitoring/settings', autocomplete='off')
                                     input(name='id', type='hidden', value=metric._id)
 
-                                    if !metric.isDetail
+                                    if !metric.is_detail
                                         .form-group.row
                                             label.col-xs-2.form-control-label= interval
                                             .col-xs-4
-                                                input.form-control.form-control-sm(name='interval', type='text')
+                                                input.form-control.form-control-sm(name='interval', type='text', value=1)
                                     .form-group.row
                                         .checkbox.col-xs-12
                                             label
                                                 input(name='active', type='checkbox')
                                                 | &nbsp;#{isActive}
-                                    if !metric.isDetail
+                                    if !metric.is_detail
                                         p.font-weight-bold= threshold.name
+                                        .form-group.row
+                                            .checkbox.col-xs-12
+                                                label
+                                                    input(name='threshold-enabled', type='checkbox')
+                                                    | &nbsp;#{isActive}
                                         .form-group.row.form-inline
                                             label.col-xs-4.form-control-label= repeat
                                             .col-xs-4
-                                                input.form-control.form-control-sm(name='repeat', type='text')
+                                                input.form-control.form-control-sm(name='repeat', type='text', value=5)
                                         .form-group.row.form-inline
                                             label.col-xs-4.form-control-label= threshold.warning
                                             .col-xs-4
-                                                input.form-control.form-control-sm(name='warning-value', type='text')
+                                                input.form-control.form-control-sm(name='warning-value', type='text', value=70)
                                             .col-xs-4
                                                 select.form-control.form-select-sm(name='warning-measurement')
                                                     option(value='%') %
@@ -57,7 +62,7 @@ block ContentBlock
                                         .form-group.row.form-inline
                                             label.col-xs-4.form-control-label= threshold.critical
                                             .col-xs-4
-                                                input.form-control.form-control-sm(name='critical-value', type='text')
+                                                input.form-control.form-control-sm(name='critical-value', type='text', value=90)
                                             .col-xs-4
                                                 select.form-control.form-select-sm(name='critical-measurement')
                                                     option(value='%') %
@@ -92,11 +97,12 @@ block ScriptsBlock
             var data = {
                 _csrf: _csrf,
 
-                isActive: $('input[name="active"]', $form).prop('checked'),
+                is_active: $('input[name="active"]', $form).prop('checked'),
                 interval: $('input[name="interval"]', $form).val(),
 
                 threshold: {
                     repeat: $('input[name="repeat"]', $form).val(),
+                    is_enabled: $('input[name="threshold-enabled"]', $form).prop('checked'),
                     warning: {
                         value: $('input[name="warning-value"]', $form).val(),
                         measurement: $('select[name="warning-measurement"] > option:selected', $form).val()
@@ -107,8 +113,6 @@ block ScriptsBlock
                     }
                 }
             };
-
-
 
             var id = $('input[name="id"]', $form).val();
             var serverId = $form.closest('.card').find('select[name="server"] > option:selected').val();
@@ -158,7 +162,8 @@ block ScriptsBlock
                     } else if (result.ok) {
                         var $form = $(self).closest('.card').find('form');
 
-                        $('input[name="active"]', $form).prop('checked', result.data.isActive);
+                        $('input[name="active"]', $form).prop('checked', result.data.is_active);
+                        $('input[name="threshold-enabled"]', $form).prop('checked', result.data.threshold.is_enabled);
                         $('input[name="interval"]', $form).val(result.data.interval);
                         $('input[name="repeat"]', $form).val(result.data.threshold.repeat);
                         $('input[name="warning-value"]', $form).val(result.data.threshold.warning.value);
