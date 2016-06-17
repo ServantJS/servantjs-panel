@@ -131,11 +131,20 @@ module.exports = (parent) => {
                 
                 if (req.files && req.files.config && req.files.config.length) {
                     const file = req.files.config[0];
-                    
-                    fs.readFile(file.path, 'utf8', (err, content) => {
-                        if (err) {
-                            next(err);
-                        } else {
+
+
+                    async.waterfall([
+                        (cb) => {
+                            moduleDB.HAProxySettingModel.find({}).select('-_id token_name value').exec((err, meta) => {
+                                cb(err, meta);
+                            });     
+                        },
+                        (meta, cb) => {
+                            fs.readFile(file.path, 'utf8', (err, content) => {
+                                cb(err, meta, content);    
+                            });
+                        },
+                        (meta, content, cb) => {
                             const arr = content.split('\n');
                             const blocks = [];
 
@@ -143,7 +152,7 @@ module.exports = (parent) => {
                             let index = 0;
                             let defCount = 0;
                             let currentBlock = null;
-                            
+
                             async.whilst(
                                 () => index < arr.length,
                                 (next) => {
@@ -189,10 +198,13 @@ module.exports = (parent) => {
                                             currentBlock.name = name;
                                             currentBlock.kind = kind;
                                             currentBlock.status = 0;
+                                            if (kind > 1) {
+                                                currentBlock.meta = meta;
+                                            }
                                         } else {
-
-                                            if (currentBlock)
+                                            if (currentBlock) {
                                                 currentBlock.content.push(arr[index]);
+                                            }
                                         }
 
                                         index++;
@@ -203,14 +215,14 @@ module.exports = (parent) => {
                                 },
                                 (err) => {
                                     if (err) {
-                                        next(err);
+                                        cb(err);
                                     } else {
                                         currentBlock.content = currentBlock.content.join('\n');
                                         blocks.push(currentBlock);
-                                        
+
                                         fs.unlink(file.path, (err) => {
                                             if (err) {
-                                                next(err);
+                                                cb(err);
                                             } else {
                                                 const task = new db.TaskModel({
                                                     username: req.currentUser.email,
@@ -221,19 +233,25 @@ module.exports = (parent) => {
                                                     params: JSON.stringify({container: blocks})
                                                 });
 
-                                                task.save((err) => {
-                                                    if (err) {
-                                                        next(err);
-                                                    } else {
-                                                        res.json({ok: true, data: task._id});
-                                                    }
-                                                });
+                                                cb(null, task);
                                             }
                                         });
                                     }
                                 }
                             );
                         }
+                    ], (err, task) => {
+                        if (err) {
+                            next(err);
+                        } else {
+                            task.save((err) => {
+                                if (err) {
+                                    next(err);
+                                } else {
+                                    res.json({ok: true, data: task._id});
+                                }
+                            });
+                        }    
                     });
                 } else {
                     next(new Error('Missing config file'));
