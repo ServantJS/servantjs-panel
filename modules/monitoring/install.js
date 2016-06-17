@@ -184,6 +184,38 @@ module.exports = () => {
             });
         },
         (cb) => {
+            const id = new mongoose.Types.ObjectId();
+            (new moduleDB.MetricModel({
+                _id: id,
+                sys_name: 'hp_stat',
+                name: {
+                    ru: lang.ru.db.HAProxyModule.metric.stat.name,
+                    us: lang.us.db.HAProxyModule.metric.stat.name
+                },
+                description: {
+                    ru: lang.ru.db.HAProxyModule.metric.stat.desc,
+                    us: lang.us.db.HAProxyModule.metric.stat.desc
+                },
+                is_detail: true,
+                settings: [],
+                events: [{
+                    sys_name: 'on_up',
+                    name: {
+                        ru: lang.ru.db.HAProxyModule.metric.stat.event.on_up,
+                        us: lang.us.db.HAProxyModule.metric.stat.event.on_up
+                    }
+                }, {
+                    sys_name: 'on_down',
+                    name: {
+                        ru: lang.ru.db.HAProxyModule.metric.stat.event.on_down,
+                        us: lang.us.db.HAProxyModule.metric.stat.event.on_down
+                    }
+                }]
+            })).save((err) => {
+                cb(null, [id]);
+            });
+        },
+        (metrics, cb) => {
             (new moduleDB.MonitoringModuleModel({
                 sys_name: 'haproxy',
                 name: {
@@ -194,7 +226,8 @@ module.exports = () => {
                     ru: lang.ru.db.HAProxyModule.desc,
                     us: lang.us.db.HAProxyModule.desc
                 },
-                type: lang.ru.db.HAProxyModule.type
+                type: lang.ru.db.HAProxyModule.type,
+                metrics: metrics
             })).save((err) => {
                 cb(null);
             });

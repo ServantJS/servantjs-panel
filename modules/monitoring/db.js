@@ -16,4 +16,7 @@ exports.RAMEventModel = mongoose.model('RAMEvent');
 exports.NetActivityHistoryModel = mongoose.model('NetActivityHistory');
 exports.NetActivityEventModel = mongoose.model('NetActivityEvent');
 
+exports.HaProxyStatHistoryModel = mongoose.model('HaProxyStatHistory');
+exports.HaProxyStatEventEventModel = mongoose.model('HaProxyStatEvent');
+
 exports.NodeDetailsModel = mongoose.model('NodeDetails');

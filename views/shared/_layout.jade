@@ -69,6 +69,8 @@ html(lang='en')
                             ul.sub-menu
                                 li#monitoring-servers-sub
                                     a(href='/monitoring/servers')= monitoring.servers
+                                li#monitoring-haproxy-stats-sub
+                                    a(href='/monitoring/haproxy/stats')= monitoring.haproxyStats
                                 li#monitoring-settings-sub
                                     a(href='/monitoring/settings')= monitoring.settings
                         li#server.nav-item
@@ -94,6 +96,19 @@ html(lang='en')
             var crudText = !{JSON.stringify(crudText)};
             var _csrf = null;
             var lang = '!{lang}';
+
+            String.prototype.format = String.prototype.f = function () {
+                var args = arguments;
+                return this.replace(/\{\{|\}\}|\{(\d+)\}/g, function (m, n) {
+                    if (m == "{{") {
+                        return "{";
+                    }
+                    if (m == "}}") {
+                        return "}";
+                    }
+                    return args[n];
+                });
+            };
 
             function _convertStatus(status) {
                 switch (status) {

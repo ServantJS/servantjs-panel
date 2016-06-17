@@ -1,0 +1,170 @@
+extends ../../../views/shared/_layout
+block StylesBlock
+    style.
+        .table-haproxy-titles > td {
+            background-color: #008aea;
+            font-weight: bold;
+        }
+
+        .server-up-status > td {
+            background-color: #80ff93;
+        }
+
+        .server-down-status > td {
+            background-color: #ff999c;
+        }
+
+        .server-no-check-status > td {
+            background-color: #808080;
+        }
+block ContentBlock
+
+    .row
+        .col-xs-12
+            h3.page-title #{pageTitle}
+    .row
+        .col-xs-4.col-xs-offset-4
+            .card
+                .card-header= agentChooseTitle
+                .card-block.text-center
+                    //-| #{agent}:&nbsp
+                    .input-group(style='display: block')
+                        select.form-select-sm.margin-10-right(name='worker')
+                            option(value='')= selectAgent
+                            each worker in data.workers
+                                option(value=worker._id, data-server=worker.server_id.toString()) #{worker.server_name} [#{worker.ip}]
+
+                        a.btn.btn-success-outline.btn-sm.disabled.refresh-data(href='#refres', title=buttonsTxt.refresh)
+                            i.fa.fa-refresh
+
+    .card
+        .card-block
+            .module-scope
+    .hints.hide
+        .empty-data
+            .alert.alert-warning(role='alert')= emptyData
+        .table-header-template
+            table
+                tbody
+                    tr.table-haproxy-titles
+                        td
+                        td= table.bytes.in
+                        td= table.bytes.out
+                        td= table.status
+                        td= table.statusDesc
+                        td= table.downtime
+
+block ScriptsPluginBlock
+block ScriptsBlock
+
+    script(type='application/javascript').
+        var $rBtn;
+
+        function bytesToString(value) {
+            var fmt = function (val) {
+                return val.toFixed(2);
+            };
+
+            if (value < 1024) {
+                return fmt(value) + 'b';
+            } else if (value < 1024 * 1024) {
+                return fmt(value / 1024) + 'Kb';
+            } else if (value < 1024 * 1024 * 1024) {
+                return fmt(value / 1024 / 1024) + 'Mb';
+            } else {
+                return fmt(value / 1024 / 1024 / 1024) + 'Gb';
+            }
+        }
+
+        Number.prototype.toHHMMSS = function () {
+            var sec_num = this; // don't forget the second param
+            var hours = Math.floor(sec_num / 3600);
+            var minutes = Math.floor((sec_num - (hours * 3600)) / 60);
+            var seconds = sec_num - (hours * 3600) - (minutes * 60);
+
+            if (sec_num == 0) {
+                return '';
+            } else if (hours == 0) {
+                return minutes + 'm ' + seconds + 's';
+            } else if (hours == 0 && minutes == 0) {
+                return seconds + 's';
+            } else {
+                return hours + 'h ' + minutes + 'm';
+            }
+        };
+
+        function updateDate(agentId) {
+            $.get('/monitoring/haproxy/stats/' + agentId, function (result) {
+                if (result.ok) {
+                    $rBtn.removeClass('disabled');
+
+                    var $table = $('<table class="table table-bordered"><tbody></tbody></table>');
+
+                    for (let i = 0; i < result.data.values.length; i++) {
+                        var block = result.data.values[i];
+
+                        $table.find('tbody').append($('<tr><td style="background-color: #8b0000; color: #ffd700">' + block.name + '</td><td colspan="5">&nbsp;</td></tr>'));
+                        $table.find('tbody').append($('.table-header-template').find('tbody').html());
+                        for (let y = 0; y < block.servers.length; y++) {
+                            var server = block.servers[y];
+
+                            var statusColor = 'up';
+                            if (server.status.indexOf('DOWN') >= 0) {
+                                statusColor = 'down'
+                            } else if (server.status.indexOf('no check') >= 0) {
+                                statusColor = 'no-check'
+                            }
+
+                            if (server.checkStatus.desc) {
+                                server.checkStatus.desc = server.checkStatus.desc.replace(/"/g, "&quot;");
+                            }
+
+                            $table.find('tbody').append($('<tr class="server-{7}-status"><td>{0}</td><td>{1}</td><td>{2}</td><td>{3}</td><td><a data-toggle="tooltip" data-placement="bottom" data-original-title="{5}">{4}<a/></td><td>{6}</td></tr>'.f(
+                                    server.name, bytesToString(server.bytes.input), bytesToString(server.bytes.output), server.status, server.checkStatus.name,
+                                    server.checkStatus.desc, server.downTime.toHHMMSS(), statusColor
+                            )));
+                        }
+
+                        if (i + 1 != result.data.values.length) {
+                            $table.find('tbody').append($('<tr><td colspan="6">&nbsp;</td></tr>'));
+                        }
+
+                    }
+
+                    $('.module-scope').append($table);
+                    $('[data-toggle="tooltip"]', $table).tooltip();
+                } else {
+                    if (result.error == 'not_found') {
+                        $('.module-scope').append($('.empty-data').html());
+                    } else {
+                        toastr.error(result.msg);
+                    }
+                }
+            });
+        }
+
+
+        $(function () {
+            setActiveLink('#monitoring', '#monitoring-haproxy-stats-sub');
+            $rBtn = $('.refresh-data');
+
+            $rBtn.on('click', function (e) {
+                e.preventDefault();
+
+                $('.module-scope').empty();
+                updateDate($('select[name="worker"] > option:selected').val());
+            });
+
+            $('select[name="worker"]').on('change', function (e) {
+                var $opt = $('option:selected', this);
+                var agentId = $opt.val();
+
+                $('.module-scope').empty();
+
+                if (agentId !== '') {
+                    updateDate(agentId);
+                } else {
+                    $rBtn.addClass('disabled');
+                }
+            });
+        });

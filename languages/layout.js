@@ -110,6 +110,7 @@ exports.ru = {
     monitoring: {
         menu: 'Мониторинг',
         servers: 'Сервера',
+        haproxyStats: 'HAProxy',
         settings: 'Настройки'
     },
     server: {
@@ -250,6 +251,7 @@ exports.us = {
     monitoring: {
         menu: 'Monitoring',
         servers: 'Servers',
+        haproxyStats: 'HAProxy',
         settings: 'Settings'
     },
 

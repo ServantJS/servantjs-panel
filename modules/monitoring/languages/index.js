@@ -48,7 +48,17 @@ exports.ru = {
         HAProxyModule: {
             name: 'HAProxy',
             desc: 'Содержит метрики для мониторинга за приложением HAProxy.',
-            type: 'app'
+            type: 'app',
+            metric: {
+                stat: {
+                    name: 'Статистика',
+                    desc: 'Подробная информация о каждом сервере, удаленном сервере внутри HAProxy.',
+                    event: {
+                        on_up: 'Сервер доступен',
+                        on_down: 'Сервер недоступен'
+                    }
+                }
+            }
         }
     },
 
@@ -121,6 +131,27 @@ exports.ru = {
                 output: 'Пакеты исходящие\\сек'
             }
         }
+    },
+
+    haStats: {
+        title: 'HAProxy статистика',
+        pageTitle: 'HAProxy статистика',
+
+        agentChooseTitle: 'Выберите агента на сервере',
+        agent: 'Агент',
+        selectAgent: '--Выберите агента--',
+
+        emptyData: 'Данные отсутствуют',
+
+        table: {
+            bytes: {
+                in: 'Входящие байты',
+                out: 'Исходящие байты'
+            },
+            status: 'Статус',
+            statusDesc: 'Описание статуса',
+            downtime: 'Простой'
+        }
     }
 };
 
@@ -174,7 +205,17 @@ exports.us = {
         HAProxyModule: {
             name: 'HAProxy',
             desc: 'Contains metrics for HAProxy.',
-            type: 'app'
+            type: 'app',
+            metric: {
+                stat: {
+                    name: 'Statistic',
+                    desc: 'Detailed information about each server, backend and frontend in HAProxy.',
+                    event: {
+                        on_up: 'Server is UP',
+                        on_down: 'Server is DOWN'
+                    }
+                }
+            }
         }
     },
 
@@ -246,6 +287,27 @@ exports.us = {
                 input: 'Incoming packets\\sec',
                 output: 'Outgoing packets\\sec'
             }
+        }
+    },
+
+    haStats: {
+        title: 'HAProxy statistic',
+        pageTitle: 'HAProxy statistic',
+
+        agentChooseTitle: 'Select the agent on the server',
+        agent: 'Agent',
+        selectAgent: '--Choose agent--',
+
+        emptyData: 'No data available',
+
+        table: {
+            bytes: {
+                in: 'Income bytes',
+                out: 'Outcome bytes'
+            },
+            status: 'Status',
+            statusDesc: 'Status desc',
+            downtime: 'Downtime'
         }
     }
 };
