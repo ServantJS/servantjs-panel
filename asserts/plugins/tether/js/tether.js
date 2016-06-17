@@ -1,4 +1,4 @@
-/*! tether 1.3.0 */
+/*! tether 1.3.2 */
 
 (function(root, factory) {
   if (typeof define === 'function' && define.amd) {
@@ -110,8 +110,10 @@ var getOrigin = function getOrigin() {
 };
 
 function removeUtilElements() {
-  document.body.removeChild(zeroElement);
-  zeroElement = undefined;
+  if (zeroElement) {
+    document.body.removeChild(zeroElement);
+  }
+  zeroElement = null;
 };
 
 function getBounds(el) {
@@ -315,7 +317,7 @@ var Evented = (function () {
   }, {
     key: 'off',
     value: function off(event, handler) {
-      if (typeof this.bindings !== 'undefined' && typeof this.bindings[event] !== 'undefined') {
+      if (typeof this.bindings === 'undefined' || typeof this.bindings[event] === 'undefined') {
         return;
       }
 
@@ -472,7 +474,7 @@ function now() {
       return;
     }
 
-    if (typeof pendingTimeout !== 'undefined') {
+    if (pendingTimeout != null) {
       clearTimeout(pendingTimeout);
       pendingTimeout = null;
     }
