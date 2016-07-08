@@ -7,6 +7,12 @@ exports.ru = {
             name: 'Список'
         },
 
+        hint: {
+            name: 'Подсказка',
+            swap: 'Вы можете менять блоки друг с другом местами. Для это необходимо захватить блок мышкой и потянуть на нужную позицию.',
+            settings: 'Блоки с типом listen, frontend, backend могут иметь дополнительные данные, которые можно создать во вкладке HAProxy -> Настройки.\nДанные хранятся в конфиг файле с помощью комментария перед блоком. В данных можно хранить полезную информацию о наименовании блока, чтобы было удобно читать конфиг.'
+        },
+
         groupConfig: 'Конфиг группы',
         agentConfig: 'Конфиг на сервере',
 
@@ -97,6 +103,12 @@ exports.us = {
 
         table: {
             name: 'List'
+        },
+
+        hint: {
+            name: 'Hint',
+            swap: 'You can change the blocks with each other in some places. For this you need to to capture the the block with the mouse and drag to the desired position.',
+            settings: 'Blocks of type listen, frontend, backend may have additional data that can be created in HAProxy tab -> Settings. \nThe data is stored in a configuration file with a comment to the block. The data you can store useful information about the name of the block to make it easy to read configuration.'
         },
 
         groupConfig: 'Config of group',

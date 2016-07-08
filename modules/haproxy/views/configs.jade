@@ -77,6 +77,19 @@ block ContentBlock
                                             option(value=target.sys_id)= target.name || target.server_name
 
                     .modal-footer
+                        .hints.text-left
+                            #swap-hint.alert.alert-info.alert-dismissible.fade.in(role='alert')
+                                button.close(type='button', data-dismiss='alert' aria-label='Close')
+                                    span(aria-hidden='true') &times;
+                                strong #{hint.name}.&nbsp;
+                                | #{hint.swap}
+                            #setting-hint.alert.alert-info.alert-dismissible.fade.in(role='alert')
+                                button.close(type='button', data-dismiss='alert' aria-label='Close')
+                                    span(aria-hidden='true') &times;
+                                strong #{hint.name}.&nbsp;
+                                | #{hint.settings}
+
+
                         button.btn.btn-default(type='button', data-dismiss='modal')= buttonsTxt.close
                         button.btn.btn-success.add-template(type='button')= addBlock
                         button.btn.btn-primary.create-config(type='submit')
@@ -320,5 +333,21 @@ block ScriptsBlock
                     }
                 });
             });
+
+            $('.alert-dismissible > button').on('click', function (e) {
+                if (window.localStorage) {
+                    window.localStorage.setItem($(this).parent().attr('id'), true);
+                }
+            });
+
+            if (window.localStorage) {
+                if (window.localStorage.getItem('swap-hint')) {
+                    $('#swap-hint').hide();
+                }
+
+                if (window.localStorage.getItem('setting-hint')) {
+                    $('#setting-hint').hide();
+                }
+            }
         });
 
