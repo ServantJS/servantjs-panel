@@ -35,8 +35,8 @@ function onDeleteBtnClick(btn, data, title, onSuccess) {
             if (onSuccess) {
                 onSuccess(result);
             }
-            
-            
+
+            $elem.removeClass('disabled');
         }
     });
 }
