@@ -125,11 +125,11 @@ block ScriptsBlock
                             },
                             success: function (result) {
                                 if (result.ok) {
-                                    $editModal.modal('hide');
+                                    $createModal.modal('hide');
                                     location.reload();
                                 }
 
-                                $('.save-btn').toggleClass('disabled').find('i').toggleClass('hide');
+                                $('.create-btn').toggleClass('disabled').find('i').toggleClass('hide');
                             }
                         });
                     }
