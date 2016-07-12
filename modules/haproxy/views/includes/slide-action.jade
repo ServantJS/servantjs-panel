@@ -5,39 +5,6 @@ script(type='application/javascript').
     };
 
 script(type='application/javascript').
-    var taskCheckInterval = 1000;
-
-    function waitTask(taskId, cb) {
-        $.get('/tasks/' + taskId + '/status', function (result) {
-            var refresh = true;
-
-            if (result.ok) {
-                if (result.data.status !== -1 && result.data.status !== 2) {
-                    if (result.data.status == 0) {
-                        toastr.success(taskWords.successComplete.replace('$id', taskId));
-                    } else {
-                        toastr.warning(taskWords.errorComplete.replace('$id', taskId));
-                    }
-
-                    refresh = false;
-                    if (cb) {
-                        cb(result.data.status);
-                    }
-                }
-            } else {
-                console.error(result);
-
-                refresh = false;
-            }
-
-            if (refresh) {
-                setTimeout(function () {
-                    waitTask(taskId, cb);
-                }, taskCheckInterval);
-            }
-        });
-    }
-
     function onSlideAction(e) {
         e.preventDefault();
 
