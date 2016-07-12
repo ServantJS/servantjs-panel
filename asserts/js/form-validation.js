@@ -38,14 +38,14 @@ function validateForm(options, form, rules, callback) {
         },
 
         submitHandler: function (form) {
-            callback();
+            callback(form);
         }
     });
 
     form.find('input').keypress(function (e) {
         if (e.which == 13) {
             if (form.validate().form()) {
-                callback();
+                callback(form);
             }
 
             return false;
