@@ -21,3 +21,12 @@ script(type='application/javascript').
             max: jQuery.validator.format('!{validation.max}'),
             min: jQuery.validator.format('!{validation.min}')
         });
+
+        $.validator.addMethod(
+                "regex",
+                function (value, element, regexp) {
+                    var re = new RegExp(regexp);
+                    return this.optional(element) || re.test(value);
+                },
+                jQuery.validator.format('!{validation.regex}')
+        );
