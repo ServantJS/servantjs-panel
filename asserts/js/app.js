@@ -9,6 +9,38 @@ function setActiveLink(selector, subSelector) {
     }
 }
 
+function onDeleteBtnClick(btn, data, title, onSuccess) {
+    data = data || {};
+    data._csrf = _csrf;
+    
+    if (!confirm(title)) {
+        return;
+    }
+    
+    var $elem = $(btn);
+    $elem.addClass('disabled');
+
+    $.ajax({
+        url: $elem.attr('href'),
+        type: 'DELETE',
+        contentType: 'application/json',
+        data: JSON.stringify(data),
+        dataType: 'json',
+        cache: false,
+        error: function (XMLHttpRequest, textStatus, errorThrow) {
+            $elem.removeClass('disabled');
+            alert(XMLHttpRequest + '\n' + textStatus + '\n' + errorThrow);
+        },
+        success: function (result) {
+            if (onSuccess) {
+                onSuccess(result);
+            }
+            
+            
+        }
+    });
+}
+
 $(document).ready(function () {
     $(window)
         .resize(function () {
@@ -18,11 +50,18 @@ $(document).ready(function () {
 
     $('i.arrow').closest('a').on('click', function (e) {
         e.preventDefault();
+
+        if (!$(this).closest('li').hasClass('is-active') && $('li.is-active').length) {
+            $('.is-active > a').trigger('click');
+        }
+
         $(this)
             .closest('li')
+                .toggleClass('is-active')
                 .find('.sub-menu').slideToggle(200)
             .end()
                 .find('i.arrow')
+
                 .toggleClass('fa-angle-left')
                 .toggleClass('fa-angle-down');
     });
