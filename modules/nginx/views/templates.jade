@@ -122,7 +122,7 @@ block ContentBlock
                                         .col-xs-3
                                             a.btn.btn-success.add-var(href='#add-new-var', title=buttonsTxt.add)
                                                 i.fa.fa-plus
-                                    .row.template-var.hide
+                                    #modal-template-var.row.hide
                                         .col-xs-3
                                             .form-group
                                                 input.form-control.var-name(name='var-name', placeholder=modal.fields.vars.name, type='text')
@@ -193,8 +193,8 @@ block ScriptsBlock
 
             hljs.initHighlightingOnLoad();
 
-            var $templateVar = $('.template-var');
-            var $varsScope = $('.vars-scope');
+            var $templateVar = $('#modal-template-var');
+            var $createModal = $('#create-template-modal');
 
             $(function () {
                 $('[data-toggle="tooltip"]').tooltip()
@@ -297,22 +297,20 @@ block ScriptsBlock
 
             });
 
-            $('.add-var').on('click', function (e) {
+            $('.add-var', $createModal).on('click', function (e) {
                 e.preventDefault();
 
                 var $block = $templateVar.clone();
                 $block.removeClass('template-var').removeClass('hide');
                 $block.find('.remove').on('click', onRemoveVar);
 
-                $varsScope.append($block);
+                $(this).closest('form').find('.vars-scope').append($block);
 
                 addValidateRules($block);
             });
 
-            var $createModal = $('#create-template-modal');
-
             $createModal.on('show.bs.modal', function () {
-                $('.vars-scope .remove').each(function () {
+                $('.vars-scope .remove', $createModal).each(function () {
                     $(this).closest('.row').remove();
                 });
             });
@@ -405,7 +403,7 @@ block ScriptsBlock
                             vars: []
                         };
 
-                        $varsScope.find('.row').each(function () {
+                        $('.vars-scope', $createModal).find('.row').each(function () {
                             var $row = $(this);
 
                             var obj = {
