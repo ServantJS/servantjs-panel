@@ -183,7 +183,7 @@ block ScriptsBlock
                 return toastr.warning(words.empty);
             }
 
-            modal.find('.create-config').attr('disabled', true).find('i').removeClass('hide');
+            toggleModalActionBtn(modal.find('.create-config'));
 
             $.ajax({
                 url: '/haproxy/configs',
@@ -215,7 +215,7 @@ block ScriptsBlock
 
                     } else {
                         toastr.error(taskWords.onCreateError);
-                        modal.find('.create-config').attr('disabled', false).find('i').addClass('hide');
+                        toggleModalActionBtn(modal.find('.create-config'));
                     }
                 }
             });
@@ -293,7 +293,7 @@ block ScriptsBlock
             }, function () {
                 var data = new FormData($form[0]);
 
-                $form.find('.import-config').attr('disabled', true).find('i').removeClass('hide');
+                toggleModalActionBtn($form.find('.import-config'));
 
                 $.ajax({
                     url: '/haproxy/configs/import',
@@ -326,7 +326,7 @@ block ScriptsBlock
 
                         } else {
                             toastr.error(taskWords.onCreateError);
-                            $form.find('.import-config').attr('disabled', false).find('i').addClass('hide');
+                            toggleModalActionBtn($form.find('.import-config'));
                         }
                     }
                 });

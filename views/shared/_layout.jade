@@ -122,6 +122,10 @@ html(lang='en')
                 });
             };
 
+            function toggleModalActionBtn($btn) {
+                $btn.toggleClass('disabled').prop('disabled', $btn.hasClass('disabled')).find('i').toggleClass('hide');
+            }
+
             function _convertStatus(status) {
                 switch (status) {
                     case -1:

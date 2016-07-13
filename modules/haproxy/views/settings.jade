@@ -112,7 +112,7 @@ block ScriptsBlock
                             desc: $('input[name="desc"]', $createModal).val()
                         };
 
-                        $('.create-btn').toggleClass('disabled').find('i').toggleClass('hide');
+                        toggleModalActionBtn($('.create-config'));
 
                         $.ajax({
                             url: '/haproxy/settings',
@@ -127,9 +127,11 @@ block ScriptsBlock
                                 if (result.ok) {
                                     $createModal.modal('hide');
                                     location.reload();
+                                } else {
+                                    toastr.error(result.msg);
                                 }
 
-                                $('.create-btn').toggleClass('disabled').find('i').toggleClass('hide');
+                                toggleModalActionBtn($('.create-config'));
                             }
                         });
                     }
@@ -153,7 +155,7 @@ block ScriptsBlock
                             desc: $('input[name="desc"]', $editModal).val()
                         };
 
-                        $('.save-btn').toggleClass('disabled').find('i').toggleClass('hide');
+                        toggleModalActionBtn($('.save-config'));
 
                         $.ajax({
                             url: '/haproxy/settings/' + $('input[name="id"]', $editModal).val(),
@@ -168,9 +170,11 @@ block ScriptsBlock
                                 if (result.ok) {
                                     $editModal.modal('hide');
                                     location.reload();
+                                } else {
+                                    toastr.error(result.msg);
                                 }
 
-                                $('.save-btn').toggleClass('disabled').find('i').toggleClass('hide');
+                                toggleModalActionBtn($('.save-config'));
                             }
                         });
                     }
@@ -185,11 +189,11 @@ block ScriptsBlock
                 var name = $tr.children('.name').text();
                 var desc = $tr.children('.desc').text();
 
+                $('#edit-setting-modal').modal('show');
+
                 $('#edit-setting-form input[name="id"]').val(id);
                 $('#edit-setting-form input[name="name"]').val(name);
                 $('#edit-setting-form input[name="desc"]').val(desc);
-
-                $('#edit-setting-modal').modal('show');
             });
 
             $('.delete-btn').on('click', function (e) {

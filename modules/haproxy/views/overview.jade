@@ -130,6 +130,8 @@ block ScriptsBlock
                 return;
             }
 
+            toggleModalActionBtn($('.save-config'));
+
             $.ajax({
                 url: '/haproxy/configs/' + $('#config-id').val(),
                 type: 'PUT',
@@ -144,11 +146,9 @@ block ScriptsBlock
                     if (result.ok) {
                         toastr.info(taskWords.onCreateSuccess);
 
-                        $('.save-config').addClass('disabled').find('i').removeClass('hide');
-
                         setTimeout(function () {
                             waitTask(result.data, function (status) {
-                                $('.save-config').removeClass('disabled').find('i').addClass('hide');
+                                toggleModalActionBtn($('.save-config'));
                             });
                         }, taskCheckInterval);
 
@@ -170,7 +170,7 @@ block ScriptsBlock
                 _csrf: _csrf
             };
 
-            $('.delete-config').addClass('disabled').find('i').removeClass('hide');
+            toggleModalActionBtn($('.delete-config'));
 
             $.ajax({
                 url: '/haproxy/configs/' + $('#config-id').val(),
@@ -191,11 +191,14 @@ block ScriptsBlock
                                 if (status === 0) {
                                     location.href = '/haproxy/configs';
                                 }
+
+                                toggleModalActionBtn($('.delete-config'));
                             });
                         }, taskCheckInterval);
 
                     } else {
                         toastr.error(taskWords.onCreateError);
+                        toggleModalActionBtn($('.delete-config'));
                     }
                 }
             });

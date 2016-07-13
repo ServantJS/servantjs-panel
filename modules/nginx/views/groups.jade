@@ -123,7 +123,7 @@ block ScriptsBlock
                             targetId: $('select[name="targetId"] > option:selected', $createModal).val()
                         };
 
-                        $('.create-btn').toggleClass('disabled').find('i').toggleClass('hide');
+                        toggleModalActionBtn($('.create-btn'));
 
                         $.ajax({
                             url: '/nginx/groups',
@@ -142,7 +142,7 @@ block ScriptsBlock
                                     toastr.error(result.msg);
                                 }
 
-                                $('.create-btn').toggleClass('disabled').find('i').toggleClass('hide');
+                                toggleModalActionBtn($('.create-btn'));
                             }
                         });
                     }

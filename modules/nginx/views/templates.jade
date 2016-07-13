@@ -349,7 +349,8 @@ block ScriptsBlock
                         }
                     });
 
-                    $('.save-template', $form).addClass('disabled');
+                    $('.save-template', $form).addClass('disabled').prop('disable', true);
+
                     $.ajax({
                         url: '/nginx/templates/' + $form.find('input[name="id"]').val(),
                         type: 'PUT',
@@ -367,7 +368,7 @@ block ScriptsBlock
                                 toastr.error(result.msg);
                             }
 
-                            $('.save-template', $form).removeClass('disabled');
+                            $('.save-template', $form).removeClass('disabled').prop('disable', false);
                         }
                     });
                 })
@@ -415,7 +416,7 @@ block ScriptsBlock
                             data.vars.push(obj);
                         });
 
-                        $('.create-btn').toggleClass('disabled').find('i').toggleClass('hide');
+                        toggleModalActionBtn($('.create-btn'));
 
                         $.ajax({
                             url: '/nginx/templates',
@@ -434,7 +435,7 @@ block ScriptsBlock
                                     toastr.error(result.msg);
                                 }
 
-                                $('.create-btn').toggleClass('disabled').find('i').toggleClass('hide');
+                                toggleModalActionBtn($('.create-btn'));
                             }
                         });
                     }
