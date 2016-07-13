@@ -358,6 +358,8 @@ block ScriptsBlock
                                                 $editModal.modal('hide');
                                                 var $current = $('tbody input[value="' + id + '"]').closest('tr');
                                                 $current.find('.name').text(data.name);
+
+                                                $('.save-btn').toggleClass('disabled').find('i').toggleClass('hide');
                                             }
                                         });
                                     }, taskCheckInterval);
