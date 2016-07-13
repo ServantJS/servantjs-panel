@@ -1,0 +1,373 @@
+extends ../../../views/shared/_layout
+block StylesBlock
+block ContentBlock
+
+    .row
+        .col-xs-12
+            h3.page-title #{pageTitle}
+    .row
+        .col-xs-12
+            .card
+                .card-header
+                    | #{table.name}
+                    a.btn.btn-success.btn-sm.pull-xs-right(style='margin-top: -8px;', href='#create-config-modal', data-toggle='modal')= buttonsTxt.create
+                .card-block
+                    table.table
+                        thead
+                            tr
+                                th #
+                                th= table.columns.name
+                                th= table.columns.group
+                                th= table.columns.target
+                                th= table.columns.state
+                                th(style='width: 135px')
+                        tbody
+                            - var i = 1;
+                            - each config in data.configs
+                                tr.tr-vertical
+                                    input(name='id', type='hidden', value=config._id)
+                                    td #{i++}
+                                    td.name= config.name
+                                    td= config.group_id.name
+                                    td
+                                        if config.group_id.is_group
+                                            span.label.label-sm.label-success= config.group_id.server_name
+                                        else
+                                            span.label.label-sm.label-primary= config.group_id.server_name
+                                    td
+                                        if config.kind == 0
+                                            span.label.label-sm.label-default unstated
+                                        else
+                                            if config.status === 0
+                                                span.label.label-sm.label-success running
+                                            else if config.status === 1
+                                                span.label.label-sm.label-primary pause
+                                            else if config.status === 2
+                                                span.label.label-sm.label-info process
+                                            else if config.status === 3
+                                                span.label.label-sm.label-danger error
+                                            else if config.status === 4
+                                                span.label.label-sm.label-info delete
+                                            else if config.status === 5
+                                                span.label.label-sm.label-danger warning
+                                    td
+                                        a.btn.btn-success.edit-btn.margin-10-right(href='#edit-config', title=buttonsTxt.edit)
+                                            i.fa.fa-pencil
+                                        a.btn.btn-danger.delete-btn(href='/nginx/configs/' + config._id, title=buttonsTxt.delete)
+                                            i.fa.fa-trash-o
+
+
+        #create-config-modal.modal.fade(tabindex='-1', role='dialog', aria-hidden='true')
+            .modal-dialog.modal-lg
+                .modal-content
+                    form#create-setting-form(method='POST', action='/nginx/configs', autocomplete='off')
+                        .modal-header
+                            button.close(type='button', data-dismiss='modal', aria-label='Close')
+                                span(aria-hidden='true') &times;
+                            h4.modal-title= modal.title
+                        .modal-body.modal-align
+                            .form-group.row
+                                label.col-xs-2.form-control-label= modal.fields.name
+                                .col-xs-10
+                                    input.form-control(name='name', placeholder='', type='text')
+                            .form-group.row
+                                label.col-xs-2.form-control-label= modal.fields.template
+                                .col-xs-10
+                                    select.form-control(name='template')
+                                        option(value='')= modal.chooseTemplate
+                                        option(value='custom')= modal.customTemplate
+                                        - each template in data.templates
+                                            option(value=template._id)= template.name
+
+                            .form-group.row
+                                label.col-xs-2.form-control-label= modal.fields.group
+                                .col-xs-10
+                                    select.form-control(name='group')
+                                        option(value='')= modal.chooseGroup
+                                        - each group in data.groups
+                                            option(value=group._id)= group.name
+
+                            .form-group.row
+                                .checkbox.col-xs-12.col-xs-offset-3
+                                    label
+                                        input(name='kind', type='checkbox')
+                                        | &nbsp;#{modal.fields.kind}
+                            .form-group.row.content-area(style='display: none;')
+                                label.col-xs-2.form-control-label= modal.fields.content
+                                .col-xs-10
+                                    pre
+                                        textarea.form-control(name='content', rows='10')
+
+                            .form-group.row.vars-area(style='display: none;')
+                                label.col-xs-2.form-control-label= modal.fields.vars
+                                .col-xs-10.vars-source
+
+                            .modal-footer
+                                button.btn.btn-default(type='button', data-dismiss='modal')= buttonsTxt.close
+                                button.btn.btn-primary.create-btn(type='submit')
+                                    i.fa.fa-refresh.fa-spin.hide(style='margin-right: 5px')
+                                    | #{buttonsTxt.create}
+
+        #edit-config-modal.modal.fade(tabindex='-1', role='dialog', aria-hidden='true')
+            .modal-dialog.modal-lg
+                .modal-content
+                    form#edit-setting-form(method='POST', action='/nginx/configs', autocomplete='off')
+                        input(name='id', type='hidden', value='')
+                        .modal-header
+                            button.close(type='button', data-dismiss='modal', aria-label='Close')
+                                span(aria-hidden='true') &times;
+                            h4.modal-title= modal.editTitle
+                        .modal-body.modal-align
+                            .form-group.row
+                                label.col-xs-2.form-control-label= modal.fields.name
+                                .col-xs-10
+                                    input.form-control(name='name', placeholder='', type='text')
+
+                            .form-group.row
+                                label.col-xs-2.form-control-label= modal.fields.content
+                                .col-xs-10
+                                    pre
+                                        textarea.form-control(name='content', rows='10')
+
+                            .modal-footer
+                                button.btn.btn-default(type='button', data-dismiss='modal')= buttonsTxt.close
+                                button.btn.btn-primary.save-btn(type='submit')
+                                    i.fa.fa-refresh.fa-spin.hide(style='margin-right: 5px')
+                                    | #{buttonsTxt.save}
+
+block ScriptsPluginBlock
+block ScriptsBlock
+    include ../../../views/shared/_task
+    include ../../../views/shared/_validate
+
+    script(type='application/javascript').
+        var templates = !{JSON.stringify(data.templates)};
+        function onRemoveVar(e) {
+            e.preventDefault();
+            $(this).closest('.row').remove();
+        }
+
+        $(function () {
+            setActiveLink('#nginx', '#nginx-configs-sub');
+
+            var $createModal = $('#create-config-modal');
+            var $varsArea = $('.vars-area');
+            var $varsSource = $('.vars-source');
+
+            $('select[name="template"]').on('change', function (e) {
+                var val = $(this).find('option:selected').val();
+
+                switch (val) {
+                    case '':
+                        $createModal.find('.content-area').hide();
+                        $varsArea.hide();
+                        $varsSource.empty();
+                        break;
+                    case 'custom':
+                        $createModal.find('.content-area').show();
+                        $varsArea.hide();
+                        $varsSource.empty();
+                        break;
+                    default:
+                        $createModal.find('.content-area').hide();
+
+                        var template = templates.find(function (item) { return item._id === val;});
+
+                        if (!template) {
+                            //TODO handle
+                            break;
+                        }
+
+                        $varsArea.show();
+                        $varsSource.empty();
+
+                        for (var i = 0; i < template.vars.length; i++) {
+                            var item = template.vars[i];
+
+                            var $row = $('<div class="row"></div>');
+
+                            $row.append('<label class="col-xs-3 form-control-label">' + item.name + '</label>');
+                            $row.append('<div class="col-xs-9"><div class="form-group">' +
+                                    '<input class="form-control var-input" data-pattern="' + item.pattern + '" name="var-' + Date.now() + '" type="text" placeholder="' + item.description + '" value="" />' +
+                                    '</div></div>');
+
+                            $varsSource.append($row);
+
+                            $row.find('input').rules('add', {required: true});
+                        }
+
+                        break;
+                }
+            });
+
+            $('.delete-btn').on('click', function (e) {
+                e.preventDefault();
+
+                var self = this;
+
+                onDeleteBtnClick(this, null, 'Are you sure?', function (result) {
+                    if (result.ok) {
+                        toastr.info(taskWords.onCreateSuccess);
+
+                        setTimeout(function () {
+                            waitTask(result.data, function (status) {
+                                if (status !== 2) {
+                                    $(self).removeClass('disabled');
+                                }
+
+                                if (status === 0) {
+                                    $(self).closest('tr').remove();
+                                }
+                            });
+                        }, taskCheckInterval);
+
+                    } else {
+                        toastr.error(taskWords.onCreateError);
+                        $(self).removeClass('disabled');
+                    }
+                });
+            });
+
+            validateModal(null, $createModal,
+                    {
+                        name: {
+                            required: true,
+                            maxlength: 40
+                        },
+                        content: {
+                            required: true
+                        },
+                        template: {
+                            required: true
+                        },
+                        group: {
+                            required: true
+                        }
+                    },
+                    function () {
+                        var data = {
+                            _csrf: _csrf,
+                            name: $('input[name="name"]', $createModal).val(),
+                            content: $('textarea[name="content"]', $createModal).val(),
+                            template: $('select[name="template"] > option:selected', $createModal).val(),
+                            group: $('select[name="group"] > option:selected', $createModal).val(),
+                            kind: $('input[name="kind"]', $createModal).prop('checked') ? 0 : 1,
+                            vars: []
+                        };
+
+                        $('.var-input', $createModal).each(function () {
+                            var $elem = $(this);
+
+                            data.vars.push({
+                                pattern: $elem.data('pattern'),
+                                value: $elem.val()
+                            });
+                        });
+
+                        $('.create-btn').toggleClass('disabled').find('i').toggleClass('hide');
+
+                        $.ajax({
+                            url: '/nginx/configs',
+                            type: 'POST',
+                            contentType: 'application/json',
+                            data: JSON.stringify(data),
+                            dataType: 'json',
+                            error: function (XMLHttpRequest, textStatus, errorThrow) {
+                                alert(XMLHttpRequest + '\n' + textStatus + '\n' + errorThrow);
+                            },
+                            success: function (result) {
+                                if (result.ok) {
+                                    toastr.info(taskWords.onCreateSuccess);
+
+                                    setTimeout(function () {
+                                        waitTask(result.data, function (status) {
+                                            if (status === 0) {
+                                                $createModal.modal('hide');
+                                                location.reload();
+                                            }
+                                        });
+                                    }, taskCheckInterval);
+                                } else {
+                                    toastr.error(result.msg);
+                                    $('.create-btn').toggleClass('disabled').find('i').toggleClass('hide');
+                                }
+                            }
+                        });
+                    }
+            );
+
+            var $editModal = $('#edit-config-modal');
+
+            $('.edit-btn').on('click', function (e) {
+                e.preventDefault();
+
+                var $elem = $(this).closest('tr');
+
+                resetValidation($editModal.find('form'));
+
+                $.get('/nginx/configs/' + $elem.find('input[name="id"]').val(), function (result) {
+                    if (result.ok) {
+                        $editModal.find('input[name="id"]').val(result.data._id);
+                        $editModal.find('input[name="name"]').val(result.data.name);
+                        $editModal.find('textarea[name="content"]').val(result.data.content);
+
+                        $editModal.modal('show');
+                    } else {
+                        toastr.error(result.msg);
+                    }
+                });
+            });
+
+            validateForm(null, $editModal.find('form'),
+                    {
+                        name: {
+                            required: true,
+                            maxlength: 40
+                        },
+                        content: {
+                            required: true
+                        }
+                    },
+                    function () {
+                        var data = {
+                            _csrf: _csrf,
+                            name: $('input[name="name"]', $editModal).val(),
+                            content: $('textarea[name="content"]', $editModal).val()
+                        };
+
+                        $('.save-btn').toggleClass('disabled').find('i').toggleClass('hide');
+
+                        var id = $('input[name="id"]', $editModal).val();
+
+                        $.ajax({
+                            url: '/nginx/configs/' + id,
+                            type: 'PUT',
+                            contentType: 'application/json',
+                            data: JSON.stringify(data),
+                            dataType: 'json',
+                            error: function (XMLHttpRequest, textStatus, errorThrow) {
+                                alert(XMLHttpRequest + '\n' + textStatus + '\n' + errorThrow);
+                            },
+                            success: function (result) {
+                                if (result.ok) {
+                                    toastr.info(taskWords.onCreateSuccess);
+
+                                    setTimeout(function () {
+                                        waitTask(result.data, function (status) {
+                                            if (status === 0) {
+                                                $editModal.modal('hide');
+                                                var $current = $('tbody input[value="' + id + '"]').closest('tr');
+                                                $current.find('.name').text(data.name);
+                                            }
+                                        });
+                                    }, taskCheckInterval);
+                                } else {
+                                    toastr.error(result.msg);
+                                    $('.save-btn').toggleClass('disabled').find('i').toggleClass('hide');
+                                }
+
+                            }
+                        });
+                    }
+            );
+        });

@@ -107,12 +107,20 @@ exports.ru = {
         settings: 'Настройки'
     },
 
+    nginx: {
+        menu: 'NGINX',
+        configs: 'Конф. файлы',
+        groups: 'Группы конфигов',
+        templates: 'Шаблоны'
+    },
+
     monitoring: {
         menu: 'Мониторинг',
         servers: 'Сервера',
         haproxyStats: 'HAProxy',
         settings: 'Настройки'
     },
+    
     server: {
         menu: 'Сервера',
         info: 'Информация',
@@ -149,7 +157,8 @@ exports.ru = {
         rangelength: "Введите значение, содержащие от {0} до {1} символов.",
         range: "Введите значение в диапозоне от {0} до {1}.",
         max: "Введите значение, которое меньше или равно {0}.",
-        min: "Введите значение, которое больше или равно {0}."
+        min: "Введите значение, которое больше или равно {0}.",
+        regex: 'Данные не соответствуют шаблону {0}.'
     }
 };
 
@@ -247,6 +256,13 @@ exports.us = {
         configs: 'Configs',
         settings: 'Settings'
     },
+    
+    nginx: {
+        menu: 'NGINX',
+        configs: 'Configs',
+        groups: 'Config groups',
+        templates: 'Templates'
+    },
 
     monitoring: {
         menu: 'Monitoring',
@@ -291,6 +307,7 @@ exports.us = {
         rangelength: "Please enter a value between {0} and {1} characters long.",
         range: "Please enter a value between {0} and {1}.",
         max: "Please enter a value less than or equal to {0}.",
-        min: "Please enter a value greater than or equal to {0}."
+        min: "Please enter a value greater than or equal to {0}.",
+        regex: 'The data do not match the pattern {0}.'
     }
 };

@@ -1,0 +1,17 @@
+script(type='application/javascript').
+    $(function () {
+        $('.alert-dismissible > button').on('click', function (e) {
+            if (window.localStorage) {
+                window.localStorage.setItem($(this).parent().attr('id'), true);
+            }
+        });
+
+        if (window.localStorage) {
+            $('.hint').each(function () {
+                var id = $(this).attr('id');
+                if (window.localStorage.getItem(id)) {
+                    $('#' + id).hide();
+                }
+            });
+        }
+    });

@@ -1,0 +1,442 @@
+extends ../../../views/shared/_layout
+block StylesBlock
+    link(rel='stylesheet', href='/plugins/highlight/styles/default.css')
+block ContentBlock
+
+    .row
+        .col-xs-12
+            h3.page-title #{pageTitle}
+    .row
+        .col-xs-12
+            #hint-nginx-templates.hint.alert.alert-info.alert-dismissible.fade.in(role='alert')
+                button.close(type='button', data-dismiss='alert' aria-label='Close')
+                    span(aria-hidden='true') &times;
+                strong #{hint.name}.&nbsp;
+                | #{hint.content}
+    .row
+        .col-xs-12
+            .card
+                .card-header
+                    | #{table.name}
+                    a.btn.btn-success.btn-sm.pull-xs-right(style='margin-top: -8px;', href='#create-template-modal', data-toggle='modal')= buttonsTxt.create
+                .card-block
+                    - each template in data.templates
+                        form.item-template-form(autocomplete='off')
+                            input(name='id', type='hidden', value=template._id)
+                            .card.template-item
+                                .card-header
+                                    a(href='#open')= template.name
+                                .card-block(style='display: none;')
+                                    .row
+                                        .col-xs-2
+                                            label.col-xs-2.form-control-label= item.template
+                                        .col-xs-10
+                                            pre(style='padding: 8px; border: 1px solid #ccc; border-radius: 4px; background: #eee')
+                                                code.nginx(style='padding: .5em; border: 1px solid #ccc; border-radius: 1px; display: block;')= template.content
+                                            pre.original.hide
+                                                textarea.form-control(name='content', rows='30')= template.content
+                                    .row
+                                        .col-xs-2
+                                            label.col-xs-2.form-control-label= item.vars
+                                        .col-xs-10.vars-scope
+                                            - each variable, index in template.vars
+                                                .row
+                                                    .col-xs-3
+                                                        .form-group
+                                                            input.form-control.var-name(name='var-name[' + index + ']', placeholder=modal.fields.vars.name, type='text', value=variable.name)
+                                                    .col-xs-3
+                                                        .form-group
+                                                            input.form-control.var-desc(name='var-desc[' + index + ']', placeholder=modal.fields.vars.desc, type='text', value=variable.description)
+                                                    .col-xs-3
+                                                        .form-group
+                                                            input.form-control.var-pattern(name='var-pattern[' + index + ']', placeholder=modal.fields.vars.pattern, type='text', value=variable.pattern)
+                                                    .col-xs-3
+                                                        a.btn.btn-danger.remove.hide(href='#remove-var', title=buttonsTxt.delete)
+                                                            i.fa.fa-minus
+                                            .row.template-var-row(style='display:none;')
+                                                .col-xs-3
+                                                    .form-group
+                                                        input.form-control.var-name(name='var-name', placeholder=modal.fields.vars.name, type='text')
+                                                .col-xs-3
+                                                    .form-group
+                                                        input.form-control.var-desc(name='var-desc', placeholder=modal.fields.vars.desc, type='text')
+                                                .col-xs-3
+                                                    .form-group
+                                                        input.form-control.var-pattern(name='var-pattern', placeholder=modal.fields.vars.pattern, type='text', data-toggle='tooltip', data-placement='top', title=modal.fields.vars.patternHint)
+                                                .col-xs-3
+                                                    a.btn.btn-success.add-var(href='#add-new-var', title=buttonsTxt.add)
+                                                        i.fa.fa-plus
+                                    .row
+                                        .text-center
+                                            a.btn.btn-danger.delete-btn.margin-10-right(href='/nginx/templates/' + template._id)= buttonsTxt.delete
+                                            a.btn.btn-warning.edit-template(href='#edit')= buttonsTxt.edit
+                                            a.btn.btn-default.cancel-template.margin-10-right(href='#cancel', style='display: none;')= buttonsTxt.cancel
+                                            button.btn.btn-success.save-template(style='display: none;', type='submit')= buttonsTxt.save
+
+        #template-empty-var.row.new-var.hide
+            .col-xs-3
+                .form-group
+                    input.form-control.var-name(name='var-name', placeholder=modal.fields.vars.name, type='text')
+            .col-xs-3
+                .form-group
+                    input.form-control.var-desc(name='var-desc', placeholder=modal.fields.vars.desc, type='text')
+            .col-xs-3
+                .form-group
+                    input.form-control.var-pattern(name='var-pattern', placeholder=modal.fields.vars.pattern, type='text')
+            .col-xs-3
+                a.btn.btn-danger.remove(href='#remove-var', title=buttonsTxt.delete)
+                    i.fa.fa-minus
+
+        #create-template-modal.modal.fade(tabindex='-1', role='dialog', aria-hidden='true')
+            .modal-dialog.modal-lg
+                .modal-content
+                    form#create-setting-form(method='POST', action='/nginx/templates', autocomplete='off')
+                        .modal-header
+                            button.close(type='button', data-dismiss='modal', aria-label='Close')
+                                span(aria-hidden='true') &times;
+                            h4.modal-title= modal.title
+                        .modal-body.modal-align
+                            .form-group.row
+                                label.col-xs-2.form-control-label= modal.fields.name
+                                .col-xs-10
+                                    input.form-control(name='name', placeholder='', type='text')
+                            .form-group.row
+                                label.col-xs-2.form-control-label= modal.fields.content
+                                .col-xs-10
+                                    pre
+                                        textarea.form-control(name='content', rows='10')
+                            .form-group.row
+                                .col-xs-2
+                                    label.form-control-label= modal.fields.vars.title
+                                .col-xs-10.vars-scope
+                                    .row
+                                        .col-xs-3
+                                            .form-group
+                                                input.form-control.var-name(name='var-name', placeholder=modal.fields.vars.name, type='text')
+                                        .col-xs-3
+                                            .form-group
+                                                input.form-control.var-desc(name='var-desc', placeholder=modal.fields.vars.desc, type='text')
+                                        .col-xs-3
+                                            .form-group
+                                                input.form-control.var-pattern(name='var-pattern', placeholder=modal.fields.vars.pattern, type='text', data-toggle='tooltip', data-placement='top', title=modal.fields.vars.patternHint)
+                                        .col-xs-3
+                                            a.btn.btn-success.add-var(href='#add-new-var', title=buttonsTxt.add)
+                                                i.fa.fa-plus
+                                    .row.template-var.hide
+                                        .col-xs-3
+                                            .form-group
+                                                input.form-control.var-name(name='var-name', placeholder=modal.fields.vars.name, type='text')
+                                        .col-xs-3
+                                            .form-group
+                                                input.form-control.var-desc(name='var-desc', placeholder=modal.fields.vars.desc, type='text')
+                                        .col-xs-3
+                                            .form-group
+                                                input.form-control.var-pattern(name='var-pattern', placeholder=modal.fields.vars.pattern, type='text')
+                                        .col-xs-3
+                                            a.btn.btn-danger.remove(href='#remove-var', title=buttonsTxt.delete)
+                                                i.fa.fa-minus
+                            .modal-footer
+                                button.btn.btn-default(type='button', data-dismiss='modal')= buttonsTxt.close
+                                button.btn.btn-primary.create-btn(type='submit')
+                                    i.fa.fa-refresh.fa-spin.hide(style='margin-right: 5px')
+                                    | #{buttonsTxt.create}
+block ScriptsPluginBlock
+block ScriptsBlock
+    include  ./includes/hints
+    include ../../../views/shared/_validate
+
+    script(type='application/javascript', src='/plugins/highlight/highlight.pack.js')
+
+    script(type='application/javascript').
+
+        function onRemoveVar(e) {
+            e.preventDefault();
+            $(this).closest('.row').remove();
+        }
+
+        function addValidateRules($elem) {
+            $elem.find('.var-name').each(function () {
+                $(this).attr('name', 'var-name' + Math.random()).rules('add', {
+                    required: true,
+                    maxlength: 40
+                });
+            });
+            $elem.find('.var-desc').each(function () {
+                $(this).attr('name', 'var-desc' + Math.random()).rules('add', {
+                    required: true,
+                    maxlength: 80
+                });
+            });
+            $elem.find('.var-pattern').each(function () {
+                $(this).attr('name', 'var-pattern' + Math.random()).rules('add', {
+                    required: true,
+                    regex: /^\$\{\w{1,20}\}$/
+                });
+            });
+        }
+
+        function removeValidateRules($elem) {
+            $elem.find('.var-name').each(function () {
+                $(this).rules('remove');
+            });
+            $elem.find('.var-desc').each(function () {
+                $(this).rules('remove');
+            });
+            $elem.find('.var-pattern').each(function () {
+                $(this).rules('remove');
+            });
+        }
+
+        $(function () {
+            setActiveLink('#nginx', '#nginx-templates-sub');
+
+            hljs.initHighlightingOnLoad();
+
+            var $templateVar = $('.template-var');
+            var $varsScope = $('.vars-scope');
+
+            $(function () {
+                $('[data-toggle="tooltip"]').tooltip()
+            });
+
+            $('.remove').on('click', onRemoveVar);
+
+            $('.delete-btn').on('click', function (e) {
+                e.preventDefault();
+
+                var self = this;
+
+                onDeleteBtnClick(this, null, 'Are you sure?', function (result) {
+                    if (result.ok) {
+                        $(self).closest('.template-item').remove();
+                        toastr.success(result.msg);
+                    } else {
+                        toastr.error(result.msg);
+                    }
+                });
+            });
+
+            $('.cancel-template').on('click', function (e) {
+                e.preventDefault();
+
+                var $elem = $(this).closest('.card-block');
+
+                $elem.find('.remove').addClass('hide');
+                $elem.find('pre > code').parent().show();
+                $elem.find('.original').addClass('hide');
+                $(this).parent().find('.edit-template').show().end().find('.save-template').hide().end().find('.cancel-template').hide();
+
+                $('.template-var-row', $elem).hide();
+
+                removeValidateRules($elem);
+                $('.new-var', $elem).remove();
+
+                var $scopeToClear = $elem.find('.template-var-row');
+
+                $('.var-name', $scopeToClear).val('');
+                $('.var-desc', $scopeToClear).val('');
+                $('.var-pattern', $scopeToClear).val('');
+
+                resetValidation($elem.closest('form'));
+            });
+
+            $('.edit-template').on('click', function (e) {
+                e.preventDefault();
+
+                var $elem = $(this).closest('.card-block');
+
+                $elem.find('.remove').removeClass('hide');
+                $elem.find('pre > code').parent().hide();
+                $elem.find('.original').removeClass('hide');
+                $(this).hide().parent().find('.save-template').show().end().find('.cancel-template').show();
+
+                $('.template-var-row', $elem).show();
+
+                addValidateRules($elem);
+                removeValidateRules($elem.find('.template-var-row'));
+            });
+
+            $('.template-var-row input').on('input', function (e) {
+                var $elem = $(this).closest('.row');
+                var a = $('.var-name', $elem).val();
+                var b = $('.var-desc', $elem).val();
+                var c = $('.var-pattern', $elem).val();
+
+                if (a.length || b.length || c.length) {
+                    addValidateRules($elem);
+                } else {
+                    removeValidateRules($elem);
+                    $elem.find('.has-danger').removeClass('has-danger')
+                            .end()
+                            .find('.form-control-danger').removeClass('form-control-danger')
+                }
+            });
+
+            $('.template-var-row a').on('click', function (e) {
+                e.preventDefault();
+
+                var $row = $('#template-empty-var').clone();
+                var $current = $(this).closest('.row');
+
+                $row.attr('id', '').removeClass('hide');
+
+                $('.remove', $row).on('click', onRemoveVar);
+
+                $('[name="var-name"]',$row).val($('[name="var-name"]',$current).val());
+                $('[name="var-desc"]',$row).val($('[name="var-desc"]',$current).val());
+                $('[name="var-pattern"]',$row).val($('[name="var-pattern"]',$current).val());
+
+                $('[name="var-name"]', $current).val('');
+                $('[name="var-desc"]', $current).val('');
+                $('[name="var-pattern"]', $current).val('');
+
+                $current.before($row);
+
+                addValidateRules($row);
+
+            });
+
+            $('.add-var').on('click', function (e) {
+                e.preventDefault();
+
+                var $block = $templateVar.clone();
+                $block.removeClass('template-var').removeClass('hide');
+                $block.find('.remove').on('click', onRemoveVar);
+
+                $varsScope.append($block);
+
+                addValidateRules($block);
+            });
+
+            var $createModal = $('#create-template-modal');
+
+            $createModal.on('show.bs.modal', function () {
+                $('.vars-scope .remove').each(function () {
+                    $(this).closest('.row').remove();
+                });
+            });
+
+            $('.template-item').parent().find('.card-header').on('click', function (e) {
+                e.preventDefault();
+
+                $(this).closest('.card').find('.card-block').slideToggle();
+            });
+
+            $('.item-template-form').each(function () {
+                validateForm(null, $(this), {
+                    content: {
+                        required: true
+                    }
+                }, function (form) {
+                    var $form = $(form);
+                    var data = {
+                        _csrf: _csrf,
+                        content: $('textarea[name="content"]', $form).val(),
+                        vars: []
+                    };
+
+                    $form.find('.vars-scope > .row').each(function () {
+                        var $row = $(this);
+
+                        var obj = {
+                            name: $row.find('.var-name').val(),
+                            description: $row.find('.var-desc').val(),
+                            pattern: $row.find('.var-pattern').val()
+                        };
+
+                        if (obj.name.length && obj.description.length && obj.pattern.length) {
+                            data.vars.push(obj);
+                        }
+                    });
+
+                    $('.save-template', $form).addClass('disabled');
+                    $.ajax({
+                        url: '/nginx/templates/' + $form.find('input[name="id"]').val(),
+                        type: 'PUT',
+                        contentType: 'application/json',
+                        data: JSON.stringify(data),
+                        dataType: 'json',
+                        error: function (XMLHttpRequest, textStatus, errorThrow) {
+                            alert(XMLHttpRequest + '\n' + textStatus + '\n' + errorThrow);
+                            $('.save-template', $form).removeClass('disabled');
+                        },
+                        success: function (result) {
+                            if (result.ok) {
+                                location.reload();
+                            } else {
+                                toastr.error(result.msg);
+                            }
+
+                            $('.save-template', $form).removeClass('disabled');
+                        }
+                    });
+                })
+            });
+
+            validateModal(null, $createModal,
+                    {
+                        name: {
+                            required: true,
+                            maxlength: 40
+                        },
+                        content: {
+                            required: true
+                        },
+                        'var-name': {
+                            required: true,
+                            maxlength: 40
+                        },
+                        'var-desc': {
+                            required: true,
+                            maxlength: 80
+                        },
+                        'var-pattern': {
+                            required: true,
+                            regex: /^\$\{\w{1,20}\}$/
+                        }
+                    },
+                    function () {
+                        var data = {
+                            _csrf: _csrf,
+                            name: $('input[name="name"]', $createModal).val(),
+                            content: $('textarea[name="content"]', $createModal).val(),
+                            vars: []
+                        };
+
+                        $varsScope.find('.row').each(function () {
+                            var $row = $(this);
+
+                            var obj = {
+                                name: $row.find('.var-name').val(),
+                                description: $row.find('.var-desc').val(),
+                                pattern: $row.find('.var-pattern').val()
+                            };
+
+                            data.vars.push(obj);
+                        });
+
+                        $('.create-btn').toggleClass('disabled').find('i').toggleClass('hide');
+
+                        $.ajax({
+                            url: '/nginx/templates',
+                            type: 'POST',
+                            contentType: 'application/json',
+                            data: JSON.stringify(data),
+                            dataType: 'json',
+                            error: function (XMLHttpRequest, textStatus, errorThrow) {
+                                alert(XMLHttpRequest + '\n' + textStatus + '\n' + errorThrow);
+                            },
+                            success: function (result) {
+                                if (result.ok) {
+                                    $createModal.modal('hide');
+                                    location.reload();
+                                } else {
+                                    toastr.error(result.msg);
+                                }
+
+                                $('.create-btn').toggleClass('disabled').find('i').toggleClass('hide');
+                            }
+                        });
+                    }
+            );
+        });

@@ -61,6 +61,18 @@ html(lang='en')
                                     a(href='/haproxy/configs')= haproxy.configs
                                 li#hap-settings-sub
                                     a(href='/haproxy/settings')= haproxy.settings
+                        li#nginx.nav-item
+                            a.nav-link(href='#haproxy')
+                                i.fa.fa-server
+                                | #{nginx.menu}
+                                i.arrow.fa.fa-angle-left.pull-xs-right
+                            ul.sub-menu
+                                li#nginx-configs-sub
+                                    a(href='/nginx/configs')= nginx.configs
+                                li#nginx-groups-sub
+                                    a(href='/nginx/groups')= nginx.groups
+                                li#nginx-templates-sub
+                                    a(href='/nginx/templates')= nginx.templates
                         li#monitoring.nav-item
                             a.nav-link(href='#monitoring')
                                 i.fa.fa-line-chart

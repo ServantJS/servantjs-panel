@@ -1,0 +1,150 @@
+extends ../../../views/shared/_layout
+block StylesBlock
+block ContentBlock
+
+    .row
+        .col-xs-12
+            h3.page-title #{pageTitle}
+    .row
+        .col-xs-12
+            #hint-nginx-groups.hint.alert.alert-info.alert-dismissible.fade.in(role='alert')
+                button.close(type='button', data-dismiss='alert' aria-label='Close')
+                    span(aria-hidden='true') &times;
+                strong #{hint.name}.&nbsp;
+                | #{hint.content}
+    .row
+        .col-xs-12
+            .card
+                .card-header
+                    | #{table.name}
+                    a.btn.btn-success.btn-sm.pull-xs-right(style='margin-top: -8px;', href='#create-group-modal', data-toggle='modal')= buttonsTxt.create
+                .card-block
+                    table.table
+                        thead
+                            tr
+                                th #
+                                th= table.columns.name
+                                th= table.columns.target
+                                th= table.columns.sourceDir
+                                th(style='width: 135px')
+                        tbody
+                            - var i = 1;
+                            - each group in data.groups
+                                tr.tr-vertical
+                                    input(name='id', type='hidden', value=group._id)
+                                    td #{i++}
+                                    td= group.name
+                                    td
+                                        if group.is_group
+                                            span.label.label-sm.label-success= group.target_name
+                                        else
+                                            span.label.label-sm.label-primary= group.target_name
+                                    td= group.source_dir
+                                    td
+                                        a.btn.btn-danger.delete-btn(href='/nginx/groups/' + group._id, title=buttonsTxt.delete)
+                                            i.fa.fa-trash-o
+
+            #create-group-modal.modal.fade(tabindex='-1', role='dialog', aria-hidden='true')
+                .modal-dialog
+                    .modal-content
+                        form#create-setting-form(method='POST', action='/nginx/groups', autocomplete='off')
+                            .modal-header
+                                button.close(type='button', data-dismiss='modal', aria-label='Close')
+                                    span(aria-hidden='true') &times;
+                                h4.modal-title= modal.title
+                            .modal-body.modal-align
+                                .form-group.row
+                                    label.col-xs-4.form-control-label= modal.fields.name
+                                    .col-xs-8
+                                        input.form-control(name='name', placeholder='', type='text')
+                                .form-group.row
+                                    label.col-xs-4.form-control-label= modal.fields.sourceDir
+                                    .col-xs-8
+                                        input.form-control(name='sourceDir', placeholder='', type='text')
+                                .form-group.row
+                                    label.col-xs-2.form-control-label= modal.fields.target
+                                    .col-xs-10
+                                        select.form-control(name='targetId')
+                                            - each target in data.targets
+                                                option(value=target.sys_id)= target.name || target.server_name
+                            .modal-footer
+                                button.btn.btn-default(type='button', data-dismiss='modal')= buttonsTxt.close
+                                button.btn.btn-primary.create-btn(type='submit')
+                                    i.fa.fa-refresh.fa-spin.hide(style='margin-right: 5px')
+                                    | #{buttonsTxt.create}
+
+
+block ScriptsPluginBlock
+block ScriptsBlock
+    include  ./includes/hints
+    include ../../../views/shared/_validate
+
+    script(type='application/javascript').
+
+        $(function () {
+            setActiveLink('#nginx', '#nginx-groups-sub');
+
+            $('.delete-btn').on('click', function (e) {
+                e.preventDefault();
+
+                var self = this;
+
+                onDeleteBtnClick(this, null, 'Are you sure?', function (result) {
+                    if (result.ok) {
+                        $(self).closest('tr').remove();
+                        toastr.success(result.msg);
+                    } else {
+                        toastr.error(result.msg);
+                    }
+                });
+            });
+
+            var $createModal = $('#create-group-modal');
+
+            validateModal(null, $createModal,
+                    {
+                        name: {
+                            required: true,
+                            maxlength: 15
+                        },
+                        sourceDir: {
+                            required: true,
+                            maxlength: 300
+                        },
+                        targetId: {
+                            required: true
+                        }
+                    },
+                    function () {
+                        var data = {
+                            _csrf: _csrf,
+                            name: $('input[name="name"]', $createModal).val(),
+                            sourceDir: $('input[name="sourceDir"]', $createModal).val(),
+                            targetId: $('select[name="targetId"] > option:selected', $createModal).val()
+                        };
+
+                        $('.create-btn').toggleClass('disabled').find('i').toggleClass('hide');
+
+                        $.ajax({
+                            url: '/nginx/groups',
+                            type: 'POST',
+                            contentType: 'application/json',
+                            data: JSON.stringify(data),
+                            dataType: 'json',
+                            error: function (XMLHttpRequest, textStatus, errorThrow) {
+                                alert(XMLHttpRequest + '\n' + textStatus + '\n' + errorThrow);
+                            },
+                            success: function (result) {
+                                if (result.ok) {
+                                    $createModal.modal('hide');
+                                    location.reload();
+                                } else {
+                                    toastr.error(result.msg);
+                                }
+
+                                $('.create-btn').toggleClass('disabled').find('i').toggleClass('hide');
+                            }
+                        });
+                    }
+            );
+        });
