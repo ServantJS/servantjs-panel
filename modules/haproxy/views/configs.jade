@@ -63,8 +63,6 @@ block ContentBlock
 
                                         a.btn.btn-sm.btn-success.slide-action.margin-10-right(role='button', title=slideDown)
                                             i.fa.fa-caret-down
-
-                                        //-a.btn.btn-sm.btn-primary.margin-10-right(type='button')= insertTemplate
                                     .card-block(style='display: none;')
                                         pre
                                             textarea.form-control(name='content', rows='10')
@@ -78,12 +76,12 @@ block ContentBlock
 
                     .modal-footer
                         .hints.text-left
-                            #swap-hint.alert.alert-info.alert-dismissible.fade.in(role='alert')
+                            #swap-hint.hint.alert.alert-info.alert-dismissible.fade.in(role='alert')
                                 button.close(type='button', data-dismiss='alert' aria-label='Close')
                                     span(aria-hidden='true') &times;
                                 strong #{hint.name}.&nbsp;
                                 | #{hint.swap}
-                            #setting-hint.alert.alert-info.alert-dismissible.fade.in(role='alert')
+                            #setting-hint.hint.alert.alert-info.alert-dismissible.fade.in(role='alert')
                                 button.close(type='button', data-dismiss='alert' aria-label='Close')
                                     span(aria-hidden='true') &times;
                                 strong #{hint.name}.&nbsp;
@@ -341,13 +339,12 @@ block ScriptsBlock
             });
 
             if (window.localStorage) {
-                if (window.localStorage.getItem('swap-hint')) {
-                    $('#swap-hint').hide();
-                }
-
-                if (window.localStorage.getItem('setting-hint')) {
-                    $('#setting-hint').hide();
-                }
+                $('.hint').each(function() {
+                    var id = $(this).attr('id');
+                    if (window.localStorage.getItem(id)) {
+                        $('#' + id).hide();
+                    }
+                });
             }
         });
 
