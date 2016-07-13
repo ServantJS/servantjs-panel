@@ -142,7 +142,8 @@ block ContentBlock
                                     | #{buttonsTxt.create}
 block ScriptsPluginBlock
 block ScriptsBlock
-    include  ./includes/hints
+    include ./includes/hints
+    include ./includes/textarea-ext
     include ../../../views/shared/_validate
 
     script(type='application/javascript', src='/plugins/highlight/highlight.pack.js')
