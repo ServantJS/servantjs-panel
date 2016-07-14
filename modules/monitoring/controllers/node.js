@@ -16,7 +16,7 @@ const router = express.Router();
 
 const core = require('../../../src/core');
 
-const prefix = '/monitoring/settings';
+const prefix = '/monitoring/nodes';
 
 module.exports = (parent) => {
     app.disable('x-powered-by');
@@ -36,9 +36,9 @@ module.exports = (parent) => {
             if (err) {
                 next(err);
             } else {
-                const content = parent.wordsList['monitoring'][res.locals.lang]['settings'];
+                const content = parent.wordsList['monitoring'][res.locals.lang]['nodes'];
                 content.data = nodes;
-                res.render('settings', content);
+                res.render('nodes', content);
             }
         });
     });
@@ -47,29 +47,22 @@ module.exports = (parent) => {
         model: moduleDB.NodeDetailModel
     }));
 
-    core.logger.verbose(`\t\tGET -> ${prefix}/:node_id`);
-    router.get('/:node_id', (req, res, next) => {
+    core.logger.verbose(`\t\tGET -> ${prefix}/:node_id/details`);
+    router.get('/:node_id/details', (req, res, next) => {
+        res.json({ok: true, data: req.currentModel});
+    });
 
-        async.waterfall([
-            (cb) => {
-                moduleDB.MetricDataModel.find({node_id: req.currentModel._id}).select('sys_name component').lean().exec((err, metrics) => {
-                    cb(err, metrics)
-                });
-            },
-            (metrics, cb) => {
-                moduleDB.MetricSettingModel.find({node_id: req.currentModel._id}).lean().exec((err, settings) => {
-                    cb(err, {metrics: metrics, settings: settings});
-                });
-            }
-        ], (err, data) => {
+    core.logger.verbose(`\t\tGET -> ${prefix}/:node_id/metrics`);
+    router.get('/:node_id/metrics', (req, res, next) => {
+        moduleDB.MetricDataModel.find({node_id: req.currentModel._id}).lean().exec((err, metrics) => {
             if (err) {
                 next(err);
             } else {
-                res.json({ok: true, data: data});
+                res.json({ok: true, data: req.currentModel.status ? metrics : []});
             }
         });
     });
-
+    
     app.use(prefix, parent.authorize, router);
     parent.use(app);
 };

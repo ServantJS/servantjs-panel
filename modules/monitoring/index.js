@@ -1,9 +1,10 @@
 'use strict';
 
 module.exports = (parent) => {
-    require('./install')();
+    //require('./install')();
 
-    require('./controllers/servers')(parent);
-    require('./controllers/haproxy')(parent);
+    //require('./controllers/servers')(parent);
+    //require('./controllers/haproxy')(parent);
     require('./controllers/setting')(parent);
+    require('./controllers/node')(parent);
 };

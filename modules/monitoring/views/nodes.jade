@@ -1,0 +1,146 @@
+extends ../../../views/shared/_layout
+block StylesBlock
+    style.
+        .node-item {
+            border-radius: 0;cursor: pointer;
+        }
+        .active-node {
+            outline: 4px solid #25d634;
+        }
+
+block ContentBlock
+
+    .row
+        .col-xs-12
+            h3.page-title #{pageTitle}
+    .row
+        .col-xs-3
+            - each node in data
+                .card.node-item
+                    .card-block.text-center
+                        input(name='id', type='hidden', value=node._id)
+                        div
+                            | #{node.hostname}&nbsp;
+                            if node.status
+                                .label.label-success UP
+                            else
+                                .label.label-danger DOWN
+        .col-xs-9.metrics
+
+
+block ScriptsPluginBlock
+block ScriptsBlock
+
+    script(type='application/javascript', src='/js/bootstrap-table.js')
+    script(type='application/javascript').
+        var nodeWords = !{JSON.stringify(nodeDetails)};
+        var metricsWords = !{JSON.stringify(metrics)};
+
+        var bytes = {
+            b: 'B',
+            kb: 'Kb',
+            mb: 'Mb',
+            gb: 'Gb'
+        };
+
+        var bytesPerSec = {
+            b: 'Bps',
+            kb: 'Kbps',
+            mb: 'Mbps',
+            gb: 'Gbps'
+        };
+
+        var bytesToString = function (postfix, value) {
+            var fmt = function (val) {
+                return val.toFixed(2);
+            };
+
+            if (value < 1024) {
+                return fmt(value) + ' ' + postfix.b;
+            } else if (value < 1024 * 1024) {
+                return fmt(value / 1024) + ' ' + postfix.kb;
+            } else if (value < 1024 * 1024 * 1024) {
+                return fmt(value / 1024 / 1024) + ' ' + postfix.mb;
+            } else {
+                return fmt(value / 1024 / 1024 / 1024) + ' ' + postfix.gb;
+            }
+        };
+
+        $(function () {
+            setActiveLink('#monitoring', '#monitoring-servers-sub');
+
+            //$('.node-item').first().addClass('active-node');
+
+            $('.node-item').first().addClass('active-node').end().on('click', function () {
+                $('.active-node').removeClass('active-node');
+                $(this).addClass('active-node');
+
+                var $elem = $('.metrics');
+                $elem.empty();
+
+                $elem.append('<div class="refresh-icon text-center">' +
+                        '<i class="fa fa-refresh fa-spin fa-4x" style="color: lightgray"></i></div>');
+
+                var id = $(this).find('input[name="id"]').val();
+
+                $.ajax({url: '/monitoring/nodes/' + id + '/details', cache: false, success: function (result) {
+                        if (result.ok) {
+                            var node = result.data;
+                            $.ajax({url: '/monitoring/nodes/' + id + '/metrics', cache: false, success: function (result) {
+                                    if (result.ok) {
+                                        var metrics = result.data;
+                                        var leftColumn = 'col-xs-4 text-bold margin-bottom-3';
+                                        var rightColumn = 'col-xs-8';
+
+                                        $elem.empty();//.append('<ul></ul>');
+
+                                        $elem.append('<div class="card node-detail"><div class="card-header">' + nodeWords.title + '</div><div class="card-block"></div></div>');
+                                        $elem.append('<div class="card metrics"><div class="card-header">' + metricsWords.title + '</div><div class="card-block"></div></div>');
+
+                                        $elem.find('.node-detail .card-block')
+                                                .css('font-size', '12px')
+                                                .append('<div class="row"><div class="' + leftColumn + '">' + nodeWords.os + ':</div><div class="' + rightColumn + '">' + node.system.name + '</div></div>')
+                                                .append('<div class="row"><div class="' + leftColumn + '">' + nodeWords.version + ':</div><div class="' + rightColumn + '">' + node.system.version + '</div></div>')
+                                                .append('<div class="row"><div class="' + leftColumn + '">' + nodeWords.platform + ':</div><div class="' + rightColumn + '">' + node.system.type + '</div></div>')
+                                                .append('<div class="row"><div class="' + leftColumn + '">' + nodeWords.arch + ':</div><div class="' + rightColumn + '">' + node.system.arch + '</div></div>')
+                                                .append('<div class="row"><div class="' + leftColumn + '">' + nodeWords.kernel + ':</div><div class="' + rightColumn + '">' + node.system.kernel + '</div></div>')
+
+                                                .append('<div class="row"><div class="' + leftColumn + '">' + nodeWords.uptime + ':</div><div class="' + rightColumn + '">' +
+                                                        (new Date((new Date()).getTime() - node.uptime)).toUTCString() + '</div></div>');
+
+                                        var net = node.inets.find(function (item) {
+                                            return item.is_default;
+                                        });
+
+                                        $elem.find('.node-detail .card-block')
+                                                .append('<div class="row"><div class="' + leftColumn + '">' + nodeWords.inet + ':</div><div class="' + rightColumn + '">' + net.name + '</div></div>')
+
+                                                .append('<div class="row"><div class="' + leftColumn + '">' + nodeWords.ip + ':</div><div class="' + rightColumn + '">' + net.ip.find(function (item) {
+                                                            return item.family == 'IPv4';
+                                                        }).address + '</div></div>')
+                                                .append('<div class="row"><div class="' + leftColumn + '">' + nodeWords.mac + ':</div><div class="' + rightColumn + '">' + net.mac + '</div></div>');
+
+                                        $elem.find('.metrics .card-block').append('<ul></ul>');
+                                        metrics.forEach(function (item) {
+                                            if (item.measure === '%') {
+                                                item.value = item.value.toFixed(2) + ' ' + item.measure;
+                                            } else if (item.measure === 'bytes') {
+                                                item.value = bytesToString(bytes, item.value);
+                                            } else if (item.measure === 'bps') {
+                                                item.value = bytesToString(bytesPerSec, item.value);
+                                            }
+
+                                            $elem.find('.metrics .card-block').find('ul').append('<li>' + item.sys_name + ': ' + item.value + '</li>');
+                                        });
+                                    }
+                                }
+                            });
+                        } else {
+                            toastr.error(result.msg);
+                        }
+                    }
+                });
+            });
+
+            $('.node-item').first().trigger('click');
+        });

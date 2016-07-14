@@ -4,19 +4,7 @@ const mongoose = require('mongoose');
 
 require('./models').load();
 
-exports.MonitoringModuleModel = mongoose.model('MonitoringModule');
-exports.MetricModel = mongoose.model('Metric');
-
-exports.CPUHistoryModel = mongoose.model('CPUHistory');
-exports.CPUEventModel = mongoose.model('CPUEvent');
-
-exports.RAMHistoryModel = mongoose.model('RAMHistory');
-exports.RAMEventModel = mongoose.model('RAMEvent');
-
-exports.NetActivityHistoryModel = mongoose.model('NetActivityHistory');
-exports.NetActivityEventModel = mongoose.model('NetActivityEvent');
-
-exports.HaProxyStatHistoryModel = mongoose.model('HaProxyStatHistory');
-exports.HaProxyStatEventEventModel = mongoose.model('HaProxyStatEvent');
-
-exports.NodeDetailsModel = mongoose.model('NodeDetails');
+exports.NodeDetailModel = mongoose.model('NodeDetail');
+exports.MetricSettingModel = mongoose.model('MetricSetting');
+exports.MetricDataModel = mongoose.model('MetricData');
+exports.MetricHistoryModel = mongoose.model('MetricHistory');
