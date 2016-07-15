@@ -49,7 +49,6 @@ module.exports = (parent) => {
 
     core.logger.verbose(`\t\tGET -> ${prefix}/:node_id`);
     router.get('/:node_id', (req, res, next) => {
-
         async.waterfall([
             (cb) => {
                 moduleDB.MetricDataModel.find({node_id: req.currentModel._id}).select('sys_name component').lean().exec((err, metrics) => {
@@ -67,6 +66,68 @@ module.exports = (parent) => {
             } else {
                 res.json({ok: true, data: data});
             }
+        });
+    });
+
+    core.logger.verbose(`\t\tPUT -> ${prefix}/:node_id`);
+    router.put('/:node_id', (req, res, next) => {
+        let metric = req.body.metric;
+        let component = req.body.component;
+
+        if (!_.isStringParam(req.body, 'metric')) {
+            return next(new Error('Missing "metric" property'));
+        }
+
+        if (!_.isStringParam(req.body, 'component')) {
+            return next(new Error('Missing "component" property'));
+        }
+
+        moduleDB.MetricSettingModel.count(
+            {node_id: req.currentModel._id, sys_name: metric, component: component, disabled: true}, (err, c) => {
+                if (err) {
+                    next(err);
+                } else if (c) {
+                    const content = parent.wordsList['monitoring'][res.locals.lang]['ajax'];
+                    res.json({ok: false, msg: content.settings.exist});
+                } else {
+                    (new moduleDB.MetricSettingModel({node_id: req.currentModel._id, sys_name: metric, component: component, disabled: true})).save((err) => {
+                        if (err) {
+                            next(err);
+                        } else {
+                            const content = parent.wordsList['monitoring'][res.locals.lang]['ajax'];
+                            res.json({ok: true, msg: content.settings.ok});
+                        }
+                    });    
+                }
+            });
+    });
+
+    core.logger.verbose(`\t\tDELETE -> ${prefix}/:node_id`);
+    router.delete('/:node_id', (req, res, next) => {
+        let metric = req.body.metric;
+        let component = req.body.component;
+
+        if (!_.isStringParam(req.body, 'metric')) {
+            return next(new Error('Missing "metric" property'));
+        }
+
+        if (!_.isStringParam(req.body, 'component')) {
+            return next(new Error('Missing "component" property'));
+        }
+
+        moduleDB.MetricSettingModel.remove(
+            {node_id: req.currentModel._id, sys_name: metric, component: component, disabled: true},
+            (err, entry) => {
+                if (err) {
+                    next(err);
+                }  else if (!entry.result.n) {
+                    const content = parent.wordsList['monitoring'][res.locals.lang]['ajax'];
+                    res.json({ok: false, msg: content.settings.notExist});
+                } else {
+                    const content = parent.wordsList['monitoring'][res.locals.lang]['ajax'];
+                    res.json({ok: true, msg: content.settings.removed});
+                }
+
         });
     });
 

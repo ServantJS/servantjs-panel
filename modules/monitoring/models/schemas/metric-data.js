@@ -7,7 +7,10 @@ const MetricSettingSchema = exports.MetricSettingSchema = new Schema({
     node_id: {type: Schema.Types.ObjectId, index: true},
 
     sys_name: String,
-    component: String
+    component: String,
+    disabled: Boolean,
+    
+    options: Schema.Types.Mixed
 }, {collection: 'monitoring.metrics.settings'});
 
 const MetricSchema = exports.MetricSchema = new Schema({

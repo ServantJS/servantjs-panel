@@ -65,6 +65,7 @@ exports.ru = {
 
         create: 'Создать',
         add: 'Добавить',
+        remove: 'Убрать',
         save: 'Сохранить',
         process: 'Обработка задания...',
         cancel: 'Отмена',
@@ -215,6 +216,7 @@ exports.us = {
 
         create: 'Create',
         add: 'Add',
+        remove: 'Remove',
         save: 'Save',
         process: 'Processing the tasks...',
         cancel: 'Cancel',

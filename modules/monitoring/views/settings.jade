@@ -51,10 +51,10 @@ block ScriptsBlock
                             $elem.empty();
                             $elem.append('<div class="card metric-settings"><div class="card-header">' + settingsWords.title + '</div><div class="card-block"></div></div>');
 
-                            var $select = $('<select class="form-select-sm margin-10-right"></select>');
-                            var $selectComponent = $('<select class="form-select-sm"></select>');
+                            var $select = $('<select class="form-control form-select-sm margin-10-right"></select>');
+                            var $selectComponent = $('<select class="form-control form-select-sm"></select>');
 
-                            $select.append('<option>Choose</option>');
+                            //$select.append('<option>Choose</option>');
 
                             var metrics = {};
 
@@ -81,15 +81,97 @@ block ScriptsBlock
                                 $selectComponent.empty();
                                 $selectComponent.append('<option value="all">all</option>');
 
-                                val.split(',').forEach(function (item) {
+
+                               var arr =  val.split(',');
+                                arr.sort();
+                                arr.forEach(function (item) {
                                     if (item.length)
                                         $selectComponent.append('<option value="' + item + '">' + item + '</option>');
                                 });
+                            }).trigger('change');
 
+
+                            $elem.find('.card-block')
+                                    .append('<div class="row margin-bottom-10">' +
+                                            '<div class="col-xs-5 metrics-scope"></div>' +
+                                            '<div class="col-xs-3 components-scope"></div>' +
+                                            '<div class="col-xs-4 action-scope"></div></div>')
+                                    .find('.metrics-scope').append($select)
+                                    .end()
+                                    .find('.components-scope').append($selectComponent);
+
+                            var $add = $('<a href="#add" class="btn btn-success btn-sm margin-10-right" title="' + crudText.add + '"><i class="fa fa-plus"></i></a>');
+                            var $remove = $('<a href="#remove" class="btn btn-sm btn-danger" title="' + crudText.remove + '"><i class="fa fa-minus"></i></a>');
+
+                            $elem.find('.action-scope').append($add).append($remove);
+
+                            $elem.find('.card-block').append('<div class="row"><label class="col-xs-4">' + settingsWords.existRules + '</label><ul class="col-xs-4"></ul></div>');
+
+                            var $ul = $elem.find('ul');
+
+                            result.data.settings.forEach(function (item) {
+                                $ul.append('<li>' + item.sys_name + '[' + item.component + ']</li>');
                             });
 
-                            $elem.find('.card-block').append($select);
-                            $elem.find('.card-block').append($selectComponent);
+                            $add.on('click', function (e) {
+                                e.preventDefault();
+
+                                var $row = $(this).closest('.row');
+                                var id = $('.active-node').find('input[name="id"]').val();
+
+                                var metric = $row.find('.metrics-scope option:selected').val();
+                                var component = $row.find('.components-scope option:selected').val();
+
+                                $.ajax({
+                                    url: '/monitoring/settings/' + id,
+                                    type: 'PUT',
+                                    contentType: 'application/json',
+                                    data: JSON.stringify({_csrf: _csrf, metric: metric, component: component}),
+                                    dataType: 'json',
+                                    error: function (XMLHttpRequest, textStatus, errorThrow) {
+                                        alert(XMLHttpRequest + '\n' + textStatus + '\n' + errorThrow);
+                                    },
+                                    success: function (result) {
+                                        if (result.ok) {
+                                            toastr.success(result.msg);
+                                            $elem.find('ul').append('<li>' + metric + '[' + component + ']</li>')
+
+                                        } else {
+                                            toastr.error(result.msg);
+                                        }
+                                    }
+                                })
+                            });
+
+                            $remove.on('click', function (e) {
+                                e.preventDefault();
+
+                                var $row = $(this).closest('.row');
+                                var id = $('.active-node').find('input[name="id"]').val();
+
+                                var metric = $row.find('.metrics-scope option:selected').val();
+                                var component = $row.find('.components-scope option:selected').val();
+
+                                $.ajax({
+                                    url: '/monitoring/settings/' + id,
+                                    type: 'DELETE',
+                                    contentType: 'application/json',
+                                    data: JSON.stringify({_csrf: _csrf, metric: metric, component: component}),
+                                    dataType: 'json',
+                                    error: function (XMLHttpRequest, textStatus, errorThrow) {
+                                        alert(XMLHttpRequest + '\n' + textStatus + '\n' + errorThrow);
+                                    },
+                                    success: function (result) {
+                                        if (result.ok) {
+                                            toastr.success(result.msg);
+                                            $elem.find('ul li:contains(' + metric + '[' + component + '])').remove();
+
+                                        } else {
+                                            toastr.error(result.msg);
+                                        }
+                                    }
+                                })
+                            });
 
 
                         } else {
