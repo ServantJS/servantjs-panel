@@ -97,41 +97,53 @@ block ScriptsBlock
                                         $elem.append('<div class="card node-detail"><div class="card-header">' + nodeWords.title + '</div><div class="card-block"></div></div>');
                                         $elem.append('<div class="card metrics"><div class="card-header">' + metricsWords.title + '</div><div class="card-block"></div></div>');
 
-                                        $elem.find('.node-detail .card-block')
-                                                .css('font-size', '12px')
-                                                .append('<div class="row"><div class="' + leftColumn + '">' + nodeWords.os + ':</div><div class="' + rightColumn + '">' + node.system.name + '</div></div>')
-                                                .append('<div class="row"><div class="' + leftColumn + '">' + nodeWords.version + ':</div><div class="' + rightColumn + '">' + node.system.version + '</div></div>')
-                                                .append('<div class="row"><div class="' + leftColumn + '">' + nodeWords.platform + ':</div><div class="' + rightColumn + '">' + node.system.type + '</div></div>')
-                                                .append('<div class="row"><div class="' + leftColumn + '">' + nodeWords.arch + ':</div><div class="' + rightColumn + '">' + node.system.arch + '</div></div>')
-                                                .append('<div class="row"><div class="' + leftColumn + '">' + nodeWords.kernel + ':</div><div class="' + rightColumn + '">' + node.system.kernel + '</div></div>')
+                                        if (node.system) {
 
-                                                .append('<div class="row"><div class="' + leftColumn + '">' + nodeWords.uptime + ':</div><div class="' + rightColumn + '">' +
-                                                        (new Date((new Date()).getTime() - node.uptime)).toUTCString() + '</div></div>');
+                                            $elem.find('.node-detail .card-block')
+                                                    .css('font-size', '12px')
+                                                    .append('<div class="row"><div class="' + leftColumn + '">' + nodeWords.os + ':</div><div class="' + rightColumn + '">' + node.system.name + '</div></div>')
+                                                    .append('<div class="row"><div class="' + leftColumn + '">' + nodeWords.version + ':</div><div class="' + rightColumn + '">' + node.system.version + '</div></div>')
+                                                    .append('<div class="row"><div class="' + leftColumn + '">' + nodeWords.platform + ':</div><div class="' + rightColumn + '">' + node.system.type + '</div></div>')
+                                                    .append('<div class="row"><div class="' + leftColumn + '">' + nodeWords.arch + ':</div><div class="' + rightColumn + '">' + node.system.arch + '</div></div>')
+                                                    .append('<div class="row"><div class="' + leftColumn + '">' + nodeWords.kernel + ':</div><div class="' + rightColumn + '">' + node.system.kernel + '</div></div>')
 
-                                        var net = node.inets.find(function (item) {
-                                            return item.is_default;
-                                        });
+                                                    .append('<div class="row"><div class="' + leftColumn + '">' + nodeWords.uptime + ':</div><div class="' + rightColumn + '">' +
+                                                            (new Date((new Date()).getTime() - node.uptime)).toUTCString() + '</div></div>');
 
-                                        $elem.find('.node-detail .card-block')
-                                                .append('<div class="row"><div class="' + leftColumn + '">' + nodeWords.inet + ':</div><div class="' + rightColumn + '">' + net.name + '</div></div>')
+                                            var net = node.inets.find(function (item) {
+                                                return item.is_default;
+                                            });
 
-                                                .append('<div class="row"><div class="' + leftColumn + '">' + nodeWords.ip + ':</div><div class="' + rightColumn + '">' + net.ip.find(function (item) {
-                                                            return item.family == 'IPv4';
-                                                        }).address + '</div></div>')
-                                                .append('<div class="row"><div class="' + leftColumn + '">' + nodeWords.mac + ':</div><div class="' + rightColumn + '">' + net.mac + '</div></div>');
+                                            $elem.find('.node-detail .card-block')
+                                                    .append('<div class="row"><div class="' + leftColumn + '">' + nodeWords.inet + ':</div><div class="' + rightColumn + '">' + net.name + '</div></div>')
 
-                                        $elem.find('.metrics .card-block').append('<ul></ul>');
-                                        metrics.forEach(function (item) {
-                                            if (item.measure === '%') {
-                                                item.value = item.value.toFixed(2) + ' ' + item.measure;
-                                            } else if (item.measure === 'bytes') {
-                                                item.value = bytesToString(bytes, item.value);
-                                            } else if (item.measure === 'bps') {
-                                                item.value = bytesToString(bytesPerSec, item.value);
-                                            }
+                                                    .append('<div class="row"><div class="' + leftColumn + '">' + nodeWords.ip + ':</div><div class="' + rightColumn + '">' + net.ip.find(function (item) {
+                                                                return item.family == 'IPv4';
+                                                            }).address + '</div></div>')
+                                                    .append('<div class="row"><div class="' + leftColumn + '">' + nodeWords.mac + ':</div><div class="' + rightColumn + '">' + net.mac + '</div></div>');
 
-                                            $elem.find('.metrics .card-block').find('ul').append('<li>' + item.sys_name + ': ' + item.value + '</li>');
-                                        });
+                                        } else {
+                                            $elem.find('.node-detail .card-block').append(nodeWords.emptyData);
+                                        }
+
+                                        if (metrics.length) {
+
+                                            $elem.find('.metrics .card-block').append('<ul></ul>');
+                                            metrics.forEach(function (item) {
+                                                if (item.measure === '%') {
+                                                    item.value = item.value.toFixed(2) + ' ' + item.measure;
+                                                } else if (item.measure === 'bytes') {
+                                                    item.value = bytesToString(bytes, item.value);
+                                                } else if (item.measure === 'bps') {
+                                                    item.value = bytesToString(bytesPerSec, item.value);
+                                                }
+
+                                                $elem.find('.metrics .card-block').find('ul').append('<li>' + item.sys_name + ': ' + item.value + '</li>');
+                                            });
+
+                                        } else {
+                                            $elem.find('.metrics .card-block').append(metricsWords.emptyData);
+                                        }
                                     }
                                 }
                             });

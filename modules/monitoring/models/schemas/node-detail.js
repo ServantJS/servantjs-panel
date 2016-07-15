@@ -27,15 +27,16 @@ const INetSchema = new Schema({
 }, {_id :false});
 
 const NodeDetailSchema = exports.NodeDetailSchema = new Schema({
-    node_id: {type: Schema.Types.ObjectId, index: true},
+    server_id: {type: Schema.Types.ObjectId, ref: 'Server'},
+    worker_id: {type: Schema.Types.ObjectId, ref: 'Worker'},
     ts: Date,
-    
+
     node_type: String,
     vendor: String,
 
     uptime: Number,
     status: Number,
-    hostname: String,
+    hostname: {type: String, unique: true},
 
     system: SystemSchema,
     gw: String,

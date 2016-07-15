@@ -1,9 +1,9 @@
 'use strict';
 
 const mongoose = require('mongoose');
-const express  = require('express');
-const path  = require('path');
-const async  = require('async');
+const express = require('express');
+const path = require('path');
+const async = require('async');
 
 const db = require('../../../lib/db');
 
@@ -90,14 +90,36 @@ module.exports = (parent) => {
                     const content = parent.wordsList['monitoring'][res.locals.lang]['ajax'];
                     res.json({ok: false, msg: content.settings.exist});
                 } else {
-                    (new moduleDB.MetricSettingModel({node_id: req.currentModel._id, sys_name: metric, component: component, disabled: true})).save((err) => {
+                    (new moduleDB.MetricSettingModel({
+                        node_id: req.currentModel._id,
+                        sys_name: metric,
+                        component: component,
+                        disabled: true
+                    })).save((err) => {
                         if (err) {
                             next(err);
                         } else {
-                            const content = parent.wordsList['monitoring'][res.locals.lang]['ajax'];
-                            res.json({ok: true, msg: content.settings.ok});
+
+                            const task = new db.TaskModel({
+                                username: req.currentUser.email,
+                                server_id: req.currentModel.server_id,
+                                target_id: 'SERVER',
+                                module: 'monitoring',
+                                cmd: 'update-settings',
+
+                                params: JSON.stringify({id: req.currentModel._id})
+                            });
+
+                            task.save((err) => {
+                                if (err) {
+                                    next(err);
+                                } else {
+                                    const content = parent.wordsList['monitoring'][res.locals.lang]['ajax'];
+                                    res.json({ok: true, msg: content.settings.ok});
+                                }
+                            });
                         }
-                    });    
+                    });
                 }
             });
     });
@@ -120,15 +142,32 @@ module.exports = (parent) => {
             (err, entry) => {
                 if (err) {
                     next(err);
-                }  else if (!entry.result.n) {
+                } else if (!entry.result.n) {
                     const content = parent.wordsList['monitoring'][res.locals.lang]['ajax'];
                     res.json({ok: false, msg: content.settings.notExist});
                 } else {
-                    const content = parent.wordsList['monitoring'][res.locals.lang]['ajax'];
-                    res.json({ok: true, msg: content.settings.removed});
+
+                    const task = new db.TaskModel({
+                        username: req.currentUser.email,
+                        server_id: req.currentModel.server_id,
+                        target_id: 'SERVER',
+                        module: 'monitoring',
+                        cmd: 'update-settings',
+
+                        params: JSON.stringify({id: req.currentModel._id})
+                    });
+
+                    task.save((err) => {
+                        if (err) {
+                            next(err);
+                        } else {
+                            const content = parent.wordsList['monitoring'][res.locals.lang]['ajax'];
+                            res.json({ok: true, msg: content.settings.removed});
+                        }
+                    });
                 }
 
-        });
+            });
     });
 
     app.use(prefix, parent.authorize, router);

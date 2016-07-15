@@ -4,31 +4,33 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const MetricSettingSchema = exports.MetricSettingSchema = new Schema({
-    node_id: {type: Schema.Types.ObjectId, index: true},
+    node_id: {type: Schema.Types.ObjectId, index: true, ref: 'NodeDetail'},
 
     sys_name: String,
     component: String,
     disabled: Boolean,
-    
+
     options: Schema.Types.Mixed
 }, {collection: 'monitoring.metrics.settings'});
 
 const MetricSchema = exports.MetricSchema = new Schema({
-    node_id: {type: Schema.Types.ObjectId, index: true},
+    node_id: {type: Schema.Types.ObjectId, index: true, ref: 'NodeDetail'},
 
-    sys_name: String,
-    ts: {type: Date, index: {expires: '1d'}},
+    sys_name: {type: String},
+    ts: {type: Date, index: {expires: '2m'}},
     measure: String,
+    component: String,
 
     value: Number
 }, {collection: 'monitoring.metrics.current'});
 
 const MetricHistorySchema = exports.MetricHistorySchema = new Schema({
-    node_id: {type: Schema.Types.ObjectId, index: true},
+    node_id: {type: Schema.Types.ObjectId, index: true, ref: 'NodeDetail'},
 
-    sys_name: String,
+    sys_name: {type: String},
     ts: {type: Date, index: {expires: '30d'}},
     measure: String,
+    component: String,
 
     num_samples: Number,
     total_value: {
