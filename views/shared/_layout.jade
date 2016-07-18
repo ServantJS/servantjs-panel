@@ -80,7 +80,9 @@ html(lang='en')
                                 i.arrow.fa.fa-angle-left.pull-xs-right
                             ul.sub-menu
                                 li#monitoring-servers-sub
-                                    a(href='/monitoring/nodes')= monitoring.servers
+                                    a(href='/monitoring/nodes')= monitoring.nodes
+                                li#monitoring-netmap-sub
+                                    a(href='/monitoring/netmap')= monitoring.netmap
                                 li#monitoring-settings-sub
                                     a(href='/monitoring/settings')= monitoring.settings
                         li#server.nav-item

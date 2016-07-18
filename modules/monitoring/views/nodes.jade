@@ -31,7 +31,6 @@ block ContentBlock
 block ScriptsPluginBlock
 block ScriptsBlock
 
-    script(type='application/javascript', src='/js/bootstrap-table.js')
     script(type='application/javascript').
         var nodeWords = !{JSON.stringify(nodeDetails)};
         var metricsWords = !{JSON.stringify(metrics)};
@@ -71,7 +70,7 @@ block ScriptsBlock
 
             //$('.node-item').first().addClass('active-node');
 
-            $('.node-item').first().addClass('active-node').end().on('click', function () {
+            $('.node-item').on('click', function () {
                 $('.active-node').removeClass('active-node');
                 $(this).addClass('active-node');
 
@@ -154,5 +153,32 @@ block ScriptsBlock
                 });
             });
 
-            $('.node-item').first().trigger('click');
+            if ($('.node-item').length) {
+
+                var $elem = null;
+
+                if (location.hash.length) {
+                    $elem = $('.node-item input[value="' + location.hash.replace('#', '') + '"]').closest('.node-item');
+                } else {
+                    $elem = $('.node-item').first();
+                }
+
+                $elem.trigger('click');
+            }
+
+            setInterval(function () {
+                $.get('/monitoring/nodes/status', function (result) {
+                    if (result.ok) {
+                        result.data.forEach(function (item) {
+                            var $elem = $('.node-item input[value="' + item._id + '"]').parent();
+                            $elem.find('div > div').remove();
+                            if (item.status) {
+                                $elem.find('div').append('<div class="label label-success">UP</div>');
+                            } else {
+                                $elem.find('div').append('<div class="label label-danger">DOWN</div>');
+                            }
+                        })
+                    }
+                });
+            }, 30 * 1000)
         });

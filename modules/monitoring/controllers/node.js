@@ -43,6 +43,16 @@ module.exports = (parent) => {
         });
     });
 
+    router.get('/status', (req, res, next) => {
+        moduleDB.NodeDetailModel.find({}).sort('-hostname').select('hostname status').lean().exec((err, nodes) => {
+            if (err) {
+                next(err);
+            } else {
+                res.json({ok: true, data: nodes});
+            }
+        });
+    });
+
     router.param('node_id', checkIdOnRequest({
         model: moduleDB.NodeDetailModel
     }));

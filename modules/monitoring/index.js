@@ -7,4 +7,5 @@ module.exports = (parent) => {
     //require('./controllers/haproxy')(parent);
     require('./controllers/setting')(parent);
     require('./controllers/node')(parent);
+    require('./controllers/netmap')(parent);
 };

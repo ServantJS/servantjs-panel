@@ -22,7 +22,7 @@ function searchIS(value) {
 }
 
 function encryptPwd (pwd) {
-    return crypto.createHash('sha256').update(pwd || '').digest('hex');
+    return crypto.createHash('sha256').update(pwd).digest('hex');
 }
 
 UserSchema.statics.authorize = function (login, pwd, callback) {

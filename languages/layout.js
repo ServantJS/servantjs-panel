@@ -117,7 +117,8 @@ exports.ru = {
 
     monitoring: {
         menu: 'Мониторинг',
-        servers: 'Узлы',
+        nodes: 'Узлы',
+        netmap: 'Сетевая карта узлов',
         settings: 'Настройки'
     },
     
@@ -267,7 +268,8 @@ exports.us = {
 
     monitoring: {
         menu: 'Monitoring',
-        servers: 'Nodes',
+        nodes: 'Nodes',
+        netmap: 'Network map nodes',
         settings: 'Settings'
     },
 

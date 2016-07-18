@@ -39,6 +39,24 @@ exports.ru = {
         }
     },
 
+    netmap: {
+        title: 'Сетевая карта узлов',
+        pageTitle: 'Сетевая карта узлов',
+        
+        save: {
+            btn: 'Сохранить расположение',
+            toastr: 'Координаты расположения узлов на карте сохранены.'
+        },
+
+        tooltip: {
+            state: 'Состояние',
+            metrics: {
+                title: 'Метрики',
+                more: 'Подробнее'
+            }
+        }
+    },
+
     ajax: {
         settings: {
             ok: 'Новое исключение успешно добавлено.',
@@ -87,6 +105,24 @@ exports.us = {
             title: 'Configure exceptions for metrics',
             existRules: 'Current exceptions:',
             emptyData: 'This node has not yet received a request for the collection of metrics.'
+        }
+    },
+
+    netmap: {
+        title: 'Network map nodes',
+        pageTitle: 'Network map nodes',
+
+        save: {
+            btn: 'Save location',
+            toastr: 'Coordinates of nodes stored location on the map.'
+        },
+
+        tooltip: {
+            state: 'State',
+            metrics: {
+                title: 'Metrics',
+                more: 'More'
+            }
         }
     },
 

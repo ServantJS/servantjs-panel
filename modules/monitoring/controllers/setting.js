@@ -51,8 +51,8 @@ module.exports = (parent) => {
     router.get('/:node_id', (req, res, next) => {
         async.waterfall([
             (cb) => {
-                moduleDB.MetricDataModel.find({node_id: req.currentModel._id}).select('sys_name component').lean().exec((err, metrics) => {
-                    cb(err, metrics)
+                moduleDB.MetricHistoryModel.find({node_id: req.currentModel._id}).select('sys_name component').sort('sys_name').lean().exec((err, metrics) => {
+                    cb(err, metrics);
                 });
             },
             (metrics, cb) => {

@@ -1,13 +1,12 @@
 'use strict';
 
 const mongoose = require('mongoose');
+const crypto = require("crypto");
 const Schema   = mongoose.Schema;
 
-const crypto = require('crypto');
-
 function generateId(pref) {
-    const currentDate = (new Date()).valueOf().toString();
-    const random = Math.random().toString();
+    var currentDate = (new Date()).valueOf().toString();
+    var random = Math.random().toString();
     return (pref + crypto.createHash('md5').update(currentDate + random).digest('hex')).toUpperCase();
 }
 
@@ -18,7 +17,9 @@ const WorkersGroupSchema = exports.WorkersGroupSchema = new Schema({
     workers: [{type: Schema.Types.ObjectId, ref: 'Worker'}]
 });
 
-WorkersGroupSchema.pre('save', function (next) {
+WorkersGroupSchema.pre('save', (next) => {
+    this.dt = new Date();
+
     if (!this.sys_id) {
         this.sys_id = generateId('g');
     }
