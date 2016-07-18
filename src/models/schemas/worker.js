@@ -14,7 +14,7 @@ const WorkerSchema = exports.WorkerSchema = new Schema({
     modules: [String]
 });
 
-WorkerSchema.pre('remove', (next) => {
+WorkerSchema.pre('remove', function (next) {
     this.model('Task').remove({ target_id: this.sys_id }, next);
 });
 
