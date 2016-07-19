@@ -64,7 +64,7 @@ module.exports = (parent) => {
 
     core.logger.verbose(`\t\tGET -> ${prefix}/:node_id/metrics`);
     router.get('/:node_id/metrics', (req, res, next) => {
-        moduleDB.MetricDataModel.find({node_id: req.currentModel._id}).lean().exec((err, metrics) => {
+        moduleDB.MetricDataModel.find({node_id: req.currentModel._id}).sort('sys_name component').lean().exec((err, metrics) => {
             if (err) {
                 next(err);
             } else {

@@ -49,22 +49,11 @@ module.exports = (parent) => {
 
     core.logger.verbose(`\t\tGET -> ${prefix}/:node_id`);
     router.get('/:node_id', (req, res, next) => {
-        async.waterfall([
-            (cb) => {
-                moduleDB.MetricHistoryModel.find({node_id: req.currentModel._id}).select('sys_name component').sort('sys_name').lean().exec((err, metrics) => {
-                    cb(err, metrics);
-                });
-            },
-            (metrics, cb) => {
-                moduleDB.MetricSettingModel.find({node_id: req.currentModel._id}).lean().exec((err, settings) => {
-                    cb(err, {metrics: metrics, settings: settings});
-                });
-            }
-        ], (err, data) => {
+        moduleDB.MetricSettingModel.find({node_id: req.currentModel._id}).lean().exec((err, settings) => {
             if (err) {
                 next(err);
             } else {
-                res.json({ok: true, data: data});
+                res.json({ok: true, data: {metrics: req.currentModel.metrics, settings: settings}});
             }
         });
     });

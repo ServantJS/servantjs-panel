@@ -63,12 +63,12 @@ block ScriptsBlock
                             var metrics = {};
 
                             result.data.metrics.forEach(function (item) {
-                                if (item.component == null && !metrics.hasOwnProperty(item.sys_name)) {
+                                if ((item.component == null || !item.component.length) && !metrics.hasOwnProperty(item.sys_name)) {
                                     metrics[item.sys_name] = [];
-                                } else if (item.component != null && !metrics.hasOwnProperty(item.sys_name.replace('.' + item.component, ''))) {
+                                } else if (item.component != null && item.component.length && !metrics.hasOwnProperty(item.sys_name.replace('.' + item.component, ''))) {
                                     metrics[item.sys_name.replace('.' + item.component, '')] = [item.component];
                                 } else {
-                                    if (item.component != null) {
+                                    if (item.component != null && item.component.length) {
                                         metrics[item.sys_name.replace('.' + item.component, '')].push(item.component);
                                     }
                                 }
@@ -174,7 +174,11 @@ block ScriptsBlock
                                         if (result.ok) {
                                             toastr.success(result.msg);
 
-                                            var $li = $('<li>' + metric.replace('.' + component, '') + '[' + component + '] ' +
+                                            if (component !== 'all') {
+                                                metric = metric.replace('.' + component, '')
+                                            }
+
+                                            var $li = $('<li>' + metric + '[' + component + '] ' +
                                                     '<a class="remove-exception" href="#remove" data-metric="' + metric + '" data-component="' + component +
                                                     '">' + crudText.remove + '</a></li>');
                                             $li.find('a').on('click', onRemove);

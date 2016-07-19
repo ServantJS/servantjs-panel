@@ -135,9 +135,11 @@ block ScriptsBlock
                                                     item.value = bytesToString(bytes, item.value);
                                                 } else if (item.measure === 'bps') {
                                                     item.value = bytesToString(bytesPerSec, item.value);
+                                                } else {
+                                                    item.value += ' ' + item.measure;
                                                 }
 
-                                                $elem.find('.metrics .card-block').find('ul').append('<li>' + item.sys_name + ': ' + item.value + '</li>');
+                                                $elem.find('.metrics .card-block').find('ul').append('<li>{0}[{1}]: {2}</li>'.f(item.sys_name, item.component || 'total', item.value));
                                             });
 
                                         } else {
