@@ -1,6 +1,8 @@
 'use strict';
 
 const mongoose = require('mongoose');
+const db = require('../../../lib/db');
+
 const Schema = mongoose.Schema;
 
 const ReportSchema = new Schema({
@@ -33,7 +35,32 @@ TaskSchema.pre('save', function (next) {
         this.dt = new Date();
     }
 
-    next();
+    if (!this.isModified('status')) {
+        this.status = -1;
+    }
+
+    let search = null;
+
+    if (this.target_id && this.target_id[0] === 'W') {
+        search = db.WorkerModel;
+    } else if (this.target_id && this.target_id[0] === 'G') {
+        search = db.WorkersGroupModel;
+    } else if (this.target_id === 'SERVER') {
+        return next();
+    } else {
+        return next(new Error('Unsupported target id'));
+    }
+
+    search.findOne({sys_id: this.target_id}, 'server_id', (err, item) => {
+        if (err) {
+            next(err);
+        } else if (!item) {
+            next(new Error(`Target "${this.target_id}" not found`));
+        } else {
+            this.server_id = item.server_id;
+            next();
+        }
+    });
 });
 
 mongoose.model('Task', TaskSchema);
