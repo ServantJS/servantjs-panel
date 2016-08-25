@@ -60,7 +60,7 @@ module.exports = (parent) => {
                 });
             },
             (data, cb) => {
-                moduleDB.NGINXConfigModel.find({}).populate('group_id', 'name target_id').select('group_id name status kind').lean().exec((err, list) => {
+                moduleDB.NGINXConfigModel.find({}).populate('group_id', 'name target_id').select('group_id name status kind is_paused').lean().exec((err, list) => {
                     if (err) {
                         cb(err);
                     } else {
@@ -206,50 +206,54 @@ module.exports = (parent) => {
             return next(new Error('Missing "content" property'));
         }
 
-        moduleDB.NGINXConfigModel.populate(req.currentModel, [{path: 'group_id', select: 'target_id'}], (err, config) => {
-            if (err) {
-                next(err);
-            } else {
-                const task = new db.TaskModel({
-                    username: req.currentUser.email,
-                    target_id: config.group_id.target_id,
-                    module: controller,
-                    cmd: 'update-config',
-
-                    params: JSON.stringify({id: req.currentModel._id, name: name, content: content})
-                });
-
-                task.save((err) => {
-                    if (err) {
-                        next(err);
-                    } else {
-                        res.json({ok: true, data: task._id});
-                    }
-                });
-            }
+        req.currentTask = new db.TaskModel({
+            cmd: 'update-config',
+            params: JSON.stringify({id: req.currentModel._id, name: name, content: content})
         });
+
+        next();
+    });
+
+    core.logger.verbose(`\t\tPUT -> ${prefix}/:id/status`);
+    router.put('/:id/status', (req, res, next) => {
+        let isPaused = req.body.isPaused;
+        
+        if (!req.body.hasOwnProperty('isPaused')) {
+            return next(new Error('Missing "isPaused" property'));
+        }
+
+        req.currentTask = new db.TaskModel({
+            cmd: 'change-status-config',
+            params: JSON.stringify({id: req.currentModel._id, status: isPaused})
+        });
+
+        next();
     });
 
     core.logger.verbose(`\t\tDELETE -> ${prefix}/:id`);
     router.delete('/:id', (req, res, next) => {
+        req.currentTask = new db.TaskModel({
+            cmd: 'remove-config',
+            params: JSON.stringify({id: req.currentModel._id})
+        });
+
+        next();
+    });
+    
+    router.use('/:id', (req, res, next) => {
         moduleDB.NGINXConfigModel.populate(req.currentModel, [{path: 'group_id', select: 'target_id'}], (err, config) => {
             if (err) {
                 next(err);
             } else {
-                const task = new db.TaskModel({
-                    username: req.currentUser.email,
-                    target_id: config.group_id.target_id,
-                    module: controller,
-                    cmd: 'remove-config',
+                req.currentTask.username = req.currentUser.email;
+                req.currentTask.module = controller;
+                req.currentTask.target_id = config.group_id.target_id;
 
-                    params: JSON.stringify({id: req.currentModel._id})
-                });
-
-                task.save((err) => {
+                req.currentTask.save((err) => {
                     if (err) {
                         next(err);
                     } else {
-                        res.json({ok: true, data: task._id});
+                        res.json({ok: true, data: req.currentTask._id});
                     }
                 });
             }

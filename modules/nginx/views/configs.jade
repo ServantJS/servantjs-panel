@@ -20,7 +20,7 @@ block ContentBlock
                                 th= table.columns.group
                                 th= table.columns.target
                                 th= table.columns.state
-                                th(style='width: 135px')
+                                th(style='width: 200px')
                         tbody
                             - var i = 1;
                             - each config in data.configs
@@ -34,7 +34,7 @@ block ContentBlock
                                             span.label.label-sm.label-success= config.group_id.server_name
                                         else
                                             span.label.label-sm.label-primary= config.group_id.server_name
-                                    td
+                                    td.status
                                         if config.kind == 0
                                             span.label.label-sm.label-default unstated
                                         else
@@ -53,6 +53,13 @@ block ContentBlock
                                     td
                                         a.btn.btn-success.edit-btn.margin-10-right(href='#edit-config', title=buttonsTxt.edit)
                                             i.fa.fa-pencil
+
+                                        if config.kind != 0
+                                            a.btn.btn-success.resume-btn.margin-10-right(class=(config.is_paused ? "" : "hide"), href='/nginx/configs/' + config._id + '/status', title=resumeBtn, data-status='0')
+                                                i.fa.fa-play
+                                            a.btn.btn-warning.pause-btn.margin-10-right(class=(config.is_paused ? "hide" : ""), href='/nginx/configs/' + config._id + '/status', title=pauseBtn, data-status='1')
+                                                i.fa.fa-pause
+
                                         a.btn.btn-danger.delete-btn(href='/nginx/configs/' + config._id, title=buttonsTxt.delete)
                                             i.fa.fa-trash-o
 
@@ -148,6 +155,67 @@ block ScriptsBlock
             $(this).closest('.row').remove();
         }
 
+        function onSuccessChangeBtns($btn, span) {
+            var $p = $btn.parent();
+
+            $p.find('.btn.hide').toggleClass('hide');
+            $btn.toggleClass('hide');
+
+            $btn.closest('tr').find('td.status').empty().append(span);
+        }
+
+        function onChangeStatus(e) {
+            var self = this;
+            var templateSpan;
+            e.preventDefault();
+
+            if (!confirm('Are you sure?')) {
+                return;
+            }
+
+            var data = {
+                _csrf: _csrf,
+                isPaused: parseInt($(this).data('status'), 10)
+            };
+
+            if (data.isPaused) {
+                templateSpan = '<span class="label label-sm label-primary">pause</span>';
+            } else {
+                templateSpan = '<span class="label label-sm label-success">running</span>';
+            }
+
+            $(this).addClass('disabled');
+
+            $.ajax({
+                url: this.href,
+                type: 'PUT',
+                contentType: 'application/json',
+                data: JSON.stringify(data),
+                dataType: 'json',
+                error: function (XMLHttpRequest, textStatus, errorThrow) {
+                    alert(XMLHttpRequest + '\n' + textStatus + '\n' + errorThrow);
+                },
+                success: function (result) {
+                    if (result.ok) {
+                        toastr.info(taskWords.onCreateSuccess);
+
+                        setTimeout(function () {
+                            waitTask(result.data, function (status) {
+                                if (status === 0) {
+                                    onSuccessChangeBtns($(self), templateSpan);
+                                }
+
+                                $(self).removeClass('disabled');
+                            });
+                        }, taskCheckInterval);
+                    } else {
+                        toastr.error(result.msg);
+                        $(self).removeClass('disabled');
+                    }
+                }
+            });
+        }
+
         $(function () {
             setActiveLink('#nginx', '#nginx-configs-sub');
 
@@ -200,6 +268,9 @@ block ScriptsBlock
                         break;
                 }
             });
+
+            $('.pause-btn').on('click', onChangeStatus);
+            $('.resume-btn').on('click', onChangeStatus);
 
             $('.delete-btn').on('click', function (e) {
                 e.preventDefault();

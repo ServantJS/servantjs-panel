@@ -12,6 +12,9 @@ exports.ru = {
             }
         },
 
+        resumeBtn: 'включить',
+        pauseBtn: 'выключить',
+
         modal: {
             title: 'Создать новый конфигурационный файл',
             editTitle: 'Редактирование конфигурационного файла',
@@ -115,6 +118,9 @@ exports.us = {
             }
         },
 
+        resumeBtn: 'resume',
+        pauseBtn: 'pause',
+        
         modal: {
             title: 'Create a new config file',
             editTitle: 'Edit the config file',
