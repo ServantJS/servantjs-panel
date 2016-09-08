@@ -11,17 +11,17 @@ html.no-js(lang='en')
         meta(content='', name='description')
         meta(content='StormEye', name='author')
         meta(content='320', name='MobileOptimized')
-        title StormWall | 404 Server error!
+        title ServantJS | 404 Server error!
         link(href='/plugins/bootstrap/css/bootstrap.min.css', rel='stylesheet', type='text/css')
         link(href='/css/styles.css', rel='stylesheet', type='text/css')
-        link(href='/favicon.ico', rel='shortcut icon')
+        link(rel='shortcut icon' href='/img/favicon.ico')
     body.page-404-full-page
         .row
             .col-md-12(style='text-align: center; margin-top: 100px;')
                 .number 404
                 .details
-                    h3 Упс! Кажется вы потерялись
+                    h3= title
                     p
-                        | Мы не можем найти запрашиваемою страницу.
+                        | #{text}
                         br
-                        a(href='/') Домой
+                        a(href='/')= home
