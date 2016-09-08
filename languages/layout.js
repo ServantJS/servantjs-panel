@@ -89,6 +89,8 @@ exports.ru = {
         }
     },
 
+    modulesTitle: 'Модули',
+
     home: {
         menu: 'Приборная панель',
         index: ''
@@ -99,27 +101,6 @@ exports.ru = {
         users: 'Пользователи',
         groups: 'Группы',
         roles: 'Роли'
-    },
-
-
-    haproxy: {
-        menu: 'HAProxy',
-        configs: 'Конф. файлы',
-        settings: 'Настройки'
-    },
-
-    nginx: {
-        menu: 'NGINX',
-        configs: 'Конф. файлы',
-        groups: 'Группы конфигов',
-        templates: 'Шаблоны'
-    },
-
-    monitoring: {
-        menu: 'Мониторинг',
-        nodes: 'Узлы',
-        netmap: 'Сетевая карта узлов',
-        settings: 'Настройки'
     },
     
     server: {
@@ -160,6 +141,12 @@ exports.ru = {
         max: "Введите значение, которое меньше или равно {0}.",
         min: "Введите значение, которое больше или равно {0}.",
         regex: 'Данные не соответствуют шаблону {0}.'
+    },
+
+    404: {
+        title: 'Упс! Кажется вы потерялись.',
+        text: 'Мы не можем найти запрашиваемою страницу.',
+        home: 'Домой'
     }
 };
 
@@ -241,6 +228,8 @@ exports.us = {
         }
     },
 
+    modulesTitle: 'Modules',
+
     home: {
         menu: 'Dashboard',
         index: ''
@@ -251,26 +240,6 @@ exports.us = {
         users: 'Users',
         groups: 'Groups',
         roles: 'Roles'
-    },
-
-    haproxy: {
-        menu: 'HAProxy',
-        configs: 'Configs',
-        settings: 'Settings'
-    },
-    
-    nginx: {
-        menu: 'NGINX',
-        configs: 'Configs',
-        groups: 'Config groups',
-        templates: 'Templates'
-    },
-
-    monitoring: {
-        menu: 'Monitoring',
-        nodes: 'Nodes',
-        netmap: 'Network map nodes',
-        settings: 'Settings'
     },
 
     server: {
@@ -311,5 +280,11 @@ exports.us = {
         max: "Please enter a value less than or equal to {0}.",
         min: "Please enter a value greater than or equal to {0}.",
         regex: 'The data do not match the pattern {0}.'
+    },
+
+    404: {
+        title: 'Oops! I think you are lost.',
+        text: 'We can not find the requested page.',
+        home: 'Home'
     }
 };
