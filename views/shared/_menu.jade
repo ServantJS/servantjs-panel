@@ -1,0 +1,9 @@
+li.nav-item(id=menu.id)
+    a.nav-link(href='#' + menu.id)
+        i.fa(class=menu.icon)
+        | #{menu.name}
+        i.arrow.fa.fa-angle-left.pull-xs-right
+    ul.sub-menu
+        each sub in menu.subs
+            li(id=sub.id)
+                a(href=sub.url)= sub.name

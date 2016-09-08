@@ -52,40 +52,6 @@ html(lang='en')
                             ul.sub-menu
                                 li#users-sub
                                     a(href='/users')= management.users
-                        li#haproxy.nav-item
-                            a.nav-link(href='#haproxy')
-                                i.fa.fa-share-alt
-                                | #{haproxy.menu}
-                                i.arrow.fa.fa-angle-left.pull-xs-right
-                            ul.sub-menu
-                                li#hap-configs-sub
-                                    a(href='/haproxy/configs')= haproxy.configs
-                                li#hap-settings-sub
-                                    a(href='/haproxy/settings')= haproxy.settings
-                        li#nginx.nav-item
-                            a.nav-link(href='#haproxy')
-                                i.fa.fa-server
-                                | #{nginx.menu}
-                                i.arrow.fa.fa-angle-left.pull-xs-right
-                            ul.sub-menu
-                                li#nginx-configs-sub
-                                    a(href='/nginx/configs')= nginx.configs
-                                li#nginx-groups-sub
-                                    a(href='/nginx/groups')= nginx.groups
-                                li#nginx-templates-sub
-                                    a(href='/nginx/templates')= nginx.templates
-                        li#monitoring.nav-item
-                            a.nav-link(href='#monitoring')
-                                i.fa.fa-line-chart
-                                | #{monitoring.menu}
-                                i.arrow.fa.fa-angle-left.pull-xs-right
-                            ul.sub-menu
-                                li#monitoring-servers-sub
-                                    a(href='/monitoring/nodes')= monitoring.nodes
-                                li#monitoring-netmap-sub
-                                    a(href='/monitoring/netmap')= monitoring.netmap
-                                li#monitoring-settings-sub
-                                    a(href='/monitoring/settings')= monitoring.settings
                         li#server.nav-item
                             a.nav-link(href='#servers')
                                 i.fa.fa-sitemap
@@ -96,6 +62,11 @@ html(lang='en')
                                     a(href='/servers/info')= server.info
                                 li#server-groups-sub
                                     a(href='/servers/groups')= server.groups
+                        li.heading(style='padding: 15px')
+                            h4.text-uppercase(style='font-weight: 300; color: #7e7e7e; margin: 0')= modulesTitle
+                        each menu in menus
+                            include _menu
+
             .wrapper
                 .content
                     block ContentBlock

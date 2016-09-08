@@ -1,4 +1,14 @@
 exports.ru = {
+    menu: {
+        id: 'haproxy',
+        name: 'HAProxy',
+        icon: 'fa-share-alt',
+        subs: [
+            {id: 'hap-configs-sub', url: '/haproxy/configs', name: 'Конф. файлы'},
+            {id: 'hap-settings-sub', url: '/haproxy/settings', name: 'Настройки'}
+        ]
+    },
+    
     configs: {
         title: 'HAProxy конф. файлы',
         pageTitle: 'Список конфигурационных файлов',
@@ -97,6 +107,16 @@ exports.ru = {
 };
 
 exports.us = {
+    menu: {
+        id: 'haproxy',
+        name: 'HAProxy',
+        icon: 'fa-share-alt',
+        subs: [
+            {id: 'hap-configs-sub', url: '/haproxy/configs', name: 'Configs'},
+            {id: 'hap-settings-sub', url: '/haproxy/settings', name: 'Settings'}
+        ]
+    },
+    
     configs: {
         title: 'HAProxy config. files',
         pageTitle: 'List of config files',

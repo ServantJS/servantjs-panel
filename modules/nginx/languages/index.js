@@ -1,4 +1,15 @@
 exports.ru = {
+    menu: {
+        id: 'nginx',
+        name: 'NGINX',
+        icon: 'fa-server',
+        subs: [
+            {id: 'nginx-configs-sub', url: '/nginx/configs', name: 'Конф. файлы'},
+            {id: 'nginx-groups-sub', url: '/nginx/groups', name: 'Группы конфигов'},
+            {id: 'nginx-templates-sub', url: '/nginx/templates', name: 'Шаблоны'}
+        ]
+    },
+
     configs: {
         title: 'NGINX конфиги',
         pageTitle: 'Конфиги',
@@ -105,6 +116,17 @@ exports.ru = {
 };
 
 exports.us = {
+    menu: {
+        id: 'nginx',
+        name: 'NGINX',
+        icon: 'fa-server',
+        subs: [
+            {id: 'nginx-configs-sub', url: '/nginx/configs', name: 'Configs'},
+            {id: 'nginx-groups-sub', url: '/nginx/groups', name: 'Config groups'},
+            {id: 'nginx-templates-sub', url: '/nginx/templates', name: 'Templates'}
+        ]
+    },
+
     configs: {
         title: 'NGINX configs',
         pageTitle: 'Configs',

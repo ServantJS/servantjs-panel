@@ -1,7 +1,7 @@
 {
   "env": "debug",
   "fork": false,
-  "ip": "127.0.0.1",
+  "ip": "0.0.0.0",
   "port": 8020,
 
   "secret_cookie": "123",
@@ -13,5 +13,20 @@
 
   "db": {
     "url": "mongodb://127.0.0.1:27017/servant"
-  }
+  },
+
+  "modules": [
+    {
+      "name": "haproxy",
+      "enabled": true
+    },
+    {
+      "name": "monitoring",
+      "enabled": true
+    },
+    {
+      "name": "nginx",
+      "enabled": true
+    }
+  ]
 }

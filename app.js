@@ -37,6 +37,7 @@ app.disable('x-powered-by');
 
 const supportedLanguages = app.supportedLanguages = ['ru', 'us'];
 const wordsList = app.wordsList = require('./languages')();
+const modulesMenu = {ru: [], us: []};
 
 app.response.message = function (type, msg) {
     var sess = this.req.session;
@@ -159,6 +160,8 @@ app.use(function (req, res, next) {
     // expose "messages" local variable
     res.locals.messages = msgs;
 
+    res.locals.menus = modulesMenu[req.selectedLanguage];
+
     // expose "hasMessages"
     res.locals.hasMessages = !!(msgs.error || msgs.warn || msgs.success);
     res.locals.csrfToken = req.csrfToken();
@@ -177,12 +180,17 @@ fs.readdirSync(path.join(__dirname, 'controllers')).forEach((name) => {
 });
 
 //load modules url handlers
-fs.readdirSync(path.join(__dirname, 'modules')).forEach((name) => {
-    logger.verbose(`Load module: ${name}`);
-
-    if (!name.endsWith('.js')) {
-        require(path.join(__dirname, 'modules', name))(app);
+conf.get('modules').forEach((module) => {
+    if (!module.enabled) {
+        logger.verbose(`Module "${module.name.toUpperCase()}" is disabled`);
+        return;
     }
+
+    logger.verbose(`Load module: ${module.name}`);
+
+    const info = require(path.join(__dirname, 'modules', module.name))(app);
+    modulesMenu.ru.push(info.ru);
+    modulesMenu.us.push(info.us);
 });
 
 // handle error
@@ -210,7 +218,7 @@ app.use((req, res, next) => {
     if (req.xhr) {
         res.json({ok: false, error: 'not_found', msg: 'Not Found'});
     } else {
-        res.status(404).render('404');
+        res.status(404).render('404', wordsList['layout'][req.selectedLanguage]['404']);
     }
 });
 

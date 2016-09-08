@@ -8,4 +8,6 @@ module.exports = (parent) => {
     require('./controllers/setting')(parent);
     require('./controllers/node')(parent);
     require('./controllers/netmap')(parent);
+
+    return {ru: require('./languages').ru.menu, us: require('./languages').us.menu};
 };

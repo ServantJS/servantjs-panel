@@ -1,4 +1,15 @@
 exports.ru = {
+    menu: {
+        id: 'monitoring',
+        name: 'Мониторинг',
+        icon: 'fa-line-chart',
+        subs: [
+            {id: 'monitoring-nodes-sub', url: '/monitoring/nodes', name: 'Узлы'},
+            {id: 'monitoring-netmap-sub', url: '/monitoring/netmap', name: 'Сетевая карта узлов'},
+            {id: 'monitoring-settings-sub', url: '/monitoring/settings', name: 'Настройки'}
+        ]
+    },
+
     nodes: {
         title: 'Мониторинг',
         pageTitle: 'Мониторинг',
@@ -68,6 +79,17 @@ exports.ru = {
 };
 
 exports.us = {
+    menu: {
+        id: 'monitoring',
+        name: 'Monitoring',
+        icon: 'fa-line-chart',
+        subs: [
+            {id: 'monitoring-nodes-sub', url: '/monitoring/nodes', name: 'Nodes'},
+            {id: 'monitoring-netmap-sub', url: '/monitoring/netmap', name: 'Network map nodes'},
+            {id: 'monitoring-settings-sub', url: '/monitoring/settings', name: 'Settings'}
+        ]
+    },
+
     nodes: {
         title: 'Monitoring',
         pageTitle: 'Monitoring',
