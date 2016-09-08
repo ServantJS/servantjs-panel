@@ -8,7 +8,9 @@ block ContentBlock
     .row
         .col-xs-12
             .card
-                .card-header= table.name
+                .card-header
+                    | #{table.name}
+                    a.btn.btn-success.btn-sm.pull-xs-right(style='margin-top: -8px;', href='#create-user-modal', data-toggle='modal')= buttonsTxt.create
                 .card-block
                     table.table
                         thead
@@ -16,7 +18,7 @@ block ContentBlock
                                 th #
                                 th #{table.columns.email}
                                 th #{table.columns.token}
-                                th(style='width: 125px')
+                                th(style='width: 135px')
                         tbody
                             - each user, index in data
                                 tr.tr-vertical
@@ -25,11 +27,180 @@ block ContentBlock
                                     td= user.email
                                     td= user.access_key
                                     td
+                                        a.btn.btn-success.edit-btn.margin-10-right(href='/users/' + user._id, title=buttonsTxt.edit)
+                                            i.fa.fa-pencil
+                                        a.btn.btn-danger.delete-btn(href='/users/' + user._id, title=buttonsTxt.delete)
+                                            i.fa.fa-trash-o
 
+    #create-user-modal.modal.fade(tabindex='-1', role='dialog', aria-hidden='true')
+        .modal-dialog
+            .modal-content
+                form#create-user-form(method='POST', action='/users', autocomplete='off')
+                    .modal-header
+                        button.close(type='button', data-dismiss='modal', aria-label='Close')
+                            span(aria-hidden='true') &times;
+                        h4.modal-title= modal.title
+                    .modal-body.modal-align
+                        .form-group.row
+                            label.col-xs-4.form-control-label= modal.fields.email
+                            .col-xs-8
+                                input.form-control(name='email', placeholder='', type='text')
+                        .form-group.row
+                            label.col-xs-4.form-control-label= modal.fields.pwd
+                            .col-xs-8
+                                input#pwd.form-control(name='pwd', placeholder='', type='password')
+                        .form-group.row
+                            label.col-xs-4.form-control-label= modal.fields.rpwd
+                            .col-xs-8
+                                input.form-control(name='rpwd', placeholder='', type='password')
+                    .modal-footer
+                        button.btn.btn-default(type='button', data-dismiss='modal')= buttonsTxt.close
+                        button.btn.btn-primary.create-btn(type='submit')
+                            i.fa.fa-refresh.fa-spin.hide(style='margin-right: 5px')
+                            | #{buttonsTxt.create}
+
+    #edit-user-modal.modal.fade(tabindex='-1', role='dialog', aria-hidden='true')
+        .modal-dialog
+            .modal-content
+                form#edit-user-form(method='PUT', action='/users', autocomplete='off')
+                    .modal-header
+                        button.close(type='button', data-dismiss='modal', aria-label='Close')
+                            span(aria-hidden='true') &times;
+                        h4.modal-title= modal.title
+                    .modal-body.modal-align
+                        input.form-control(name='id', type='hidden')
+                        .form-group.row
+                            label.col-xs-4.form-control-label= modal.fields.npwd
+                            .col-xs-8
+                                input#new-pwd.form-control(name='npwd', placeholder='', type='password')
+                        .form-group.row
+                            label.col-xs-4.form-control-label= modal.fields.rpwd
+                            .col-xs-8
+                                input.form-control(name='rpwd', placeholder='', type='password')
+                    .modal-footer
+                        button.btn.btn-default(type='button', data-dismiss='modal')= buttonsTxt.close
+                        button.btn.btn-primary.save-btn(type='submit')
+                            i.fa.fa-refresh.fa-spin.hide(style='margin-right: 5px')
+                            | #{buttonsTxt.save}
 
 block ScriptsPluginBlock
 block ScriptsBlock
-    script(type='application/javascript').
+    include ../shared/_validate
+
+    script(type = 'application/javascript').
         $(function () {
             setActiveLink('#managment', '#users-sub');
+
+            $('.delete-btn').on('click', function (e) {
+                e.preventDefault();
+
+                var self = this;
+
+                onDeleteBtnClick(this, null, 'Are you sure?', function (result) {
+                    if (result.ok) {
+                        $(self).closest('tr').remove();
+                        toastr.success(result.msg);
+                    } else {
+                        toastr.error(result.msg);
+                    }
+                });
+            });
+
+            $('.edit-btn').on('click', function (e) {
+                e.preventDefault();
+
+                $('#edit-user-modal').modal('show');
+
+
+                $('#edit-user-form input[name="id"]').val(this.href.substring(this.href.lastIndexOf('/') + 1, this.href.length));
+                $('#edit-user-form input[name="npwd"]').val('');
+                $('#edit-user-form input[name="rpwd"]').val('');
+            });
+
+            var $createModal = $('#create-user-modal');
+            var $editModal = $('#edit-user-modal');
+
+            validateModal(null, $createModal,
+                    {
+                        email: {
+                            required: true,
+                            email: true
+                        },
+                        pwd: {
+                            required: true
+                        },
+                        rpwd: {
+                            equalTo: '#pwd'
+                        }
+                    },
+                    function () {
+                        var data = {
+                            _csrf: _csrf,
+                            email: $('input[name="email"]', $createModal).val(),
+                            pwd: $('input[name="pwd"]', $createModal).val()
+                        };
+
+                        toggleModalActionBtn($('.create-btn'));
+
+                        $.ajax({
+                            url: '/users',
+                            type: 'POST',
+                            contentType: 'application/json',
+                            data: JSON.stringify(data),
+                            dataType: 'json',
+                            error: function (XMLHttpRequest, textStatus, errorThrow) {
+                                alert(XMLHttpRequest + '\n' + textStatus + '\n' + errorThrow);
+                            },
+                            success: function (result) {
+                                if (result.ok) {
+                                    $createModal.modal('hide');
+                                    location.reload();
+                                } else {
+                                    toastr.error(result.msg);
+                                }
+
+                                toggleModalActionBtn($('.create-btn'));
+                            }
+                        });
+                    }
+            );
+
+            validateModal(null, $editModal,
+                    {
+                        npwd: {
+                            required: true
+                        },
+                        rpwd: {
+                            equalTo: '#new-pwd'
+                        }
+                    },
+                    function () {
+                        var data = {
+                            _csrf: _csrf,
+                            pwd: $('input[name="npwd"]', $editModal).val()
+                        };
+
+                        toggleModalActionBtn($('.save-btn'));
+
+                        $.ajax({
+                            url: '/users/' + $('input[name="id"]', $editModal).val(),
+                            type: 'PUT',
+                            contentType: 'application/json',
+                            data: JSON.stringify(data),
+                            dataType: 'json',
+                            error: function (XMLHttpRequest, textStatus, errorThrow) {
+                                alert(XMLHttpRequest + '\n' + textStatus + '\n' + errorThrow);
+                            },
+                            success: function (result) {
+                                if (result.ok) {
+                                    $editModal.modal('hide');
+                                } else {
+                                    toastr.error(result.msg);
+                                }
+
+                                toggleModalActionBtn($('.save-btn'));
+                            }
+                        });
+                    }
+            );
         });

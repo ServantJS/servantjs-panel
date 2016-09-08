@@ -215,6 +215,7 @@ app.use((req, res, next) => {
 });
 
 (new db.UserModel({
+    _id: mongoose.Types.ObjectId('000000000000000000000001'),
     email: conf.get('root_account').email,
     pwd: conf.get('root_account').pwd,
     activated: true

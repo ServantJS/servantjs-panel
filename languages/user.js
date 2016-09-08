@@ -14,6 +14,30 @@ exports.ru = {
                 name: 'Имя',
                 token: 'API ключ'
             }
+        },
+
+        modal: {
+            title: 'Создание пользователя',
+            fields: {
+                email: 'E-mail',
+                pwd: 'Пароль',
+                cpwd: 'Текущий пароль',
+                npwd: 'Новый пароль',
+                rpwd: 'Повторите пароль'
+            }
+        }
+    },
+
+    ajax: {
+        create: {
+            ok: 'Пользователь успешно создан.'    
+        },
+        edit: {
+            ok: 'Данные пользователя успешно сохранены.'
+        },
+        delete: {
+            ok: 'Пользователь успешно удален.',
+            root: 'Нельзя удалить "root" пользователя.'
         }
     }
 };
@@ -34,6 +58,19 @@ exports.us = {
                 name: 'Name',
                 token: 'API token'
             }
+        }
+    },
+
+    ajax: {
+        create: {
+            ok: 'User successfully created.'
+        },
+        edit: {
+            ok: 'User data saved successfully.'
+        },
+        delete: {
+            ok: 'User successfully deleted.',
+            root: 'You can not remove "root" user.'
         }
     }
 };
