@@ -348,6 +348,7 @@ block ScriptsBlock
                                 alert(XMLHttpRequest + '\n' + textStatus + '\n' + errorThrow);
                             },
                             success: function (result) {
+                                console.log(result);
                                 if (result.ok) {
                                     toastr.info(taskWords.onCreateSuccess);
 
@@ -357,6 +358,8 @@ block ScriptsBlock
                                                 $createModal.modal('hide');
                                                 location.reload();
                                             }
+
+                                            toggleModalActionBtn($('.create-btn'));
                                         });
                                     }, taskCheckInterval);
                                 } else {
