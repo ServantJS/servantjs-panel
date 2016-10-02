@@ -58,6 +58,17 @@ exports.us = {
                 name: 'Name',
                 token: 'API token'
             }
+        },
+
+        modal: {
+            title: 'Create a new user',
+            fields: {
+                email: 'E-mail',
+                pwd: 'Passord',
+                cpwd: 'Current password',
+                npwd: 'New password',
+                rpwd: 'Repeat password'
+            }
         }
     },
 
